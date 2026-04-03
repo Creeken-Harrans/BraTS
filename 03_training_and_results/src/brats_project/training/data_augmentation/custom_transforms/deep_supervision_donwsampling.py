@@ -1,4 +1,4 @@
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Optional
 
 from batchgenerators.augmentations.utils import resize_segmentation
 from batchgenerators.transforms.abstract_transforms import AbstractTransform
@@ -11,7 +11,7 @@ class DownsampleSegForDSTransform2(AbstractTransform):
     '''
     def __init__(self, ds_scales: Union[List, Tuple],
                  order: int = 0, input_key: str = "seg",
-                 output_key: str = "seg", axes: Tuple[int] = None):
+                 output_key: str = "seg", axes: Optional[Tuple[int]] = None):
         """
         Downscales data_dict[input_key] according to ds_scales. Each entry in ds_scales specified one deep supervision
         output and its resolution relative to the original data, for example 0.25 specifies 1/4 of the original shape.

@@ -1,4 +1,4 @@
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional
 
 import numpy as np
 from batchgeneratorsv2.helpers.scalar_type import RandomScalar
@@ -12,14 +12,14 @@ class nnUNetTrainerNoDA(nnUNetTrainer):
     def get_training_transforms(
             patch_size: Union[np.ndarray, Tuple[int]],
             rotation_for_DA: RandomScalar,
-            deep_supervision_scales: Union[List, Tuple, None],
+            deep_supervision_scales: Optional[Union[List, Tuple]],
             mirror_axes: Tuple[int, ...],
             do_dummy_2d_data_aug: bool,
-            use_mask_for_norm: List[bool] = None,
+            use_mask_for_norm: Optional[List[bool]] = None,
             is_cascaded: bool = False,
-            foreground_labels: Union[Tuple[int, ...], List[int]] = None,
-            regions: List[Union[List[int], Tuple[int, ...], int]] = None,
-            ignore_label: int = None,
+            foreground_labels: Optional[Union[Tuple[int, ...], List[int]]] = None,
+            regions: Optional[List[Union[List[int], Tuple[int, ...], int]]] = None,
+            ignore_label: Optional[int] = None,
     ) -> BasicTransform:
         return nnUNetTrainer.get_validation_transforms(deep_supervision_scales, is_cascaded, foreground_labels,
                                                        regions, ignore_label)
@@ -32,4 +32,3 @@ class nnUNetTrainerNoDA(nnUNetTrainer):
         self.inference_allowed_mirroring_axes = None
         initial_patch_size = self.configuration_manager.patch_size
         return rotation_for_DA, do_dummy_2d_data_aug, initial_patch_size, mirror_axes
-

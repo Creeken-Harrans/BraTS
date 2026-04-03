@@ -74,8 +74,12 @@ class MetaLogger(object):
         
         # handle the ema_fg_dice special case! It is automatically logged when we add a new mean_fg_dice
         if key == 'mean_fg_dice':
-            new_ema_pseudo_dice = self.get_value('ema_fg_dice', step=step-1) * 0.9 + 0.1 * value \
-                if len(self.get_value('ema_fg_dice', step=None)) > 0 else value
+            ema_history = self.get_value('ema_fg_dice', step=None)
+            if len(ema_history) > 0:
+                prev_ema = float(self.get_value('ema_fg_dice', step=step - 1))
+                new_ema_pseudo_dice = prev_ema * 0.9 + 0.1 * float(value)
+            else:
+                new_ema_pseudo_dice = float(value)
             self.log('ema_fg_dice', new_ema_pseudo_dice, step)
 
     def log_summary(self, key: str, value: Any):

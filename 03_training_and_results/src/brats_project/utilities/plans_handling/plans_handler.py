@@ -207,7 +207,7 @@ class ConfigurationManager(object):
         return ret
 
     @property
-    def previous_stage_name(self) -> Union[str, None]:
+    def previous_stage_name(self) -> Optional[str]:
         return self.configuration.get('previous_stage')
 
 
@@ -229,7 +229,7 @@ class PlansManager(object):
         return self.plans.__repr__()
 
     def _internal_resolve_configuration_inheritance(self, configuration_name: str,
-                                                    visited: Tuple[str, ...] = None) -> dict:
+                                                    visited: Optional[Tuple[str, ...]] = None) -> dict:
         if configuration_name not in self.plans['configurations'].keys():
             raise ValueError(f'The configuration {configuration_name} does not exist in the plans I have. Valid '
                              f'configuration names are {list(self.plans["configurations"].keys())}.')

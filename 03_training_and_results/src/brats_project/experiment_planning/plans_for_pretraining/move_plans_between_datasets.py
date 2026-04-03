@@ -1,5 +1,5 @@
 import argparse
-from typing import Union
+from typing import Union, Optional
 
 from batchgenerators.utilities.file_and_folder_operations import join, isdir, isfile, load_json, save_json
 
@@ -13,7 +13,7 @@ def move_plans_between_datasets(
         source_dataset_name_or_id: Union[int, str],
         target_dataset_name_or_id: Union[int, str],
         source_plans_identifier: str,
-        target_plans_identifier: str = None):
+        target_plans_identifier: Optional[str] = None):
     source_dataset_name = maybe_convert_to_dataset_name(source_dataset_name_or_id)
     target_dataset_name = maybe_convert_to_dataset_name(target_dataset_name_or_id)
 

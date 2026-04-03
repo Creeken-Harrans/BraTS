@@ -170,6 +170,12 @@
 
 - 加载可迁移的预训练权重。
 
+现在额外值得知道的一点：
+
+- 它不再直接依赖私有的 `torch._dynamo.OptimizedModule`
+- compiled / non-compiled module 的解包已经走公共 helper
+- 这样在不同 PyTorch 版本之间更稳，不容易因为内部类名或导入位置变化而直接失效
+
 阅读优先级：
 
 - 中。
@@ -178,6 +184,14 @@
 ### 结论
 
 `run/` 不是“网络训练细节”本身，但它是训练命令能否正确落到 trainer 的桥接层。
+
+如果你在看当前项目和 PyTorch 版本兼容性，另外要顺手记住：
+
+- `training/nnUNetTrainer/nnUNetTrainer.py`
+- `training/nnUNetTrainer/variants/lr_schedule/nnUNetTrainer_warmup.py`
+- `inference/predict_from_raw_data.py`
+
+这几个文件现在都已经统一改成公共 helper 来判断 compiled module，并修正了 DDP 下的 `torch.compile` 门控逻辑。
 
 ---
 

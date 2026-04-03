@@ -18,7 +18,7 @@
 - `trainer = SegTrainer`
 - `plans = ProjectPlans`
 - `configuration = 3d_fullres`
-- `num_epochs = 60`
+- `num_epochs = 100`
 
 这三个默认值不是随便挑的，而是和前一阶段的 planner 结果对应起来的本地约定。
 
@@ -49,15 +49,24 @@ python BraTS/run.py train --fold 0
 
 补充说明：
 
-- 默认会训练 `60` 轮
-- 如果 `fold_0` 已经有 `checkpoint_final/checkpoint_latest/checkpoint_best`，会优先从现有 checkpoint 继续
+- 默认会训练 `100` 轮
+- 如果 `fold_0` 已经有旧训练结果，会自动判断是续训还是新开
+- 自动续训时的 checkpoint 选择顺序是：`checkpoint_latest` -> `checkpoint_final` -> `checkpoint_best`
 - 如果你想强制从头开始，要显式加 `--restart-training`
+- 无论是续训还是新开，都会把决策写进 `training_log_*.txt`
+- 每个 epoch 的训练曲线会持续更新到 `progress.png`
 
 再跑完整五折：
 
 ```bash
 python BraTS/run.py train-all --npz
 ```
+
+`train-all` 也遵循同样规则：
+
+- 某个 fold 有可用 checkpoint，就接着那个 fold 继续
+- 某个 fold 没有可用 checkpoint，就从头开始训练该 fold
+- 每个 fold 都各自写自己的 `training_log_*.txt` 和 `progress.png`
 
 必要时只补验证：
 

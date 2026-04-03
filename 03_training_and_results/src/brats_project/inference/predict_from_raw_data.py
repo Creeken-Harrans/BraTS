@@ -15,7 +15,6 @@ from batchgenerators.dataloading.multi_threaded_augmenter import MultiThreadedAu
 from batchgenerators.utilities.file_and_folder_operations import load_json, join, isfile, maybe_mkdir_p, isdir, subdirs, \
     save_json
 from torch import nn
-from torch._dynamo import OptimizedModule
 from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
@@ -29,7 +28,7 @@ from brats_project.inference.sliding_window_prediction import compute_gaussian, 
     compute_steps_for_sliding_window
 from brats_project.utilities.file_path_utilities import get_output_folder, check_workers_alive_and_busy
 from brats_project.utilities.find_class_by_name import recursive_find_python_class
-from brats_project.utilities.helpers import empty_cache, dummy_context
+from brats_project.utilities.helpers import empty_cache, dummy_context, is_compiled_module, unwrap_compiled_module
 from brats_project.utilities.json_export import recursive_fix_for_json_export
 from brats_project.utilities.label_handling.label_handling import determine_num_input_channels
 from brats_project.utilities.plans_handling.plans_handler import PlansManager, ConfigurationManager
@@ -129,7 +128,7 @@ class nnUNetPredictor(object):
         self.allowed_mirroring_axes = inference_allowed_mirroring_axes
         self.label_manager = plans_manager.get_label_manager(dataset_json)
         if ('PROJECT_COMPILE' in os.environ.keys()) and (os.environ['PROJECT_COMPILE'].lower() in ('true', '1', 't')) \
-                and not isinstance(self.network, OptimizedModule):
+                and not is_compiled_module(self.network):
             print('Using torch.compile')
             self.network = torch.compile(self.network)
 
@@ -151,9 +150,9 @@ class nnUNetPredictor(object):
         allow_compile = True
         allow_compile = allow_compile and ('PROJECT_COMPILE' in os.environ.keys()) and (
                     os.environ['PROJECT_COMPILE'].lower() in ('true', '1', 't'))
-        allow_compile = allow_compile and not isinstance(self.network, OptimizedModule)
+        allow_compile = allow_compile and not is_compiled_module(self.network)
         if isinstance(self.network, DistributedDataParallel):
-            allow_compile = allow_compile and isinstance(self.network.module, OptimizedModule)
+            allow_compile = allow_compile and not is_compiled_module(self.network.module)
         if allow_compile:
             print('Using torch.compile')
             self.network = torch.compile(self.network)
@@ -169,8 +168,8 @@ class nnUNetPredictor(object):
         return use_folds
 
     def _manage_input_and_output_lists(self, list_of_lists_or_source_folder: Union[str, List[List[str]]],
-                                       output_folder_or_list_of_truncated_output_files: Union[None, str, List[str]],
-                                       folder_with_segs_from_prev_stage: str = None,
+                                       output_folder_or_list_of_truncated_output_files: Optional[Union[str, List[str]]],
+                                       folder_with_segs_from_prev_stage: Optional[str] = None,
                                        overwrite: bool = True,
                                        part_id: int = 0,
                                        num_parts: int = 1,
@@ -211,12 +210,12 @@ class nnUNetPredictor(object):
 
     def predict_from_files(self,
                            list_of_lists_or_source_folder: Union[str, List[List[str]]],
-                           output_folder_or_list_of_truncated_output_files: Union[str, None, List[str]],
+                           output_folder_or_list_of_truncated_output_files: Optional[Union[str, List[str]]],
                            save_probabilities: bool = False,
                            overwrite: bool = True,
                            num_processes_preprocessing: int = default_num_processes,
                            num_processes_segmentation_export: int = default_num_processes,
-                           folder_with_segs_from_prev_stage: str = None,
+                           folder_with_segs_from_prev_stage: Optional[str] = None,
                            num_parts: int = 1,
                            part_id: int = 0):
         """
@@ -297,12 +296,10 @@ class nnUNetPredictor(object):
 
     def get_data_iterator_from_raw_npy_data(self,
                                             image_or_list_of_images: Union[np.ndarray, List[np.ndarray]],
-                                            segs_from_prev_stage_or_list_of_segs_from_prev_stage: Union[None,
-                                                                                                        np.ndarray,
-                                                                                                        List[
-                                                                                                            np.ndarray]],
+                                            segs_from_prev_stage_or_list_of_segs_from_prev_stage: Optional[Union[np.ndarray,
+                                                                                                                 List[np.ndarray]]],
                                             properties_or_list_of_properties: Union[dict, List[dict]],
-                                            truncated_ofname: Union[str, List[str], None],
+                                            truncated_ofname: Optional[Union[str, List[str]]],
                                             num_processes: int = 3):
 
         list_of_images = [image_or_list_of_images] if not isinstance(image_or_list_of_images, list) else \
@@ -336,12 +333,10 @@ class nnUNetPredictor(object):
 
     def predict_from_list_of_npy_arrays(self,
                                         image_or_list_of_images: Union[np.ndarray, List[np.ndarray]],
-                                        segs_from_prev_stage_or_list_of_segs_from_prev_stage: Union[None,
-                                                                                                    np.ndarray,
-                                                                                                    List[
-                                                                                                        np.ndarray]],
+                                        segs_from_prev_stage_or_list_of_segs_from_prev_stage: Optional[Union[np.ndarray,
+                                                                                                             List[np.ndarray]]],
                                         properties_or_list_of_properties: Union[dict, List[dict]],
-                                        truncated_ofname: Union[str, List[str], None],
+                                        truncated_ofname: Optional[Union[str, List[str]]],
                                         num_processes: int = 3,
                                         save_probabilities: bool = False,
                                         num_processes_segmentation_export: int = default_num_processes):
@@ -426,8 +421,8 @@ class nnUNetPredictor(object):
         return ret
 
     def predict_single_npy_array(self, input_image: np.ndarray, image_properties: dict,
-                                 segmentation_previous_stage: np.ndarray = None,
-                                 output_file_truncated: str = None,
+                                 segmentation_previous_stage: Optional[np.ndarray] = None,
+                                 output_file_truncated: Optional[str] = None,
                                  save_or_return_probabilities: bool = False):
         """
         WARNING: SLOW. ONLY USE THIS IF YOU CANNOT GIVE NNUNET MULTIPLE IMAGES AT ONCE FOR SOME REASON.
@@ -483,15 +478,12 @@ class nnUNetPredictor(object):
         """
         n_threads = torch.get_num_threads()
         torch.set_num_threads(default_num_processes if default_num_processes < n_threads else n_threads)
-        prediction = None
+        prediction: Optional[torch.Tensor] = None
 
         for params in self.list_of_parameters:
 
             # messing with state dict names...
-            if not isinstance(self.network, OptimizedModule):
-                self.network.load_state_dict(params)
-            else:
-                self.network._orig_mod.load_state_dict(params)
+            unwrap_compiled_module(self.network).load_state_dict(params)
 
             # why not leave prediction on device if perform_everything_on_device? Because this may cause the
             # second iteration to crash due to OOM. Grabbing that with try except cause way more bloated code than
@@ -501,6 +493,7 @@ class nnUNetPredictor(object):
             else:
                 prediction += self.predict_sliding_window_return_logits(data).to('cpu')
 
+        assert prediction is not None
         if len(self.list_of_parameters) > 1:
             prediction /= len(self.list_of_parameters)
 
@@ -686,10 +679,10 @@ class nnUNetPredictor(object):
 
     def predict_from_files_sequential(self,
                            list_of_lists_or_source_folder: Union[str, List[List[str]]],
-                           output_folder_or_list_of_truncated_output_files: Union[str, None, List[str]],
+                           output_folder_or_list_of_truncated_output_files: Optional[Union[str, List[str]]],
                            save_probabilities: bool = False,
                            overwrite: bool = True,
-                           folder_with_segs_from_prev_stage: str = None):
+                           folder_with_segs_from_prev_stage: Optional[str] = None):
         """
         Just like predict_from_files but doesn't use any multiprocessing. Slow, but sometimes necessary
         """
@@ -1065,4 +1058,3 @@ if __name__ == '__main__':
         [['/media/isensee/raw_data/PROJECT_RAW/Dataset004_Hippocampus/imagesTs/hippocampus_002_0000.nii.gz'], ['/media/isensee/raw_data/PROJECT_RAW/Dataset004_Hippocampus/imagesTs/hippocampus_005_0000.nii.gz']],
         '/home/isensee/temp/tmp', False, True, None
     )
-

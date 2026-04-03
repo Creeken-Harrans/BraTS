@@ -1,13 +1,12 @@
 from typing import Union
 
 import torch
-from torch._dynamo import OptimizedModule
 
 from brats_project.training.lr_scheduler.warmup import Lin_incr_LRScheduler, PolyLRScheduler_offset
 from brats_project.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-from brats_project.utilities.helpers import empty_cache
+from brats_project.utilities.helpers import empty_cache, unwrap_compiled_module
 
 
 class nnUNetTrainer_warmup(nnUNetTrainer):
@@ -105,15 +104,9 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
 
         # messing with state dict naming schemes. Facepalm.
         if self.is_ddp:
-            if isinstance(self.network.module, OptimizedModule):
-                self.network.module._orig_mod.load_state_dict(new_state_dict)
-            else:
-                self.network.module.load_state_dict(new_state_dict)
+            unwrap_compiled_module(self.network.module).load_state_dict(new_state_dict)
         else:
-            if isinstance(self.network, OptimizedModule):
-                self.network._orig_mod.load_state_dict(new_state_dict)
-            else:
-                self.network.load_state_dict(new_state_dict)
+            unwrap_compiled_module(self.network).load_state_dict(new_state_dict)
 
         # it's fine to do this every time we load because configure_optimizers will be a no-op if the correct optimizer
         # and lr scheduler are already set up

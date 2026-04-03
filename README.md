@@ -255,6 +255,15 @@
 - 如果已有断点续训：
   `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/checkpoint_*.pth`
 
+行为：
+
+- 默认会先检查当前 fold 是否已有可恢复训练状态
+- 如果有，会自动续训，选择顺序为 `checkpoint_latest` -> `checkpoint_final` -> `checkpoint_best`
+- 如果没有，会自动从头开始训练
+- 只有显式传 `--restart-training` 才会忽略已有 checkpoint
+- 训练决策会写入 `training_log_*.txt`
+- 每个 epoch 的训练记录图会写入并刷新 `progress.png`
+
 写入：
 
 - `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/checkpoint_best.pth`
@@ -275,6 +284,12 @@
 
 - `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0 ... fold_4/*`
 - 每个 `fold_x/validation/` 里额外写出 `.npz` 概率文件
+
+行为：
+
+- 每个 fold 都独立判断“续训还是新开”
+- 有旧 checkpoint 的 fold 自动续训，没有的 fold 自动从头开始
+- 每个 fold 都会各自生成 `training_log_*.txt` 和 `progress.png`
 
 #### `python BraTS/run.py find-best-config`
 
@@ -539,7 +554,8 @@
 产物是什么：
 
 - `summary.json` 一类的结构化评估结果
-- 当前预测子集或全量预测的 Dice 等指标
+- 在默认严格模式下，是和 ground truth 完整对齐后的 Dice 等指标
+- 只有显式传 `--chill` 时，才允许对子集预测做评估
 
 #### `python BraTS/run.py report-evaluation`
 
@@ -682,7 +698,9 @@ python BraTS/run.py find-best-config
 - 汇总多折结果
 - 默认优先比较当前项目的默认训练组合
 - 如果默认组合还没有可用的 `fold_x/validation` 结果，会自动回退到当前数据集下实际已有 validation 输出的模型
-- 如果只完成了部分 fold，会自动只使用当前实际存在 validation 输出的 folds
+- 比较时不再允许“每个模型各用各的 fold 子集”；所有候选模型必须共享同一批 validation folds
+- 如果请求的 folds 不完整，系统会自动收缩到所有候选模型都共同拥有的 folds，并在终端明确打印
+- 如果候选模型之间连一个共享 fold 都没有，`find-best-config` 会直接报错，而不是继续输出不可比结果
 - 需要时可通过 `--configurations/--trainers/--plans-identifiers` 比较多组组合
 - 需要时比较 ensemble
 - 自动寻找最合适的后处理规则
@@ -720,9 +738,10 @@ python BraTS/run.py evaluate
 当前默认行为：
 
 - 如果预测目录为空，会直接提示你先跑 `predict`
-- 如果预测目录只覆盖了 ground truth 的一个子集，`evaluate` 会自动按这个子集评估，不再因为“不是全量 368 例”直接报错
+- 默认要求预测目录和 ground truth 完整一一对应；缺失病例或额外病例都会直接报错
+- 只有你显式传 `--chill` 时，才允许对子集预测做评估
 - 在未显式指定模型元数据参数时，`evaluate` 也会优先使用 `find-best-config` 选出的最佳模型元数据
-- 如果 `predict` 前一步用的是训练集随机抽样输入，`evaluate` 会继续按这批病例名做子集评估，不要求全量 368 例预测都存在
+- 如果 `predict` 前一步用的是训练集随机抽样输入，评估这批样本时也需要显式加 `--chill`
 
 输出通常是：
 
@@ -807,6 +826,17 @@ python BraTS/run.py report-evaluation
   - 数据变换层
 - `nnUNetTrainer.py`
   - 训练主控层
+
+如果你关心当前 PyTorch 兼容性，再额外看两个文件最值：
+
+1. [predict_from_raw_data.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/inference/predict_from_raw_data.py)
+2. [helpers.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/utilities/helpers.py)
+
+原因：
+
+- 项目现在通过公共 helper 处理 compiled module 的识别与解包
+- 不再直接依赖私有的 `torch._dynamo.OptimizedModule`
+- DDP 下的 `torch.compile` 门控逻辑也已经按当前实现修正
 
 ---
 

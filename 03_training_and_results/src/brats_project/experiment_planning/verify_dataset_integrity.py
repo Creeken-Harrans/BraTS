@@ -13,11 +13,17 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import multiprocessing
-from typing import Type
+from typing import List, Type
 
 import numpy as np
 import pandas as pd
-from batchgenerators.utilities.file_and_folder_operations import *
+from batchgenerators.utilities.file_and_folder_operations import (
+    isdir,
+    isfile,
+    join,
+    load_json,
+    subfiles,
+)
 
 from brats_project.imageio.base_reader_writer import BaseReaderWriter
 from brats_project.imageio.reader_writer_registry import determine_reader_writer_from_dataset_json

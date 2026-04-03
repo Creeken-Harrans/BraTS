@@ -1,7 +1,7 @@
 import argparse
 import os.path
 from copy import deepcopy
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Optional
 
 from batchgenerators.utilities.file_and_folder_operations import (
     load_json, join, isdir, listdir, save_json
@@ -93,10 +93,51 @@ def discover_trained_models_with_validation(dataset_name_or_id: Union[str, int])
     return tuple(discovered)
 
 
+def determine_comparable_folds(
+    dataset_name_or_id: Union[str, int],
+    allowed_trained_models: Union[List[dict], Tuple[dict, ...]],
+    requested_folds: Union[List[int], Tuple[int, ...]],
+) -> Tuple[List[dict], Tuple[int, ...]]:
+    comparable_models = []
+    available_folds_per_model = {}
+
+    for trained_model in allowed_trained_models:
+        output_folder = get_output_folder(
+            dataset_name_or_id,
+            trained_model['trainer'],
+            trained_model['plans'],
+            trained_model['configuration'],
+            fold=None,
+        )
+        identifier = os.path.basename(output_folder)
+        available_folds = get_available_validation_folds(output_folder)
+        selected_folds = tuple(f for f in requested_folds if f in available_folds)
+        if len(selected_folds) == 0:
+            print(f"Skipping {identifier}: no validation results found for requested folds {tuple(requested_folds)}.")
+            continue
+        comparable_models.append(trained_model)
+        available_folds_per_model[identifier] = set(selected_folds)
+
+    if len(comparable_models) == 0:
+        return [], tuple()
+
+    comparable_folds = tuple(
+        fold for fold in requested_folds
+        if all(fold in available_folds_per_model[os.path.basename(get_output_folder(
+            dataset_name_or_id,
+            model['trainer'],
+            model['plans'],
+            model['configuration'],
+            fold=None,
+        ))] for model in comparable_models)
+    )
+    return comparable_models, comparable_folds
+
+
 def generate_inference_command(dataset_name_or_id: Union[int, str], configuration_name: str,
                                plans_identifier: str = 'ProjectPlans', trainer_name: str = 'SegTrainer',
                                folds: Union[List[int], Tuple[int, ...]] = (0, 1, 2, 3, 4),
-                               folder_with_segs_from_prev_stage: str = None,
+                               folder_with_segs_from_prev_stage: Optional[str] = None,
                                input_folder: str = 'INPUT_FOLDER',
                                output_folder: str = 'OUTPUT_FOLDER',
                                save_npz: bool = False):
@@ -135,6 +176,23 @@ def find_best_configuration(dataset_name_or_id,
     folds_per_identifier = {}
 
     allowed_trained_models = filter_available_models(deepcopy(allowed_trained_models), dataset_name_or_id)
+    allowed_trained_models, comparable_folds = determine_comparable_folds(
+        dataset_name_or_id,
+        allowed_trained_models,
+        folds,
+    )
+
+    if len(allowed_trained_models) == 0 or len(comparable_folds) == 0:
+        raise RuntimeError(
+            f"No comparable validation folds were found for dataset {dataset_name}. "
+            f"Requested folds: {tuple(folds)}. "
+            "All compared models must share at least one validation fold before best-configuration selection is meaningful."
+        )
+    if comparable_folds != tuple(folds):
+        print(
+            f"Using shared comparable folds {comparable_folds} for all candidate models "
+            f"(requested: {tuple(folds)})."
+        )
 
     for m in allowed_trained_models:
         output_folder = get_output_folder(dataset_name_or_id, m['trainer'], m['plans'], m['configuration'], fold=None)
@@ -142,20 +200,13 @@ def find_best_configuration(dataset_name_or_id,
             raise RuntimeError(f'{dataset_name}: The output folder of plans {m["plans"]} configuration '
                                f'{m["configuration"]} is missing. Please train the model (all requested folds!) first!')
         identifier = os.path.basename(output_folder)
-        available_folds = get_available_validation_folds(output_folder)
-        selected_folds = tuple(f for f in folds if f in available_folds)
-        if len(selected_folds) == 0:
-            print(f"Skipping {identifier}: no validation results found for requested folds {tuple(folds)}.")
-            continue
-        if selected_folds != tuple(folds):
-            print(f"Using available folds {selected_folds} for {identifier} (requested: {tuple(folds)}).")
-        merged_output_folder = join(output_folder, f'crossval_results_folds_{folds_tuple_to_string(selected_folds)}')
-        accumulate_cv_results(output_folder, merged_output_folder, selected_folds, num_processes, overwrite)
+        merged_output_folder = join(output_folder, f'crossval_results_folds_{folds_tuple_to_string(comparable_folds)}')
+        accumulate_cv_results(output_folder, merged_output_folder, comparable_folds, num_processes, overwrite)
         all_results[identifier] = {
             'source': merged_output_folder,
             'result': load_summary_json(join(merged_output_folder, 'summary.json'))['foreground_mean']['Dice']
         }
-        folds_per_identifier[identifier] = selected_folds
+        folds_per_identifier[identifier] = comparable_folds
 
     if allow_ensembling:
         for i in range(len(allowed_trained_models)):
@@ -164,22 +215,11 @@ def find_best_configuration(dataset_name_or_id,
 
                 output_folder_1 = get_output_folder(dataset_name_or_id, m1['trainer'], m1['plans'], m1['configuration'], fold=None)
                 output_folder_2 = get_output_folder(dataset_name_or_id, m2['trainer'], m2['plans'], m2['configuration'], fold=None)
-                available_folds_1 = set(get_available_validation_folds(output_folder_1))
-                available_folds_2 = set(get_available_validation_folds(output_folder_2))
-                selected_folds = tuple(f for f in folds if f in available_folds_1 and f in available_folds_2)
-                if len(selected_folds) == 0:
-                    continue
-                if selected_folds != tuple(folds):
-                    print(
-                        f"Using available shared folds {selected_folds} for ensemble "
-                        f"{os.path.basename(output_folder_1)} + {os.path.basename(output_folder_2)} "
-                        f"(requested: {tuple(folds)})."
-                    )
-                identifier = get_ensemble_name(output_folder_1, output_folder_2, selected_folds)
+                identifier = get_ensemble_name(output_folder_1, output_folder_2, comparable_folds)
 
                 output_folder_ensemble = join(PROJECT_RESULTS, dataset_name, 'ensembles', identifier)
 
-                ensemble_crossvalidations([output_folder_1, output_folder_2], output_folder_ensemble, selected_folds,
+                ensemble_crossvalidations([output_folder_1, output_folder_2], output_folder_ensemble, comparable_folds,
                                           num_processes, overwrite=overwrite)
 
                 # evaluate ensembled predictions
@@ -202,14 +242,14 @@ def find_best_configuration(dataset_name_or_id,
                     'source': output_folder_ensemble,
                     'result': load_summary_json(join(output_folder_ensemble, 'summary.json'))['foreground_mean']['Dice']
                     }
-                folds_per_identifier[identifier] = selected_folds
+                folds_per_identifier[identifier] = comparable_folds
 
     if len(all_results) == 0:
         raise RuntimeError(
             f"No usable cross-validation validation results were found for dataset {dataset_name}. "
             f"Requested folds: {tuple(folds)}. "
-            "Run training to completion for at least one fold so that fold_x/validation exists, "
-            "or call find-best-config with the trainer/configuration that actually produced validation outputs."
+            "Run training to completion for at least one shared fold across all compared models, "
+            "or call find-best-config with the trainer/configuration that actually produced compatible validation outputs."
         )
 
     # pick best and report inference command
@@ -285,7 +325,7 @@ def find_best_configuration(dataset_name_or_id,
     return return_dict
 
 
-def print_inference_instructions(inference_info_dict: dict, instructions_file: str = None):
+def print_inference_instructions(inference_info_dict: dict, instructions_file: Optional[str] = None):
     def _print_and_maybe_write_to_file(string):
         print(string)
         if f_handle is not None:

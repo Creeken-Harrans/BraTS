@@ -248,8 +248,8 @@ def apply_postprocessing_to_folder(input_folder: str,
                                    output_folder: str,
                                    pp_fns: List[Callable],
                                    pp_fn_kwargs: List[dict],
-                                   plans_file_or_dict: Union[str, dict] = None,
-                                   dataset_json_file_or_dict: Union[str, dict] = None,
+                                   plans_file_or_dict: Optional[Union[str, dict]] = None,
+                                   dataset_json_file_or_dict: Optional[Union[str, dict]] = None,
                                    num_processes=8) -> None:
     """
     If plans_file_or_dict or dataset_json_file_or_dict are None, we will look for them in input_folder

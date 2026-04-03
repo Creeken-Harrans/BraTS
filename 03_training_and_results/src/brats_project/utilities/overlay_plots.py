@@ -13,7 +13,7 @@
 #    limitations under the License.
 import multiprocessing
 from multiprocessing.pool import Pool
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 import numpy as np
 import pandas as pd
@@ -52,7 +52,7 @@ def hex_to_rgb(hex: str):
     return tuple(int(hex[i:i + 2], 16) for i in (0, 2, 4))
 
 
-def generate_overlay(input_image: np.ndarray, segmentation: np.ndarray, mapping: dict = None,
+def generate_overlay(input_image: np.ndarray, segmentation: np.ndarray, mapping: Optional[dict] = None,
                      color_cycle: Tuple[str, ...] = color_cycle,
                      overlay_intensity: float = 0.6):
     """
@@ -215,7 +215,7 @@ def generate_overlays_from_raw(dataset_name_or_id: Union[int, str], output_folde
 
 def generate_overlays_from_preprocessed(dataset_name_or_id: Union[int, str], output_folder: str,
                                         num_processes: int = 8, channel_idx: int = 0,
-                                        configuration: str = None,
+                                        configuration: Optional[str] = None,
                                         plans_identifier: str = 'nnUNetPlans',
                                         overlay_intensity: float = 0.6):
     dataset_name = maybe_convert_to_dataset_name(dataset_name_or_id)

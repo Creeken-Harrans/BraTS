@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Type
+from typing import Type, Optional
 
 import numpy as np
 from numpy import number
@@ -8,7 +8,7 @@ from numpy import number
 class ImageNormalization(ABC):
     leaves_pixels_outside_mask_at_zero_if_use_mask_for_norm_is_true = None
 
-    def __init__(self, use_mask_for_norm: bool = None, intensityproperties: dict = None,
+    def __init__(self, use_mask_for_norm: Optional[bool] = None, intensityproperties: Optional[dict] = None,
                  target_dtype: Type[number] = np.float32):
         assert use_mask_for_norm is None or isinstance(use_mask_for_norm, bool)
         self.use_mask_for_norm = use_mask_for_norm
@@ -17,7 +17,7 @@ class ImageNormalization(ABC):
         self.target_dtype = target_dtype
 
     @abstractmethod
-    def run(self, image: np.ndarray, seg: np.ndarray = None) -> np.ndarray:
+    def run(self, image: np.ndarray, seg: Optional[np.ndarray] = None) -> np.ndarray:
         """
         Image and seg must have the same shape. Seg is not always used
         """
@@ -27,7 +27,7 @@ class ImageNormalization(ABC):
 class ZScoreNormalization(ImageNormalization):
     leaves_pixels_outside_mask_at_zero_if_use_mask_for_norm_is_true = True
 
-    def run(self, image: np.ndarray, seg: np.ndarray = None) -> np.ndarray:
+    def run(self, image: np.ndarray, seg: Optional[np.ndarray] = None) -> np.ndarray:
         """
         here seg is used to store the zero valued region. The value for that region in the segmentation is -1 by
         default.
@@ -58,7 +58,7 @@ class ZScoreNormalization(ImageNormalization):
 class CTNormalization(ImageNormalization):
     leaves_pixels_outside_mask_at_zero_if_use_mask_for_norm_is_true = False
 
-    def run(self, image: np.ndarray, seg: np.ndarray = None) -> np.ndarray:
+    def run(self, image: np.ndarray, seg: Optional[np.ndarray] = None) -> np.ndarray:
         assert self.intensityproperties is not None, "CTNormalization requires intensity properties"
         eps = 1e-8 if not self.target_dtype == np.float16 else 1e-4
         mean_intensity = self.intensityproperties['mean']
@@ -76,14 +76,14 @@ class CTNormalization(ImageNormalization):
 class NoNormalization(ImageNormalization):
     leaves_pixels_outside_mask_at_zero_if_use_mask_for_norm_is_true = False
 
-    def run(self, image: np.ndarray, seg: np.ndarray = None) -> np.ndarray:
+    def run(self, image: np.ndarray, seg: Optional[np.ndarray] = None) -> np.ndarray:
         return image.astype(self.target_dtype, copy=False)
 
 
 class RescaleTo01Normalization(ImageNormalization):
     leaves_pixels_outside_mask_at_zero_if_use_mask_for_norm_is_true = False
 
-    def run(self, image: np.ndarray, seg: np.ndarray = None) -> np.ndarray:
+    def run(self, image: np.ndarray, seg: Optional[np.ndarray] = None) -> np.ndarray:
         eps = 1e-8 if not self.target_dtype == np.float16 else 1e-4
         image = image.astype(self.target_dtype, copy=False)
         image -= image.min()
@@ -102,4 +102,3 @@ class RGBTo01Normalization(ImageNormalization):
         image = image.astype(self.target_dtype, copy=False)
         image /= 255.
         return image
-

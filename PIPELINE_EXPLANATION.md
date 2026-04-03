@@ -407,6 +407,12 @@ python BraTS/run.py find-best-config
 
 这些问题都需要多折汇总结果，而不是单折结果。
 
+这里还要注意一个当前项目约束：
+
+- `find-best-config` 不会再让模型 A 用一组 folds、模型 B 用另一组 folds 然后直接比较
+- 系统只会在所有候选模型共同拥有的 shared folds 上做比较
+- 如果连一个共享 fold 都没有，best-config 选择会直接失败
+
 ---
 
 ## 阶段 8：选择最佳配置
@@ -573,6 +579,11 @@ python BraTS/run.py evaluate
 - 按 case / 按 label 或 region 的 Dice、IoU、TP/FP/FN/TN
 
 ### 这一步回答的不是单一分数，而是结构化问题
+
+当前项目默认把这一步设成严格评估：
+
+- prediction folder 和 gt folder 文件名必须完整对应
+- 如果只想评估一个明确子集，必须显式传 `--chill`
 
 - 每个病例表现怎样
 - 每个 region 表现怎样

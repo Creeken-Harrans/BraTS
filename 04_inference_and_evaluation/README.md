@@ -52,7 +52,8 @@ python BraTS/run.py report-evaluation
 
 - `find-best-config` 现在不再强制要求“默认 trainer 的五折都已完成”
 - 如果默认组合没有 validation 输出，它会自动回退到当前数据集下实际已经产出 `fold_x/validation` 的模型
-- 如果只完成了部分 fold，它会自动只使用这些实际存在 validation 输出的 folds
+- 但比较时只会使用所有候选模型共同拥有的 shared folds，避免不同模型基于不同 fold 子集得出不可比结论
+- 如果候选模型之间连一个共享 fold 都没有，`find-best-config` 会直接报错，而不是继续输出不可比较的最佳模型
 
 ### 默认推理输入目录
 
@@ -117,7 +118,7 @@ python BraTS/run.py predict --disable-auto-sample-training
 它不是只打印一个“最好结果”，而是在做下面这些事：
 
 1. 检查哪些 trained model 实际存在
-2. 汇总各 configuration 实际可用 folds 的 validation 结果
+2. 只在所有候选模型共同拥有的 validation folds 上汇总与比较结果
 3. 如允许，构造 ensemble 并重新评估
 4. 选出最佳单模型或最佳 ensemble
 5. 自动搜索是否存在更优后处理策略
@@ -213,12 +214,18 @@ python BraTS/run.py train-all --npz
 
 所以 `evaluate` 的价值不只是给一个 Dice，而是给一份结构化的结果解释。
 
-当前项目里的默认 `evaluate` 还做了两件适合调试阶段的兼容：
+当前项目里的默认 `evaluate` 现在是严格模式：
 
 - 如果预测目录为空，会直接报“先跑 predict”的明确错误
-- 如果预测目录只包含 ground-truth 的一个子集，会自动按这个子集评估，而不是要求你先凑齐全量预测
+- 如果预测文件名和 ground-truth 集不完全一致，也会直接报错，避免把缺失病例静默跳过
 
-这意味着如果 `predict` 前一步用的是“从训练集随机抽样一些病例作为临时验证集”，`evaluate` 也能直接顺着这批病例做子集评估。
+如果你确实只想评估一个明确的子集，必须显式加：
+
+```bash
+python BraTS/run.py evaluate --chill
+```
+
+这意味着如果 `predict` 前一步用的是“从训练集随机抽样一些病例作为临时验证集”，评估这批病例时也要显式声明你就是在做子集评估。
 
 如果你还想进一步看“哪里分得好、哪里分得差”，当前项目已经补了：
 

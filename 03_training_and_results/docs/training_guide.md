@@ -51,6 +51,13 @@
    - 载入预训练权重
 6. 决定单卡还是 DDP 多卡
 
+当前项目里，默认训练入口已经统一成下面这个策略：
+
+- 发现当前 fold 存在旧训练状态时，自动续训
+- 找不到可恢复 checkpoint 时，自动从头开始
+- 自动续训的 checkpoint 优先级是：`checkpoint_latest` -> `checkpoint_final` -> `checkpoint_best`
+- 只有显式传 `--restart-training`，才会忽略已有 checkpoint
+
 也就是说，它真正回答的是：
 
 - “要启动哪个 trainer，以什么上下文启动”
@@ -201,6 +208,9 @@
 - ensembling
 - `find-best-config`
 
+并且当前项目的 `find-best-config` 只会在所有候选模型共享的 validation folds 上做比较。
+如果你让不同 configuration 只各自跑了互不重叠的 folds，后面不会再给出“最佳模型”，而是会直接报错。
+
 如果你后面打算做正式的 best configuration selection，五折训练最好带上：
 
 ```bash
@@ -227,12 +237,15 @@ python BraTS/run.py train-all --npz
 - 训练是否正常推进
 - epoch 在哪里
 - checkpoint 是否保存
+- 这次到底是从头训练，还是从哪个 checkpoint 继续
+- checkpoint 恢复后当前接续到哪个 epoch
 
 ### `progress.png`
 
 适合回答：
 
 - train loss、val loss、pseudo dice 的趋势
+- 当前 fold 的训练曲线是否持续正常更新
 
 但它不能回答：
 

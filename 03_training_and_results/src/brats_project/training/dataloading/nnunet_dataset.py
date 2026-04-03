@@ -3,7 +3,7 @@ import warnings
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from functools import lru_cache
-from typing import List, Union, Type, Tuple
+from typing import List, Union, Type, Tuple, Optional
 
 import numpy as np
 import blosc2
@@ -20,8 +20,8 @@ class nnUNetBaseDataset(ABC):
     """
     Defines the interface
     """
-    def __init__(self, folder: str, identifiers: List[str] = None,
-                 folder_with_segs_from_previous_stage: str = None):
+    def __init__(self, folder: str, identifiers: Optional[List[str]] = None,
+                 folder_with_segs_from_previous_stage: Optional[str] = None):
         super().__init__()
         # print('loading dataset')
         if identifiers is None:
@@ -120,8 +120,8 @@ class nnUNetDatasetNumpy(nnUNetBaseDataset):
 
 
 class nnUNetDatasetBlosc2(nnUNetBaseDataset):
-    def __init__(self, folder: str, identifiers: List[str] = None,
-                 folder_with_segs_from_previous_stage: str = None):
+    def __init__(self, folder: str, identifiers: Optional[List[str]] = None,
+                 folder_with_segs_from_previous_stage: Optional[str] = None):
         super().__init__(folder, identifiers, folder_with_segs_from_previous_stage)
         blosc2.set_nthreads(1)
 

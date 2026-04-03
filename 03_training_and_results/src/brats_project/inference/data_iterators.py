@@ -1,9 +1,9 @@
 import multiprocessing
 import queue
-from torch.multiprocessing import Event, Queue, Manager
+from torch.multiprocessing import Manager
 
 from time import sleep
-from typing import Union, List
+from typing import Any, Union, List
 
 import numpy as np
 import torch
@@ -15,14 +15,14 @@ from brats_project.utilities.plans_handling.plans_handler import PlansManager, C
 
 
 def preprocess_fromfiles_save_to_queue(list_of_lists: List[List[str]],
-                                       list_of_segs_from_prev_stage_files: Union[None, List[str]],
-                                       output_filenames_truncated: Union[None, List[str]],
+                                       list_of_segs_from_prev_stage_files: Optional[List[str]],
+                                       output_filenames_truncated: Optional[List[str]],
                                        plans_manager: PlansManager,
                                        dataset_json: dict,
                                        configuration_manager: ConfigurationManager,
-                                       target_queue: Queue,
-                                       done_event: Event,
-                                       abort_event: Event,
+                                       target_queue: Any,
+                                       done_event: Any,
+                                       abort_event: Any,
                                        verbose: bool = False):
     try:
         label_manager = plans_manager.get_label_manager(dataset_json)
@@ -59,8 +59,8 @@ def preprocess_fromfiles_save_to_queue(list_of_lists: List[List[str]],
 
 
 def preprocessing_iterator_fromfiles(list_of_lists: List[List[str]],
-                                     list_of_segs_from_prev_stage_files: Union[None, List[str]],
-                                     output_filenames_truncated: Union[None, List[str]],
+                                     list_of_segs_from_prev_stage_files: Optional[List[str]],
+                                     output_filenames_truncated: Optional[List[str]],
                                      plans_manager: PlansManager,
                                      dataset_json: dict,
                                      configuration_manager: ConfigurationManager,
@@ -121,9 +121,9 @@ def preprocessing_iterator_fromfiles(list_of_lists: List[List[str]],
 
 class PreprocessAdapter(DataLoader):
     def __init__(self, list_of_lists: List[List[str]],
-                 list_of_segs_from_prev_stage_files: Union[None, List[str]],
+                 list_of_segs_from_prev_stage_files: Optional[List[str]],
                  preprocessor: DefaultPreprocessor,
-                 output_filenames_truncated: Union[None, List[str]],
+                 output_filenames_truncated: Optional[List[str]],
                  plans_manager: PlansManager,
                  dataset_json: dict,
                  configuration_manager: ConfigurationManager,
@@ -215,9 +215,9 @@ def preprocess_fromnpy_save_to_queue(list_of_images: List[np.ndarray],
                                      plans_manager: PlansManager,
                                      dataset_json: dict,
                                      configuration_manager: ConfigurationManager,
-                                     target_queue: Queue,
-                                     done_event: Event,
-                                     abort_event: Event,
+                                     target_queue: Any,
+                                     done_event: Any,
+                                     abort_event: Any,
                                      verbose: bool = False):
     try:
         label_manager = plans_manager.get_label_manager(dataset_json)

@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from copy import deepcopy
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -34,7 +34,7 @@ def determine_do_sep_z_and_axis(
         force_separate_z: bool,
         current_spacing,
         new_spacing,
-        separate_z_anisotropy_threshold: float = ANISO_THRESHOLD) -> Tuple[bool, Union[int, None]]:
+        separate_z_anisotropy_threshold: float = ANISO_THRESHOLD) -> Tuple[bool, Optional[int]]:
     if force_separate_z is not None:
         do_separate_z = force_separate_z
         if force_separate_z:
@@ -71,7 +71,7 @@ def resample_data_or_seg_to_spacing(data: np.ndarray,
                                     new_spacing: Union[Tuple[float, ...], List[float], np.ndarray],
                                     is_seg: bool = False,
                                     order: int = 3, order_z: int = 0,
-                                    force_separate_z: Union[bool, None] = False,
+                                    force_separate_z: Optional[bool] = False,
                                     separate_z_anisotropy_threshold: float = ANISO_THRESHOLD):
     do_separate_z, axis = determine_do_sep_z_and_axis(force_separate_z, current_spacing, new_spacing,
                                                       separate_z_anisotropy_threshold)
@@ -92,7 +92,7 @@ def resample_data_or_seg_to_shape(data: Union[torch.Tensor, np.ndarray],
                                   new_spacing: Union[Tuple[float, ...], List[float], np.ndarray],
                                   is_seg: bool = False,
                                   order: int = 3, order_z: int = 0,
-                                  force_separate_z: Union[bool, None] = False,
+                                  force_separate_z: Optional[bool] = False,
                                   separate_z_anisotropy_threshold: float = ANISO_THRESHOLD):
     """
     needed for segmentation export. Stupid, I know
@@ -111,7 +111,7 @@ def resample_data_or_seg_to_shape(data: Union[torch.Tensor, np.ndarray],
 
 
 def resample_data_or_seg(data: np.ndarray, new_shape: Union[Tuple[float, ...], List[float], np.ndarray],
-                         is_seg: bool = False, axis: Union[None, int] = None, order: int = 3,
+                         is_seg: bool = False, axis: Optional[int] = None, order: int = 3,
                          do_separate_z: bool = False, order_z: int = 0, dtype_out = None):
     """
     separate_z=True will resample with order 0 along z

@@ -51,7 +51,7 @@
 
 ### 然后做什么
 
-- 比较单模型 cross-validation 表现
+- 只在所有候选模型共享的 validation folds 上比较单模型 cross-validation 表现
 - 如允许，构造并比较 ensemble
 
 ### 最后做什么
@@ -65,6 +65,12 @@
 也就是说，它在本项目中承担的是：
 
 - “从训练资产走向正式推理方案”的决策层
+
+这里有一个很重要的限制：
+
+- 不再允许模型 A 用一组 folds、模型 B 用另一组 folds 然后直接比较
+- 如果请求的 folds 不完整，系统会自动收缩到所有候选模型都共同拥有的 shared folds
+- 如果连一个共享 fold 都没有，`find-best-config` 会直接失败
 
 ---
 
@@ -223,6 +229,11 @@ python BraTS/run.py train-all --npz
 也可用于：
 
 - 排查具体哪些病例或哪些 region 表现异常
+
+当前项目默认不会再静默跳过缺失预测：
+
+- 默认要求 prediction folder 和 gt folder 文件名完整对应
+- 只有显式传 `--chill` 时，才允许对子集预测做评估
 
 ---
 

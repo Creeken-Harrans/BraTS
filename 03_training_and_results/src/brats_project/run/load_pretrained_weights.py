@@ -1,7 +1,8 @@
 import torch
-from torch._dynamo import OptimizedModule
 from torch.nn.parallel import DistributedDataParallel as DDP
 import torch.distributed as dist
+
+from brats_project.utilities.helpers import unwrap_compiled_module
 
 
 def load_pretrained_weights(network, fname, verbose=False):
@@ -30,8 +31,7 @@ def load_pretrained_weights(network, fname, verbose=False):
         mod = network.module
     else:
         mod = network
-    if isinstance(mod, OptimizedModule):
-        mod = mod._orig_mod
+    mod = unwrap_compiled_module(mod)
 
     model_dict = mod.state_dict()
     # verify that all but the segmentation layers have the same shape
@@ -66,5 +66,4 @@ def load_pretrained_weights(network, fname, verbose=False):
             print(key, 'shape', value.shape)
         print("################### Done ###################")
     mod.load_state_dict(model_dict)
-
 

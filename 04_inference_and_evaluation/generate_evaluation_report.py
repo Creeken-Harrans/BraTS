@@ -150,6 +150,32 @@ def save_figure(fig: Any, output_path: Path) -> None:
     plt.close(fig)
 
 
+def safe_ratio(numerator: float, denominator: float) -> float:
+    if denominator == 0:
+        return math.nan
+    return float(numerator / denominator)
+
+
+def safe_nanmean(values: list[float]) -> float:
+    array = np.asarray(values, dtype=float)
+    finite = array[np.isfinite(array)]
+    if finite.size == 0:
+        return math.nan
+    return float(np.mean(finite))
+
+
+def metric_sort_value(value: float) -> float:
+    return float(value) if np.isfinite(value) else float("-inf")
+
+
+def metric_display(value: float) -> str:
+    return f"{value:.3f}" if np.isfinite(value) else "n/a"
+
+
+def metric_plot_value(value: float) -> float:
+    return float(value) if np.isfinite(value) else 0.0
+
+
 def parse_case_metrics(summary: dict[str, Any]) -> list[dict[str, Any]]:
     parsed: list[dict[str, Any]] = []
     for item in summary["metric_per_case"]:
@@ -178,27 +204,34 @@ def parse_case_metrics(summary: dict[str, Any]) -> list[dict[str, Any]]:
                 "tp_et": float(item["metrics"]["(3,)"]["TP"]),
                 "fp_et": float(item["metrics"]["(3,)"]["FP"]),
                 "fn_et": float(item["metrics"]["(3,)"]["FN"]),
-                "precision_wt": float(item["metrics"]["(1, 2, 3)"]["TP"] / (item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FP"]))
-                if (item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FP"]) > 0
-                else 0.0,
-                "precision_tc": float(item["metrics"]["(2, 3)"]["TP"] / (item["metrics"]["(2, 3)"]["TP"] + item["metrics"]["(2, 3)"]["FP"]))
-                if (item["metrics"]["(2, 3)"]["TP"] + item["metrics"]["(2, 3)"]["FP"]) > 0
-                else 0.0,
-                "precision_et": float(item["metrics"]["(3,)"]["TP"] / (item["metrics"]["(3,)"]["TP"] + item["metrics"]["(3,)"]["FP"]))
-                if (item["metrics"]["(3,)"]["TP"] + item["metrics"]["(3,)"]["FP"]) > 0
-                else 0.0,
-                "recall_wt": float(item["metrics"]["(1, 2, 3)"]["TP"] / (item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FN"]))
-                if (item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FN"]) > 0
-                else 0.0,
-                "recall_tc": float(item["metrics"]["(2, 3)"]["TP"] / (item["metrics"]["(2, 3)"]["TP"] + item["metrics"]["(2, 3)"]["FN"]))
-                if (item["metrics"]["(2, 3)"]["TP"] + item["metrics"]["(2, 3)"]["FN"]) > 0
-                else 0.0,
-                "recall_et": float(item["metrics"]["(3,)"]["TP"] / (item["metrics"]["(3,)"]["TP"] + item["metrics"]["(3,)"]["FN"]))
-                if (item["metrics"]["(3,)"]["TP"] + item["metrics"]["(3,)"]["FN"]) > 0
-                else 0.0,
+                "precision_wt": safe_ratio(
+                    item["metrics"]["(1, 2, 3)"]["TP"],
+                    item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FP"],
+                ),
+                "precision_tc": safe_ratio(
+                    item["metrics"]["(2, 3)"]["TP"],
+                    item["metrics"]["(2, 3)"]["TP"] + item["metrics"]["(2, 3)"]["FP"],
+                ),
+                "precision_et": safe_ratio(
+                    item["metrics"]["(3,)"]["TP"],
+                    item["metrics"]["(3,)"]["TP"] + item["metrics"]["(3,)"]["FP"],
+                ),
+                "recall_wt": safe_ratio(
+                    item["metrics"]["(1, 2, 3)"]["TP"],
+                    item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FN"],
+                ),
+                "recall_tc": safe_ratio(
+                    item["metrics"]["(2, 3)"]["TP"],
+                    item["metrics"]["(2, 3)"]["TP"] + item["metrics"]["(2, 3)"]["FN"],
+                ),
+                "recall_et": safe_ratio(
+                    item["metrics"]["(3,)"]["TP"],
+                    item["metrics"]["(3,)"]["TP"] + item["metrics"]["(3,)"]["FN"],
+                ),
             }
         )
-    parsed.sort(key=lambda item: item["dice_mean"], reverse=True)
+        parsed[-1]["dice_mean"] = safe_nanmean([wt, tc, et])
+    parsed.sort(key=lambda item: metric_sort_value(item["dice_mean"]), reverse=True)
     return parsed
 
 
@@ -221,11 +254,12 @@ def load_nifti_array(path: Path, *, as_int: bool = False) -> np.ndarray:
 def plot_region_mean_dice(summary: dict[str, Any], output_path: Path) -> None:
     region_keys = ["(1, 2, 3)", "(2, 3)", "(3,)"]
     values = [float(summary["mean"][key]["Dice"]) for key in region_keys]
+    plot_values = [metric_plot_value(value) for value in values]
     labels = [REGION_DISPLAY_NAMES[key] for key in region_keys]
     colors = [REGION_COLORS[key] for key in region_keys]
 
     fig, ax = plt.subplots(figsize=(9, 6), dpi=FIG_DPI)
-    bars = ax.bar(labels, values, color=colors)
+    bars = ax.bar(labels, plot_values, color=colors)
     ax.set_ylim(0.0, 1.0)
     ax.set_ylabel("Dice")
     ax.set_title("Mean Dice by BraTS region")
@@ -238,17 +272,18 @@ def plot_region_mean_dice(summary: dict[str, Any], output_path: Path) -> None:
 def plot_case_ranking(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
     labels = [item["case_id"] for item in case_metrics]
     values = [item["dice_mean"] for item in case_metrics]
+    plot_values = [metric_plot_value(value) for value in values]
     colors = ["#2a9d8f" if idx < 3 else "#e76f51" if idx >= len(values) - 3 else "#577590" for idx in range(len(values))]
 
     fig, ax = plt.subplots(figsize=(12, 6), dpi=FIG_DPI)
-    bars = ax.bar(range(len(labels)), values, color=colors)
+    bars = ax.bar(range(len(labels)), plot_values, color=colors)
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels, rotation=35, ha="right")
     ax.set_ylim(0.0, 1.0)
     ax.set_ylabel("Mean Dice across WT / TC / ET")
     ax.set_title("Per-case Dice ranking on the evaluated subset")
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, value + 0.01, f"{value:.3f}", ha="center", va="bottom", fontsize=8)
+        ax.text(bar.get_x() + bar.get_width() / 2.0, metric_plot_value(value) + 0.01, metric_display(value), ha="center", va="bottom", fontsize=8)
     fig.tight_layout()
     save_figure(fig, output_path)
 
@@ -271,7 +306,7 @@ def plot_case_region_heatmap(case_metrics: list[dict[str, Any]], output_path: Pa
     ax.set_title("Per-case region Dice heatmap")
     for row in range(data.shape[0]):
         for col in range(data.shape[1]):
-            ax.text(col, row, f"{data[row, col]:.3f}", ha="center", va="center", color="white", fontsize=8)
+            ax.text(col, row, metric_display(float(data[row, col])), ha="center", va="center", color="white", fontsize=8)
     fig.colorbar(image, ax=ax, label="Dice")
     fig.tight_layout()
     save_figure(fig, output_path)
@@ -312,24 +347,26 @@ def plot_region_precision_recall(case_metrics: list[dict[str, Any]], output_path
         ("ET", "precision_et", "recall_et", "#e56b6f"),
     ]
     labels = [spec[0] for spec in region_specs]
-    precision_values = [float(np.mean([item[spec[1]] for item in case_metrics])) for spec in region_specs]
-    recall_values = [float(np.mean([item[spec[2]] for item in case_metrics])) for spec in region_specs]
+    precision_values = [safe_nanmean([item[spec[1]] for item in case_metrics]) for spec in region_specs]
+    recall_values = [safe_nanmean([item[spec[2]] for item in case_metrics]) for spec in region_specs]
+    plot_precision_values = [metric_plot_value(value) for value in precision_values]
+    plot_recall_values = [metric_plot_value(value) for value in recall_values]
 
     x = np.arange(len(labels))
     width = 0.35
     fig, ax = plt.subplots(figsize=(9, 6), dpi=FIG_DPI)
-    bars_precision = ax.bar(x - width / 2, precision_values, width, label="Precision", color="#2a9d8f")
-    bars_recall = ax.bar(x + width / 2, recall_values, width, label="Recall", color="#e9c46a")
+    bars_precision = ax.bar(x - width / 2, plot_precision_values, width, label="Precision", color="#2a9d8f")
+    bars_recall = ax.bar(x + width / 2, plot_recall_values, width, label="Recall", color="#e9c46a")
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_ylim(0.0, 1.0)
     ax.set_ylabel("Score")
     ax.set_title("Average precision and recall by region")
     ax.legend()
-    for bars in (bars_precision, bars_recall):
-        for bar in bars:
-            value = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width() / 2.0, value, f"{value:.3f}", ha="center", va="bottom", fontsize=8)
+    for bar, value in zip(bars_precision, precision_values):
+        ax.text(bar.get_x() + bar.get_width() / 2.0, bar.get_height(), metric_display(value), ha="center", va="bottom", fontsize=8)
+    for bar, value in zip(bars_recall, recall_values):
+        ax.text(bar.get_x() + bar.get_width() / 2.0, bar.get_height(), metric_display(value), ha="center", va="bottom", fontsize=8)
     fig.tight_layout()
     save_figure(fig, output_path)
 
@@ -381,19 +418,20 @@ def plot_region_case_ranking(case_metrics: list[dict[str, Any]], region_key: str
     }
     region_name = REGION_DISPLAY_NAMES[region_key]
     attr = region_to_attr[region_key]
-    ordered = sorted(case_metrics, key=lambda item: item[attr], reverse=True)
+    ordered = sorted(case_metrics, key=lambda item: metric_sort_value(item[attr]), reverse=True)
     labels = [item["case_id"] for item in ordered]
     values = [item[attr] for item in ordered]
+    plot_values = [metric_plot_value(value) for value in values]
 
     fig, ax = plt.subplots(figsize=(12, 6), dpi=FIG_DPI)
-    bars = ax.bar(range(len(labels)), values, color=REGION_COLORS[region_key])
+    bars = ax.bar(range(len(labels)), plot_values, color=REGION_COLORS[region_key])
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels, rotation=35, ha="right")
     ax.set_ylim(0.0, 1.0)
     ax.set_ylabel("Dice")
     ax.set_title(f"{region_name} case ranking")
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, value + 0.01, f"{value:.3f}", ha="center", va="bottom", fontsize=8)
+        ax.text(bar.get_x() + bar.get_width() / 2.0, metric_plot_value(value) + 0.01, metric_display(value), ha="center", va="bottom", fontsize=8)
     fig.tight_layout()
     save_figure(fig, output_path)
 
@@ -412,10 +450,12 @@ def compute_case_error_analysis(case_metrics: list[dict[str, Any]]) -> list[dict
             ],
             key=lambda pair: pair[1],
         )[0]
-        strongest_region = min(
-            [("WT", item["dice_wt"]), ("TC", item["dice_tc"]), ("ET", item["dice_et"])],
-            key=lambda pair: pair[1],
-        )[0]
+        finite_regions = [
+            (name, value)
+            for name, value in [("WT", item["dice_wt"]), ("TC", item["dice_tc"]), ("ET", item["dice_et"])]
+            if np.isfinite(value)
+        ]
+        strongest_region = min(finite_regions, key=lambda pair: pair[1])[0] if finite_regions else "n/a"
         analysis.append(
             {
                 "case_id": item["case_id"],
@@ -483,7 +523,7 @@ def write_case_analysis_csv(case_analysis: list[dict[str, Any]], output_path: Pa
 
 
 def build_dataset_analysis(case_metrics: list[dict[str, Any]], summary: dict[str, Any]) -> dict[str, Any]:
-    sorted_by_mean = sorted(case_metrics, key=lambda item: item["dice_mean"], reverse=True)
+    sorted_by_mean = sorted(case_metrics, key=lambda item: metric_sort_value(item["dice_mean"]), reverse=True)
     weakest_cases = [item["case_id"] for item in sorted_by_mean[-3:]]
     strongest_cases = [item["case_id"] for item in sorted_by_mean[:3]]
     return {
@@ -497,8 +537,10 @@ def build_dataset_analysis(case_metrics: list[dict[str, Any]], summary: dict[str
         "worst_case": weakest_cases[-1],
         "top3_cases": strongest_cases,
         "bottom3_cases": weakest_cases,
-        "mean_dice_std": float(np.std([item["dice_mean"] for item in case_metrics])),
-        "cases_with_et_zero_dice": [item["case_id"] for item in case_metrics if item["dice_et"] <= 1e-8],
+        "mean_dice_std": float(np.std([item["dice_mean"] for item in case_metrics if np.isfinite(item["dice_mean"])]))
+        if any(np.isfinite(item["dice_mean"]) for item in case_metrics)
+        else math.nan,
+        "cases_with_et_zero_dice": [item["case_id"] for item in case_metrics if np.isfinite(item["dice_et"]) and item["dice_et"] <= 1e-8],
     }
 
 
@@ -515,12 +557,12 @@ def render_case_analysis_markdown(case_analysis: list[dict[str, Any]], output_pa
     ]
     for item in case_analysis:
         lines.append(
-            f"| `{item['case_id']}` | {item['dice_mean']:.3f} | {item['weakest_region']} | "
+            f"| `{item['case_id']}` | {metric_display(item['dice_mean'])} | {item['weakest_region']} | "
             f"{item['dominant_error_mode']} | {item['fp_fn_balance_wt']:.0f} | "
             f"{item['fp_fn_balance_tc']:.0f} | {item['fp_fn_balance_et']:.0f} | "
-            f"{item['precision_wt']:.3f}/{item['recall_wt']:.3f} | "
-            f"{item['precision_tc']:.3f}/{item['recall_tc']:.3f} | "
-            f"{item['precision_et']:.3f}/{item['recall_et']:.3f} |"
+            f"{metric_display(item['precision_wt'])}/{metric_display(item['recall_wt'])} | "
+            f"{metric_display(item['precision_tc'])}/{metric_display(item['recall_tc'])} | "
+            f"{metric_display(item['precision_et'])}/{metric_display(item['recall_et'])} |"
         )
     output_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
@@ -589,13 +631,15 @@ def plot_case_region_error_map(
 
 
 def build_conclusion_lines(case_metrics: list[dict[str, Any]], dataset_analysis: dict[str, Any]) -> list[str]:
-    mean_wt = float(np.mean([item["dice_wt"] for item in case_metrics]))
-    mean_tc = float(np.mean([item["dice_tc"] for item in case_metrics]))
-    mean_et = float(np.mean([item["dice_et"] for item in case_metrics]))
-    weakest_region = min(
-        [("WT", mean_wt), ("TC", mean_tc), ("ET", mean_et)],
-        key=lambda pair: pair[1],
-    )[0]
+    mean_wt = safe_nanmean([item["dice_wt"] for item in case_metrics])
+    mean_tc = safe_nanmean([item["dice_tc"] for item in case_metrics])
+    mean_et = safe_nanmean([item["dice_et"] for item in case_metrics])
+    finite_regions = [
+        (name, value)
+        for name, value in [("WT", mean_wt), ("TC", mean_tc), ("ET", mean_et)]
+        if np.isfinite(value)
+    ]
+    weakest_region = min(finite_regions, key=lambda pair: pair[1])[0] if finite_regions else "n/a"
     dominant_error_mode = max(
         [
             ("WT false negatives", float(np.mean([item["fn_wt"] for item in case_metrics]))),
@@ -623,13 +667,13 @@ def render_per_case_markdown(case_metrics: dict[str, Any], output_path: Path, ov
     lines = [
         f"# {case_metrics['case_id']}",
         "",
-        f"- mean Dice: `{case_metrics['dice_mean']:.3f}`",
-        f"- WT Dice: `{case_metrics['dice_wt']:.3f}`",
-        f"- TC Dice: `{case_metrics['dice_tc']:.3f}`",
-        f"- ET Dice: `{case_metrics['dice_et']:.3f}`",
-        f"- WT Precision / Recall: `{case_metrics['precision_wt']:.3f} / {case_metrics['recall_wt']:.3f}`",
-        f"- TC Precision / Recall: `{case_metrics['precision_tc']:.3f} / {case_metrics['recall_tc']:.3f}`",
-        f"- ET Precision / Recall: `{case_metrics['precision_et']:.3f} / {case_metrics['recall_et']:.3f}`",
+        f"- mean Dice: `{metric_display(case_metrics['dice_mean'])}`",
+        f"- WT Dice: `{metric_display(case_metrics['dice_wt'])}`",
+        f"- TC Dice: `{metric_display(case_metrics['dice_tc'])}`",
+        f"- ET Dice: `{metric_display(case_metrics['dice_et'])}`",
+        f"- WT Precision / Recall: `{metric_display(case_metrics['precision_wt'])} / {metric_display(case_metrics['recall_wt'])}`",
+        f"- TC Precision / Recall: `{metric_display(case_metrics['precision_tc'])} / {metric_display(case_metrics['recall_tc'])}`",
+        f"- ET Precision / Recall: `{metric_display(case_metrics['precision_et'])} / {metric_display(case_metrics['recall_et'])}`",
         f"- prediction: `{to_workspace_relative_string(case_metrics['prediction_file'])}`",
         f"- reference: `{to_workspace_relative_string(case_metrics['reference_file'])}`",
         "",
@@ -645,15 +689,15 @@ def render_per_case_markdown(case_metrics: dict[str, Any], output_path: Path, ov
         "",
         "## Formula Substitution",
         "",
-        rf"WT Dice: $$\frac{{2 \times {case_metrics['tp_wt']:.0f}}}{{2 \times {case_metrics['tp_wt']:.0f} + {case_metrics['fp_wt']:.0f} + {case_metrics['fn_wt']:.0f}}} = {case_metrics['dice_wt']:.3f}$$",
+        rf"WT Dice: $$\frac{{2 \times {case_metrics['tp_wt']:.0f}}}{{2 \times {case_metrics['tp_wt']:.0f} + {case_metrics['fp_wt']:.0f} + {case_metrics['fn_wt']:.0f}}} = {metric_display(case_metrics['dice_wt'])}$$",
         "",
-        rf"TC Dice: $$\frac{{2 \times {case_metrics['tp_tc']:.0f}}}{{2 \times {case_metrics['tp_tc']:.0f} + {case_metrics['fp_tc']:.0f} + {case_metrics['fn_tc']:.0f}}} = {case_metrics['dice_tc']:.3f}$$",
+        rf"TC Dice: $$\frac{{2 \times {case_metrics['tp_tc']:.0f}}}{{2 \times {case_metrics['tp_tc']:.0f} + {case_metrics['fp_tc']:.0f} + {case_metrics['fn_tc']:.0f}}} = {metric_display(case_metrics['dice_tc'])}$$",
         "",
-        rf"ET Dice: $$\frac{{2 \times {case_metrics['tp_et']:.0f}}}{{2 \times {case_metrics['tp_et']:.0f} + {case_metrics['fp_et']:.0f} + {case_metrics['fn_et']:.0f}}} = {case_metrics['dice_et']:.3f}$$",
+        rf"ET Dice: $$\frac{{2 \times {case_metrics['tp_et']:.0f}}}{{2 \times {case_metrics['tp_et']:.0f} + {case_metrics['fp_et']:.0f} + {case_metrics['fn_et']:.0f}}} = {metric_display(case_metrics['dice_et'])}$$",
         "",
-        rf"WT Precision: $$\frac{{{case_metrics['tp_wt']:.0f}}}{{{case_metrics['tp_wt']:.0f} + {case_metrics['fp_wt']:.0f}}} = {case_metrics['precision_wt']:.3f}$$",
+        rf"WT Precision: $$\frac{{{case_metrics['tp_wt']:.0f}}}{{{case_metrics['tp_wt']:.0f} + {case_metrics['fp_wt']:.0f}}} = {metric_display(case_metrics['precision_wt'])}$$",
         "",
-        rf"WT Recall: $$\frac{{{case_metrics['tp_wt']:.0f}}}{{{case_metrics['tp_wt']:.0f} + {case_metrics['fn_wt']:.0f}}} = {case_metrics['recall_wt']:.3f}$$",
+        rf"WT Recall: $$\frac{{{case_metrics['tp_wt']:.0f}}}{{{case_metrics['tp_wt']:.0f} + {case_metrics['fn_wt']:.0f}}} = {metric_display(case_metrics['recall_wt'])}$$",
         "",
         "## Overlay",
         "",
@@ -694,8 +738,8 @@ def plot_case_overlay_panel(
     handles = build_error_handles()
     title_lines = [
         f"{case_id}",
-        f"Mean Dice={case_metrics['dice_mean']:.3f}",
-        f"WT={case_metrics['dice_wt']:.3f} | TC={case_metrics['dice_tc']:.3f} | ET={case_metrics['dice_et']:.3f}",
+        f"Mean Dice={metric_display(case_metrics['dice_mean'])}",
+        f"WT={metric_display(case_metrics['dice_wt'])} | TC={metric_display(case_metrics['dice_tc'])} | ET={metric_display(case_metrics['dice_et'])}",
     ]
 
     for col, plane in enumerate(PLANE_ORDER):
@@ -783,9 +827,9 @@ def render_report_markdown(
     lines.append("")
     lines.append("## Case Highlights")
     lines.append("")
-    lines.append(f"- best case: `{best_case['case_id']}` with mean Dice `{best_case['dice_mean']:.3f}`")
-    lines.append(f"- median case: `{median_case['case_id']}` with mean Dice `{median_case['dice_mean']:.3f}`")
-    lines.append(f"- worst case: `{worst_case['case_id']}` with mean Dice `{worst_case['dice_mean']:.3f}`")
+    lines.append(f"- best case: `{best_case['case_id']}` with mean Dice `{metric_display(best_case['dice_mean'])}`")
+    lines.append(f"- median case: `{median_case['case_id']}` with mean Dice `{metric_display(median_case['dice_mean'])}`")
+    lines.append(f"- worst case: `{worst_case['case_id']}` with mean Dice `{metric_display(worst_case['dice_mean'])}`")
     lines.append("")
     lines.append(f"### Best Case: `{best_case['case_id']}`")
     lines.append("")
@@ -823,7 +867,7 @@ def render_report_markdown(
     lines.append("| --- | ---: | ---: | ---: | ---: |")
     for item in case_metrics:
         lines.append(
-            f"| `{item['case_id']}` | {item['dice_mean']:.3f} | {item['dice_wt']:.3f} | {item['dice_tc']:.3f} | {item['dice_et']:.3f} |"
+            f"| `{item['case_id']}` | {metric_display(item['dice_mean'])} | {metric_display(item['dice_wt'])} | {metric_display(item['dice_tc'])} | {metric_display(item['dice_et'])} |"
         )
     output_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 

@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 
 import torch
 from brats_project.utilities.ddp_allgather import AllGatherGrad
@@ -6,8 +6,8 @@ from torch import nn
 
 
 class SoftDiceLoss(nn.Module):
-    def __init__(self, apply_nonlin: Callable = None, batch_dice: bool = False, do_bg: bool = True, smooth: float = 1.,
-                 ddp: bool = True, clip_tp: float = None):
+    def __init__(self, apply_nonlin: Optional[Callable] = None, batch_dice: bool = False, do_bg: bool = True, smooth: float = 1.,
+                 ddp: bool = True, clip_tp: Optional[float] = None):
         """
         """
         super(SoftDiceLoss, self).__init__()
@@ -56,7 +56,7 @@ class SoftDiceLoss(nn.Module):
 
 
 class MemoryEfficientSoftDiceLoss(nn.Module):
-    def __init__(self, apply_nonlin: Callable = None, batch_dice: bool = False, do_bg: bool = True, smooth: float = 1.,
+    def __init__(self, apply_nonlin: Optional[Callable] = None, batch_dice: bool = False, do_bg: bool = True, smooth: float = 1.,
                  ddp: bool = True):
         """
         saves 1.6 GB on Dataset017 3d_lowres

@@ -1,5 +1,5 @@
 from multiprocessing import Pool
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
 
@@ -17,7 +17,7 @@ def convert_identifier_to_trainer_plans_config(identifier: str):
 
 def get_output_folder(dataset_name_or_id: Union[str, int], trainer_name: str = 'SegTrainer',
                       plans_identifier: str = 'ProjectPlans', configuration: str = '3d_fullres',
-                      fold: Union[str, int] = None) -> str:
+                      fold: Optional[Union[str, int]] = None) -> str:
     tmp = join(PROJECT_RESULTS, maybe_convert_to_dataset_name(dataset_name_or_id),
                convert_trainer_plans_config_to_identifier(trainer_name, plans_identifier, configuration))
     if fold is not None:

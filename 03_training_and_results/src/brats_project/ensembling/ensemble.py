@@ -2,9 +2,10 @@ import argparse
 import multiprocessing
 import shutil
 from copy import deepcopy
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Optional, Dict, Any
 
 import numpy as np
+import torch
 from batchgenerators.utilities.file_and_folder_operations import load_json, join, subfiles, \
     maybe_mkdir_p, isdir, save_pickle, load_pickle, isfile
 from brats_project.configuration import default_num_processes
@@ -15,7 +16,7 @@ from brats_project.utilities.plans_handling.plans_handler import PlansManager
 
 def average_probabilities(list_of_files: List[str]) -> np.ndarray:
     assert len(list_of_files), 'At least one file must be given in list_of_files'
-    avg = None
+    avg: Optional[np.ndarray] = None
     for f in list_of_files:
         if avg is None:
             avg = np.load(f)['probabilities']
@@ -24,6 +25,7 @@ def average_probabilities(list_of_files: List[str]) -> np.ndarray:
                 avg = avg.astype(np.float32)
         else:
             avg += np.load(f)['probabilities']
+    assert avg is not None
     avg /= len(list_of_files)
     return avg
 
@@ -39,6 +41,8 @@ def merge_files(list_of_files,
     # load and average predictions
     probabilities = average_probabilities(list_of_files)
     segmentation = label_manager.convert_logits_to_segmentation(probabilities)
+    if isinstance(segmentation, torch.Tensor):
+        segmentation = segmentation.cpu().numpy()
     image_reader_writer.write_seg(segmentation, output_filename_truncated + output_file_ending, properties)
     if save_probabilities:
         np.savez_compressed(output_filename_truncated + '.npz', probabilities=probabilities)
@@ -49,8 +53,8 @@ def ensemble_folders(list_of_input_folders: List[str],
                      output_folder: str,
                      save_merged_probabilities: bool = False,
                      num_processes: int = default_num_processes,
-                     dataset_json_file_or_dict: str = None,
-                     plans_json_file_or_dict: str = None):
+                     dataset_json_file_or_dict: Optional[Union[str, Dict[str, Any]]] = None,
+                     plans_json_file_or_dict: Optional[Union[str, Dict[str, Any]]] = None):
     """we need too much shit for this function. Problem is that we now have to support region-based training plus
     multiple input/output formats so there isn't really a way around this.
 

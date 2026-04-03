@@ -3,7 +3,7 @@ import shutil
 
 import SimpleITK as sitk
 import numpy as np
-from batchgenerators.utilities.file_and_folder_operations import *
+from batchgenerators.utilities.file_and_folder_operations import join, maybe_mkdir_p, subfiles, subdirs
 from brats_project.dataset_conversion.generate_dataset_json import generate_dataset_json
 from brats_project.paths import PROJECT_RAW
 

@@ -8,14 +8,14 @@ from torch.optim.lr_scheduler import _LRScheduler, CosineAnnealingLR, _enable_ge
 
 
 class Lin_incr_LRScheduler(_LRScheduler):
-    def __init__(self, optimizer, max_lr: float, max_steps: int, current_step: int = None):
+    def __init__(self, optimizer, max_lr: float, max_steps: int, current_step: Optional[int] = None):
         self.optimizer = optimizer
         self.max_lr = max_lr
         self.max_steps = max_steps
         self.ctr = 0
         super().__init__(optimizer, current_step if current_step is not None else -1)
 
-    def step(self, current_step=None):
+    def step(self, current_step: Optional[int] = None):
         if current_step is None or current_step == -1:
             current_step = self.ctr
             self.ctr += 1
@@ -26,7 +26,7 @@ class Lin_incr_LRScheduler(_LRScheduler):
 
 
 class Lin_incr_offset_LRScheduler(_LRScheduler):
-    def __init__(self, optimizer, max_lr: float, max_steps: int, start_step: int, current_step: int = None):
+    def __init__(self, optimizer, max_lr: float, max_steps: int, start_step: int, current_step: Optional[int] = None):
         self.optimizer = optimizer
         self.max_lr = max_lr
         self.max_steps = max_steps
@@ -34,7 +34,7 @@ class Lin_incr_offset_LRScheduler(_LRScheduler):
         self.ctr = 0
         super().__init__(optimizer, current_step if current_step is not None else -1)
 
-    def step(self, current_step=None):
+    def step(self, current_step: Optional[int] = None):
         if current_step is None or current_step == -1:
             current_step = self.ctr
             self.ctr += 1
@@ -52,7 +52,7 @@ class PolyLRScheduler_offset(_LRScheduler):
         max_steps: int,
         start_step: int,
         exponent: float = 0.9,
-        current_step: int = None,
+        current_step: Optional[int] = None,
     ):
         self.optimizer = optimizer
         self.initial_lr = initial_lr
@@ -62,7 +62,7 @@ class PolyLRScheduler_offset(_LRScheduler):
         self.ctr = 0
         super().__init__(optimizer, current_step if current_step is not None else -1)
 
-    def step(self, current_step=None):
+    def step(self, current_step: Optional[int] = None):
         if current_step is None or current_step == -1:
             current_step = self.ctr
             self.ctr += 1

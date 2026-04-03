@@ -32,10 +32,10 @@ class LabelManager(object):
             self._has_regions: bool = any(
                 [isinstance(i, (tuple, list)) and len(i) > 1 for i in self.label_dict.values()])
 
-        self._ignore_label: Union[None, int] = self._determine_ignore_label()
+        self._ignore_label: Optional[int] = self._determine_ignore_label()
         self._all_labels: List[int] = self._get_all_labels()
 
-        self._regions: Union[None, List[Union[int, Tuple[int, ...]]]] = self._get_regions()
+        self._regions: Optional[List[Union[int, Tuple[int, ...]]]] = self._get_regions()
 
         if self.has_ignore_label:
             assert self.ignore_label == max(
@@ -74,7 +74,7 @@ class LabelManager(object):
         all_labels.sort()
         return all_labels
 
-    def _get_regions(self) -> Union[None, List[Union[int, Tuple[int, ...]]]]:
+    def _get_regions(self) -> Optional[List[Union[int, Tuple[int, ...]]]]:
         if not self._has_regions or self._force_use_labels:
             return None
         else:
@@ -98,7 +98,7 @@ class LabelManager(object):
                                                                   'regions'
             return regions
 
-    def _determine_ignore_label(self) -> Union[None, int]:
+    def _determine_ignore_label(self) -> Optional[int]:
         ignore_label = self.label_dict.get('ignore')
         if ignore_label is not None:
             assert isinstance(ignore_label, int), f'Ignore label has to be an integer. It cannot be a region ' \
@@ -114,7 +114,7 @@ class LabelManager(object):
         return self.ignore_label is not None
 
     @property
-    def all_regions(self) -> Union[None, List[Union[int, Tuple[int, ...]]]]:
+    def all_regions(self) -> Optional[List[Union[int, Tuple[int, ...]]]]:
         return self._regions
 
     @property
@@ -122,7 +122,7 @@ class LabelManager(object):
         return self._all_labels
 
     @property
-    def ignore_label(self) -> Union[None, int]:
+    def ignore_label(self) -> Optional[int]:
         return self._ignore_label
 
     def apply_inference_nonlin(self, logits: Union[np.ndarray, torch.Tensor]) -> \

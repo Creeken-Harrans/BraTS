@@ -93,7 +93,7 @@ class nnUNetDataLoader(DataLoader):
         seg_shape = (self.batch_size, channels_seg, *spatial_shape)
         return data_shape, seg_shape
 
-    def get_bbox(self, data_shape: np.ndarray, force_fg: bool, class_locations: Union[dict, None],
+    def get_bbox(self, data_shape: np.ndarray, force_fg: bool, class_locations: Optional[dict],
                  overwrite_class: Union[int, Tuple[int, ...]] = None, verbose: bool = False):
         # in dataloader 2d we need to select the slice prior to this and also modify the class_locations to only have
         # locations for the given slice

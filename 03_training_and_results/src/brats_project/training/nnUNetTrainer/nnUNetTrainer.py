@@ -7,7 +7,7 @@ import warnings
 from copy import deepcopy
 from datetime import datetime
 from time import time, sleep
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Optional
 
 import numpy as np
 import torch
@@ -38,7 +38,6 @@ from batchgeneratorsv2.transforms.utils.remove_label import RemoveLabelTansform
 from batchgeneratorsv2.transforms.utils.seg_to_regions import ConvertSegmentationToRegionsTransform
 from torch import autocast, nn
 from torch import distributed as dist
-from torch._dynamo import OptimizedModule
 from torch.cuda import device_count
 try:
    from torch import GradScaler           # torch >= 2.3
@@ -67,7 +66,7 @@ from brats_project.utilities.crossval_split import generate_crossval_split
 from brats_project.utilities.default_n_proc_DA import get_allowed_n_proc_DA
 from brats_project.utilities.file_path_utilities import check_workers_alive_and_busy
 from brats_project.utilities.get_network_from_plans import get_network_from_plans
-from brats_project.utilities.helpers import empty_cache, dummy_context
+from brats_project.utilities.helpers import empty_cache, dummy_context, is_compiled_module, unwrap_compiled_module
 from brats_project.utilities.label_handling.label_handling import convert_labelmap_to_one_hot, determine_num_input_channels
 from brats_project.utilities.plans_handling.plans_handler import PlansManager
 
@@ -155,7 +154,7 @@ class nnUNetTrainer(object):
         self.probabilistic_oversampling = False
         self.num_iterations_per_epoch = 250
         self.num_val_iterations_per_epoch = 50
-        self.num_epochs = 60
+        self.num_epochs = 100
         self.current_epoch = 0
         self.enable_deep_supervision = True
 
@@ -721,14 +720,14 @@ class nnUNetTrainer(object):
     def get_training_transforms(
             patch_size: Union[np.ndarray, Tuple[int]],
             rotation_for_DA: RandomScalar,
-            deep_supervision_scales: Union[List, Tuple, None],
+            deep_supervision_scales: Optional[Union[List, Tuple]],
             mirror_axes: Tuple[int, ...],
             do_dummy_2d_data_aug: bool,
-            use_mask_for_norm: List[bool] = None,
+            use_mask_for_norm: Optional[List[bool]] = None,
             is_cascaded: bool = False,
-            foreground_labels: Union[Tuple[int, ...], List[int]] = None,
-            regions: List[Union[List[int], Tuple[int, ...], int]] = None,
-            ignore_label: int = None,
+            foreground_labels: Optional[Union[Tuple[int, ...], List[int]]] = None,
+            regions: Optional[List[Union[List[int], Tuple[int, ...], int]]] = None,
+            ignore_label: Optional[int] = None,
     ) -> BasicTransform:
         transforms = []
         if do_dummy_2d_data_aug:
@@ -872,11 +871,11 @@ class nnUNetTrainer(object):
 
     @staticmethod
     def get_validation_transforms(
-            deep_supervision_scales: Union[List, Tuple, None],
+            deep_supervision_scales: Optional[Union[List, Tuple]],
             is_cascaded: bool = False,
-            foreground_labels: Union[Tuple[int, ...], List[int]] = None,
-            regions: List[Union[List[int], Tuple[int, ...], int]] = None,
-            ignore_label: int = None,
+            foreground_labels: Optional[Union[Tuple[int, ...], List[int]]] = None,
+            regions: Optional[List[Union[List[int], Tuple[int, ...], int]]] = None,
+            ignore_label: Optional[int] = None,
     ) -> BasicTransform:
         transforms = []
         transforms.append(
@@ -914,8 +913,7 @@ class nnUNetTrainer(object):
             mod = self.network.module
         else:
             mod = self.network
-        if isinstance(mod, OptimizedModule):
-            mod = mod._orig_mod
+        mod = unwrap_compiled_module(mod)
 
         mod.decoder.deep_supervision = enabled
 
@@ -1155,8 +1153,9 @@ class nnUNetTrainer(object):
         self.print_to_log_file('val_loss', np.round(self.logger.get_value('val_losses', step=-1), decimals=4))
         self.print_to_log_file('Pseudo dice', [np.round(i, decimals=4) for i in
                                                self.logger.get_value('dice_per_class_or_region', step=-1)])
-        self.print_to_log_file(
-            f"Epoch time: {np.round(self.logger.get_value('epoch_end_timestamps', step=-1) - self.logger.get_value('epoch_start_timestamps', step=-1), decimals=2)} s")
+        epoch_end = float(self.logger.get_value('epoch_end_timestamps', step=-1))
+        epoch_start = float(self.logger.get_value('epoch_start_timestamps', step=-1))
+        self.print_to_log_file(f"Epoch time: {np.round(epoch_end - epoch_start, decimals=2)} s")
 
         # handling periodic checkpointing
         current_epoch = self.current_epoch
@@ -1181,8 +1180,7 @@ class nnUNetTrainer(object):
                     mod = self.network.module
                 else:
                     mod = self.network
-                if isinstance(mod, OptimizedModule):
-                    mod = mod._orig_mod
+                mod = unwrap_compiled_module(mod)
 
                 checkpoint = {
                     'network_weights': mod.state_dict(),
@@ -1203,7 +1201,9 @@ class nnUNetTrainer(object):
         if not self.was_initialized:
             self.initialize()
 
+        checkpoint_source = None
         if isinstance(filename_or_checkpoint, str):
+            checkpoint_source = filename_or_checkpoint
             checkpoint = torch.load(filename_or_checkpoint, map_location=self.device, weights_only=False)
         # if state dict comes from nn.DataParallel but we use non-parallel model here then the state dict keys do not
         # match. Use heuristic to make it match
@@ -1223,19 +1223,18 @@ class nnUNetTrainer(object):
 
         # messing with state dict naming schemes. Facepalm.
         if self.is_ddp:
-            if isinstance(self.network.module, OptimizedModule):
-                self.network.module._orig_mod.load_state_dict(new_state_dict)
-            else:
-                self.network.module.load_state_dict(new_state_dict)
+            unwrap_compiled_module(self.network.module).load_state_dict(new_state_dict)
         else:
-            if isinstance(self.network, OptimizedModule):
-                self.network._orig_mod.load_state_dict(new_state_dict)
-            else:
-                self.network.load_state_dict(new_state_dict)
+            unwrap_compiled_module(self.network).load_state_dict(new_state_dict)
         self.optimizer.load_state_dict(checkpoint['optimizer_state'])
         if self.grad_scaler is not None:
             if checkpoint['grad_scaler_state'] is not None:
                 self.grad_scaler.load_state_dict(checkpoint['grad_scaler_state'])
+        if checkpoint_source is not None:
+            self.print_to_log_file(
+                f"Loaded checkpoint state from {checkpoint_source}. Resuming at epoch {self.current_epoch}.",
+                also_print_to_console=True,
+            )
 
     def perform_actual_validation(self, save_probabilities: bool = False):
         self.set_deep_supervision_enabled(False)

@@ -1,5 +1,5 @@
 import traceback
-from typing import Type
+from typing import Type, Optional
 
 from batchgenerators.utilities.file_and_folder_operations import join
 
@@ -20,7 +20,7 @@ LIST_OF_IO_CLASSES = [
 ]
 
 
-def determine_reader_writer_from_dataset_json(dataset_json_content: dict, example_file: str = None,
+def determine_reader_writer_from_dataset_json(dataset_json_content: dict, example_file: Optional[str] = None,
                                               allow_nonmatching_filename: bool = False, verbose: bool = True
                                               ) -> Type[BaseReaderWriter]:
     if 'overwrite_image_reader_writer' in dataset_json_content.keys() and \
@@ -38,7 +38,7 @@ def determine_reader_writer_from_dataset_json(dataset_json_content: dict, exampl
                                                     allow_nonmatching_filename, verbose)
 
 
-def determine_reader_writer_from_file_ending(file_ending: str, example_file: str = None, allow_nonmatching_filename: bool = False,
+def determine_reader_writer_from_file_ending(file_ending: str, example_file: Optional[str] = None, allow_nonmatching_filename: bool = False,
                                              verbose: bool = True):
     for rw in LIST_OF_IO_CLASSES:
         if file_ending.lower() in rw.supported_file_endings:

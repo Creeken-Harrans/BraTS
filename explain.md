@@ -904,7 +904,7 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 
 当前项目里的实际默认行为还有两点需要特别记住：
 
-- 默认训练轮数已经改成 `60`
+- 默认训练轮数已经改成 `100`
 - 如果当前 fold 已经存在 checkpoint，CLI 会优先把这次训练解释成“继续训练”
 
 ### `run/load_pretrained_weights.py`
@@ -1116,6 +1116,17 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 - `_internal_predict_sliding_window_return_logits`
   - 聚合高斯权重 tile 预测结果
 
+补充一个实现细节：
+
+- 当前项目不再直接依赖私有的 `torch._dynamo.OptimizedModule`
+- 对“一个 module 是否已经被 `torch.compile` 包装”以及“如何拿到原始 module”的判断，已经统一收敛到公共 helper
+- 这样做的目的不是改功能，而是降低不同 PyTorch 版本下因为内部 API 变动导致导入失败的风险
+
+另外，DDP 下的 compile 判定也已经修正：
+
+- 现在不会再错误要求 `self.network.module` 先是 compiled module 才允许 compile
+- 也就是说，只要环境变量允许且当前网络还没被 compile，DDP 路径也能正常进入 `torch.compile`
+
 ### `inference/sliding_window_prediction.py`
 
 作用：
@@ -1158,11 +1169,11 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
   - IoU
 - 汇总成 `summary.json`
 
-在当前项目的 CLI 封装里，`python BraTS/run.py evaluate` 还做了两层更适合工程调试的保护：
+在当前项目的 CLI 封装里，`python BraTS/run.py evaluate` 现在默认是严格模式：
 
 - 如果预测目录为空，会直接报“先跑 predict”的清晰错误
-- 如果预测目录只覆盖 ground-truth 的一个子集，会自动按这个子集评估，而不是要求先凑齐全量预测
-- 如果前一步 `predict` 用的是从训练集随机抽样出来的临时验证集，`evaluate` 也会直接沿用这些病例名做子集评估
+- 如果预测文件名和 ground-truth 集不完全一致，也会直接报错，而不是静默跳过缺失病例
+- 如果前一步 `predict` 用的是从训练集随机抽样出来的临时验证集，想评估这批样本也必须显式传 `--chill`
 
 它支持：
 
@@ -1385,7 +1396,9 @@ python BraTS/run.py find-best-config
 但当前项目已经额外做了两层兼容：
 
 - 如果默认组合没有可用的 `fold_x/validation` 输出，会自动回退到当前数据集下实际已经产出 validation 结果的模型
-- 如果只有部分 fold 完成验证，会自动只使用这些实际存在 validation 输出的 folds
+- 比较时不会再让不同模型各自使用不同的 fold 子集；系统只会使用所有候选模型共同拥有的 shared folds
+
+如果候选模型之间连一个共享 fold 都没有，`find-best-config` 会直接报错，而不是继续输出一个不可比较的最佳模型。
 
 如果你真的训练了多套配置，才需要再显式传入多组 `--configurations / --trainers / --plans-identifiers` 去做更广的比较。
 

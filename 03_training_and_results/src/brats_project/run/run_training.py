@@ -16,6 +16,13 @@ from brats_project.utilities.find_class_by_name import recursive_find_python_cla
 from torch.backends import cudnn
 
 
+TRAINING_RESUME_CHECKPOINTS = (
+    'checkpoint_latest.pth',
+    'checkpoint_final.pth',
+    'checkpoint_best.pth',
+)
+
+
 def find_free_network_port() -> int:
     """Finds a free port on localhost.
 
@@ -71,21 +78,27 @@ def get_trainer_from_args(dataset_name_or_id: Union[int, str],
 
 
 def maybe_load_checkpoint(nnunet_trainer: nnUNetTrainer, continue_training: bool, validation_only: bool,
-                          pretrained_weights_file: str = None):
+                          pretrained_weights_file: Optional[str] = None):
     if continue_training and pretrained_weights_file is not None:
         raise RuntimeError('Cannot both continue a training AND load pretrained weights. Pretrained weights can only '
                            'be used at the beginning of the training.')
     if continue_training:
-        expected_checkpoint_file = join(nnunet_trainer.output_folder, 'checkpoint_final.pth')
-        if not isfile(expected_checkpoint_file):
-            expected_checkpoint_file = join(nnunet_trainer.output_folder, 'checkpoint_latest.pth')
-        # special case where --c is used to run a previously aborted validation
-        if not isfile(expected_checkpoint_file):
-            expected_checkpoint_file = join(nnunet_trainer.output_folder, 'checkpoint_best.pth')
-        if not isfile(expected_checkpoint_file):
-            print(f"WARNING: Cannot continue training because there seems to be no checkpoint available to "
-                               f"continue from. Starting a new training...")
-            expected_checkpoint_file = None
+        expected_checkpoint_file = None
+        for checkpoint_name in TRAINING_RESUME_CHECKPOINTS:
+            candidate = join(nnunet_trainer.output_folder, checkpoint_name)
+            if isfile(candidate):
+                expected_checkpoint_file = candidate
+                break
+        if expected_checkpoint_file is None:
+            nnunet_trainer.print_to_log_file(
+                'No existing checkpoint found. Starting a new training run from scratch.',
+                also_print_to_console=True,
+            )
+        else:
+            nnunet_trainer.print_to_log_file(
+                f'Resuming training from checkpoint: {expected_checkpoint_file}',
+                also_print_to_console=True,
+            )
     elif validation_only:
         expected_checkpoint_file = join(nnunet_trainer.output_folder, 'checkpoint_final.pth')
         if not isfile(expected_checkpoint_file):
@@ -95,6 +108,15 @@ def maybe_load_checkpoint(nnunet_trainer: nnUNetTrainer, continue_training: bool
             if not nnunet_trainer.was_initialized:
                 nnunet_trainer.initialize()
             load_pretrained_weights(nnunet_trainer.network, pretrained_weights_file, verbose=True)
+            nnunet_trainer.print_to_log_file(
+                f'Starting a new training run from pretrained weights: {pretrained_weights_file}',
+                also_print_to_console=True,
+            )
+        else:
+            nnunet_trainer.print_to_log_file(
+                'Starting a new training run from scratch.',
+                also_print_to_console=True,
+            )
         expected_checkpoint_file = None
 
     if expected_checkpoint_file is not None:

@@ -170,7 +170,7 @@ def _resolve_existing_training_checkpoint(
     if str(fold) == "all":
         return None
     output_dir = Path(get_output_folder(dataset_name, trainer, plans, configuration, fold=int(fold)))
-    for checkpoint_name in ("checkpoint_final.pth", "checkpoint_latest.pth", "checkpoint_best.pth"):
+    for checkpoint_name in ("checkpoint_latest.pth", "checkpoint_final.pth", "checkpoint_best.pth"):
         checkpoint_path = output_dir / checkpoint_name
         if checkpoint_path.is_file():
             return checkpoint_path
@@ -363,8 +363,9 @@ def cmd_doctor(_: argparse.Namespace) -> int:
         print(f"torch_installed: {torch.__version__}")
         print(f"cuda_available: {torch.cuda.is_available()}")
         if torch.cuda.is_available():
+            cuda_version = getattr(getattr(torch, "version", None), "cuda", None)
             print(f"cuda_device_count: {torch.cuda.device_count()}")
-            print(f"cuda_version: {torch.version.cuda}")
+            print(f"cuda_version: {cuda_version}")
             print(f"current_device: {torch.cuda.get_device_name(0)}")
 
     archive_root = resolve_workspace_path(paths["archive_root"])
@@ -531,6 +532,8 @@ def cmd_train(args: argparse.Namespace) -> int:
         if existing_checkpoint is not None:
             continue_training = True
             print(f"[INFO] Found existing checkpoint, resuming training from: {existing_checkpoint}")
+        else:
+            print("[INFO] No existing checkpoint found. Starting a new training run from scratch.")
     run_training(
         dataset_name_or_id=dataset["name"],
         configuration=args.configuration,
@@ -719,13 +722,28 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
             "predicted segmentations."
         )
     gt_dir = resolve_workspace_path(args.gt_dir)
-    gt_file_count = len(list(gt_dir.glob(f"*{file_ending}")))
+    gt_files = sorted(p.name for p in gt_dir.glob(f"*{file_ending}"))
+    gt_file_count = len(gt_files)
     chill = args.chill
-    if not chill and len(predicted_files) < gt_file_count:
-        chill = True
+    if not chill and predicted_files != gt_files:
+        missing_predictions = sorted(set(gt_files) - set(predicted_files))
+        extra_predictions = sorted(set(predicted_files) - set(gt_files))
+        details = []
+        if missing_predictions:
+            details.append(f"missing predictions for {len(missing_predictions)} cases")
+        if extra_predictions:
+            details.append(f"{len(extra_predictions)} predictions have no matching ground truth")
+        detail_text = "; ".join(details) if details else "prediction filenames do not match the ground-truth set"
+        raise RuntimeError(
+            "Prediction coverage does not match the ground-truth directory.\n"
+            f"predictions: {len(predicted_files)} files, ground truth: {gt_file_count} files\n"
+            f"details: {detail_text}\n"
+            "If you intentionally want to evaluate only a subset, rerun with --chill."
+        )
+    if chill and predicted_files != gt_files:
         print(
-            f"[INFO] Prediction folder contains {len(predicted_files)} cases but ground-truth folder contains "
-            f"{gt_file_count}. Evaluating on the prediction subset."
+            f"[INFO] Evaluating a prediction subset with --chill: "
+            f"{len(predicted_files)} prediction files vs {gt_file_count} ground-truth files."
         )
     compute_metrics_on_folder2(
         str(gt_dir),

@@ -1,13 +1,13 @@
 import pydoc
 import warnings
-from typing import Union
+from typing import Optional
 
 from brats_project.utilities.find_class_by_name import recursive_find_python_class
 from batchgenerators.utilities.file_and_folder_operations import join
 
 
 def get_network_from_plans(arch_class_name, arch_kwargs, arch_kwargs_req_import, input_channels, output_channels,
-                           allow_init=True, deep_supervision: Union[bool, None] = None):
+                           allow_init=True, deep_supervision: Optional[bool] = None):
     network_class = arch_class_name
     architecture_kwargs = dict(**arch_kwargs)
     for ri in arch_kwargs_req_import:

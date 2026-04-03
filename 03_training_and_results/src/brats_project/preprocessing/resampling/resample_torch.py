@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional
 
 import numpy as np
 import torch
@@ -102,7 +102,7 @@ def resample_torch_fornnunet(
         num_threads: int = 4,
         device: torch.device = torch.device('cpu'),
         memefficient_seg_resampling: bool = False,
-        force_separate_z: Union[bool, None] = None,
+        force_separate_z: Optional[bool] = None,
         separate_z_anisotropy_threshold: float = ANISO_THRESHOLD,
         mode='linear',
         aniso_axis_mode='nearest-exact'
@@ -172,4 +172,3 @@ if __name__ == '__main__':
 
     ret_nosep = resample_torch_fornnunet(use, target_shape, spacing, spacing, is_seg)
     ret_sep = resample_torch_fornnunet(use, target_shape, spacing, spacing, is_seg, force_separate_z=False)
-

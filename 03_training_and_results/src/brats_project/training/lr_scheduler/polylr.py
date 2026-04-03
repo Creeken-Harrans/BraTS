@@ -1,8 +1,10 @@
+from typing import Optional
+
 from torch.optim.lr_scheduler import _LRScheduler
 
 
 class PolyLRScheduler(_LRScheduler):
-    def __init__(self, optimizer, initial_lr: float, max_steps: int, exponent: float = 0.9, current_step: int = None):
+    def __init__(self, optimizer, initial_lr: float, max_steps: int, exponent: float = 0.9, current_step: Optional[int] = None):
         self.optimizer = optimizer
         self.initial_lr = initial_lr
         self.max_steps = max_steps
@@ -10,7 +12,7 @@ class PolyLRScheduler(_LRScheduler):
         self.ctr = 0
         super().__init__(optimizer, current_step if current_step is not None else -1)
 
-    def step(self, current_step=None):
+    def step(self, current_step: Optional[int] = None):
         if current_step is None or current_step == -1:
             current_step = self.ctr
             self.ctr += 1

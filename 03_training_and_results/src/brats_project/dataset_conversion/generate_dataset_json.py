@@ -1,4 +1,4 @@
-from typing import Tuple, Union, List
+from typing import Optional, Tuple, Union, List
 
 from batchgenerators.utilities.file_and_folder_operations import save_json, join
 
@@ -8,13 +8,13 @@ def generate_dataset_json(output_folder: str,
                           labels: dict,
                           num_training_cases: int,
                           file_ending: str,
-                          citation: Union[List[str], str] = None,
-                          regions_class_order: Tuple[int, ...] = None,
-                          dataset_name: str = None,
-                          reference: str = None,
-                          release: str = None,
-                          description: str = None,
-                          overwrite_image_reader_writer: str = None,
+                          citation: Optional[Union[List[str], str]] = None,
+                          regions_class_order: Optional[Tuple[int, ...]] = None,
+                          dataset_name: Optional[str] = None,
+                          reference: Optional[str] = None,
+                          release: Optional[str] = None,
+                          description: Optional[str] = None,
+                          overwrite_image_reader_writer: Optional[str] = None,
                           license: str = 'Whoever converted this dataset was lazy and didn\'t look it up!',
                           converted_by: str = "Please enter your name, especially when sharing datasets with others in a common infrastructure!",
                           **kwargs):
@@ -98,7 +98,7 @@ def generate_dataset_json(output_folder: str,
     if release is not None:
         dataset_json['release'] = release
     if citation is not None:
-        dataset_json['citation'] = release
+        dataset_json['citation'] = citation
     if description is not None:
         dataset_json['description'] = description
     if overwrite_image_reader_writer is not None:

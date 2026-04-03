@@ -56,7 +56,7 @@ class DefaultPreprocessor(object):
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(f"{timestamp} {message}\n")
 
-    def run_case_npy(self, data: np.ndarray, seg: Union[np.ndarray, None], properties: dict,
+    def run_case_npy(self, data: np.ndarray, seg: Optional[np.ndarray], properties: dict,
                      plans_manager: PlansManager, configuration_manager: ConfigurationManager,
                      dataset_json: Union[dict, str]):
         # let's not mess up the inputs!
@@ -133,7 +133,7 @@ class DefaultPreprocessor(object):
             seg = seg.astype(np.int8)
         return data, seg, properties
 
-    def run_case(self, image_files: List[str], seg_file: Union[str, None], plans_manager: PlansManager,
+    def run_case(self, image_files: List[str], seg_file: Optional[str], plans_manager: PlansManager,
                  configuration_manager: ConfigurationManager,
                  dataset_json: Union[dict, str]):
         """

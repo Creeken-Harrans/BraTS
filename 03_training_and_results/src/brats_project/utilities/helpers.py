@@ -25,3 +25,11 @@ class dummy_context(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
+
+
+def is_compiled_module(module) -> bool:
+    return hasattr(module, "_orig_mod")
+
+
+def unwrap_compiled_module(module):
+    return module._orig_mod if is_compiled_module(module) else module

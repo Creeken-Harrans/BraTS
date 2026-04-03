@@ -1,7 +1,7 @@
 import multiprocessing
 import os
 from copy import deepcopy
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import subfiles, join, save_json, load_json, \
@@ -86,7 +86,7 @@ def compute_tp_fp_fn_tn(mask_ref: np.ndarray, mask_pred: np.ndarray, ignore_mask
 
 def compute_metrics(reference_file: str, prediction_file: str, image_reader_writer: BaseReaderWriter,
                     labels_or_regions: Union[List[int], List[Union[int, Tuple[int, ...]]]],
-                    ignore_label: int = None) -> dict:
+                    ignore_label: Optional[int] = None) -> dict:
     # load images
     seg_ref, seg_ref_dict = image_reader_writer.read_seg(reference_file)
     seg_pred, seg_pred_dict = image_reader_writer.read_seg(prediction_file)
@@ -121,7 +121,7 @@ def compute_metrics_on_folder(folder_ref: str, folder_pred: str, output_file: st
                               image_reader_writer: BaseReaderWriter,
                               file_ending: str,
                               regions_or_labels: Union[List[int], List[Union[int, Tuple[int, ...]]]],
-                              ignore_label: int = None,
+                              ignore_label: Optional[int] = None,
                               num_processes: int = default_num_processes,
                               chill: bool = True) -> dict:
     """
@@ -131,6 +131,15 @@ def compute_metrics_on_folder(folder_ref: str, folder_pred: str, output_file: st
         assert output_file.endswith('.json'), 'output_file should end with .json'
     files_pred = subfiles(folder_pred, suffix=file_ending, join=False)
     files_ref = subfiles(folder_ref, suffix=file_ending, join=False)
+    if len(files_pred) == 0:
+        raise RuntimeError(
+            f"No prediction files with suffix {file_ending} were found in {folder_pred}."
+        )
+    missing_references = [i for i in files_pred if not isfile(join(folder_ref, i))]
+    if len(missing_references) > 0:
+        raise FileNotFoundError(
+            f"Predictions without matching ground-truth files were found in {folder_pred}: {missing_references}"
+        )
     if not chill:
         present = [isfile(join(folder_pred, i)) for i in files_ref]
         assert all(present), "Not all files in folder_ref exist in folder_pred"
@@ -174,7 +183,7 @@ def compute_metrics_on_folder(folder_ref: str, folder_pred: str, output_file: st
 
 
 def compute_metrics_on_folder2(folder_ref: str, folder_pred: str, dataset_json_file: str, plans_file: str,
-                               output_file: str = None,
+                               output_file: Optional[str] = None,
                                num_processes: int = default_num_processes,
                                chill: bool = False):
     dataset_json = load_json(dataset_json_file)
@@ -196,9 +205,9 @@ def compute_metrics_on_folder2(folder_ref: str, folder_pred: str, dataset_json_f
 
 
 def compute_metrics_on_folder_simple(folder_ref: str, folder_pred: str, labels: Union[Tuple[int, ...], List[int]],
-                                     output_file: str = None,
+                                     output_file: Optional[str] = None,
                                      num_processes: int = default_num_processes,
-                                     ignore_label: int = None,
+                                     ignore_label: Optional[int] = None,
                                      chill: bool = False):
     example_file = subfiles(folder_ref, join=True)[0]
     file_ending = os.path.splitext(example_file)[-1]

@@ -1,0 +1,34 @@
+{
+  "include": [
+    "src"
+  ],
+  "extraPaths": [
+    "src"
+  ],
+  "venvPath": "/home/Creeken/miniconda3/envs",
+  "venv": "pytorch",
+  "typeCheckingMode": "basic",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": false,
+  "reportMissingModuleSource": false,
+  "reportWildcardImportFromLibrary": false,
+  "reportOptionalMemberAccess": false,
+  "reportOptionalSubscript": false,
+  "reportOptionalIterable": false,
+  "reportOptionalCall": false,
+  "reportOptionalOperand": false,
+  "reportOptionalContextManager": false,
+  "reportArgumentType": false,
+  "reportAssignmentType": false,
+  "reportAttributeAccessIssue": false,
+  "reportCallIssue": false,
+  "reportFunctionMemberAccess": false,
+  "reportGeneralTypeIssues": false,
+  "reportIncompatibleMethodOverride": false,
+  "reportInvalidTypeForm": false,
+  "reportOperatorIssue": false,
+  "reportPossiblyUnboundVariable": false,
+  "reportPrivateImportUsage": false,
+  "reportReturnType": false,
+  "reportUndefinedVariable": false
+}

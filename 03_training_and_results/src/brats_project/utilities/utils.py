@@ -14,7 +14,7 @@
 #    limitations under the License.
 import os.path
 from functools import lru_cache
-from typing import Union
+from typing import Union, Optional, List
 
 from batchgenerators.utilities.file_and_folder_operations import *
 import numpy as np
@@ -39,7 +39,7 @@ def create_paths_fn(folder, files, file_ending, f):
     return [join(folder, i) for i in files if p.fullmatch(i)]
 
 
-def create_lists_from_splitted_dataset_folder(folder: str, file_ending: str, identifiers: List[str] = None, num_processes: int = 12) -> List[
+def create_lists_from_splitted_dataset_folder(folder: str, file_ending: str, identifiers: Optional[List[str]] = None, num_processes: int = 12) -> List[
     List[str]]:
     """
     does not rely on dataset.json
@@ -56,7 +56,7 @@ def create_lists_from_splitted_dataset_folder(folder: str, file_ending: str, ide
     return list_of_lists
 
 
-def get_filenames_of_train_images_and_targets(raw_dataset_folder: str, dataset_json: dict = None):
+def get_filenames_of_train_images_and_targets(raw_dataset_folder: str, dataset_json: Optional[dict] = None):
     if dataset_json is None:
         dataset_json = load_json(join(raw_dataset_folder, 'dataset.json'))
 
