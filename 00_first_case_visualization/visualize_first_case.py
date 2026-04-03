@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import re
 from pathlib import Path
 from typing import Any, Protocol, cast
@@ -39,10 +40,10 @@ matplotlib.use("Agg")
 
 
 DEFAULT_DATA_ROOT_REL = Path(
-    "archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
+    "../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
 )
 DEFAULT_OUTPUT_DIR_REL = Path(
-    "BraTS/00_first_case_visualization/output"
+    "00_first_case_visualization/output"
 )
 
 MODALITY_ORDER = ("t1", "t1ce", "t2", "flair")
@@ -88,30 +89,27 @@ def log(message: str) -> None:
     print(f"[BraTS visualize] {message}")
 
 
-def find_workspace_root() -> Path:
+def find_project_root() -> Path:
     current = Path(__file__).resolve()
     for parent in current.parents:
-        if parent.name == "machine-learning-test":
+        if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError("Unable to locate workspace root 'machine-learning-test'")
+    raise RuntimeError("Unable to locate BraTS project root from visualize_first_case.py")
 
 
-WORKSPACE_ROOT = find_workspace_root()
+PROJECT_ROOT = find_project_root()
 
 
 def resolve_workspace_path(relative_or_absolute: Path | str) -> Path:
     candidate = Path(relative_or_absolute)
     if candidate.is_absolute():
         return candidate.resolve()
-    return (WORKSPACE_ROOT / candidate).resolve()
+    return (PROJECT_ROOT / candidate).resolve()
 
 
 def to_workspace_relative_string(path: Path) -> str:
     absolute = path.resolve()
-    try:
-        return str(absolute.relative_to(WORKSPACE_ROOT))
-    except ValueError:
-        return str(absolute)
+    return os.path.relpath(absolute, PROJECT_ROOT)
 
 
 def ensure_output_dir(path: Path) -> None:
@@ -1496,13 +1494,13 @@ def parse_args() -> argparse.Namespace:
         "--data-root",
         type=Path,
         default=DEFAULT_DATA_ROOT_REL,
-        help="BraTS archive root. Relative paths are resolved from machine-learning-test.",
+        help="BraTS archive root. Relative paths are resolved from the BraTS project root.",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=DEFAULT_OUTPUT_DIR_REL,
-        help="Output directory. Relative paths are resolved from machine-learning-test.",
+        help="Output directory. Relative paths are resolved from the BraTS project root.",
     )
     return parser.parse_args()
 

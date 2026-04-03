@@ -8,13 +8,13 @@
     "default_folds": [0, 1, 2, 3, 4]
   },
   "paths": {
-    "archive_root": "archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData",
-    "project_raw_root": "nnUNet_test/nnUNet_raw",
-    "project_preprocessed_root": "nnUNet_test/nnUNet_preprocessed",
-    "project_results_root": "nnUNet_test/nnUNet_results",
-    "first_case_output_root": "BraTS/00_first_case_visualization/output",
-    "prediction_input_root": "BraTS/04_inference_and_evaluation/input",
-    "prediction_output_root": "BraTS/04_inference_and_evaluation/predictions"
+    "archive_root": "../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData",
+    "project_raw_root": "../nnUNet_test/nnUNet_raw",
+    "project_preprocessed_root": "../nnUNet_test/nnUNet_preprocessed",
+    "project_results_root": "../nnUNet_test/nnUNet_results",
+    "first_case_output_root": "00_first_case_visualization/output",
+    "prediction_input_root": "04_inference_and_evaluation/input",
+    "prediction_output_root": "04_inference_and_evaluation/predictions"
   },
   "runtime": {
     "torch": "2.7.1",

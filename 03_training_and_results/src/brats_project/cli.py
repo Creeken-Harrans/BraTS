@@ -347,7 +347,7 @@ def cmd_doctor(_: argparse.Namespace) -> int:
         torch = None
 
     print("BraTS project doctor")
-    print(f"workspace_root: {workspace_relative_string(get_workspace_root())}")
+    print(f"path_base: {workspace_relative_string(get_project_root())}")
     print(f"project_root: {workspace_relative_string(get_project_root())}")
     print(f"dataset: {dataset['name']} (id={dataset['id']})")
     print(f"archive_root: {paths['archive_root']}")
@@ -811,12 +811,12 @@ def build_parser() -> argparse.ArgumentParser:
         "visualize-first-case", help="Regenerate the first-case visualization snapshot"
     )
     visualize.add_argument(
-        "--data-root", default=paths["archive_root"], help="Relative to machine-learning-test by default"
+        "--data-root", default=paths["archive_root"], help="Relative to BraTS project root by default"
     )
     visualize.add_argument(
         "--output-dir",
         default=paths["first_case_output_root"],
-        help="Relative to machine-learning-test by default",
+        help="Relative to BraTS project root by default",
     )
     visualize.set_defaults(func=cmd_visualize_first_case)
 

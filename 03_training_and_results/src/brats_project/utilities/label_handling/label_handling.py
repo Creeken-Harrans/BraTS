@@ -1,6 +1,6 @@
 from __future__ import annotations
 from time import time
-from typing import Union, List, Tuple, Type
+from typing import List, Optional, Tuple, Type, Union
 
 import numpy as np
 import torch

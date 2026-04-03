@@ -11,24 +11,24 @@ from typing import Iterable
 DATASET_ID = 220
 DATASET_NAME = "BraTS2020"
 DEFAULT_SRC_ROOT_REL = Path(
-    "archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
+    "../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
 )
-DEFAULT_PROJECT_RAW_REL = Path("nnUNet_test/nnUNet_raw")
+DEFAULT_PROJECT_RAW_REL = Path("../nnUNet_test/nnUNet_raw")
 
 
-def find_workspace_root() -> Path:
+def find_project_root() -> Path:
     current = Path(__file__).resolve()
     for parent in current.parents:
-        if parent.name == "machine-learning-test":
+        if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError("Unable to locate workspace root 'machine-learning-test'")
+    raise RuntimeError("Unable to locate BraTS project root from prepare_brats2020_for_project.py")
 
 
 def resolve_workspace_path(relative_or_absolute: Path | str) -> Path:
     candidate = Path(relative_or_absolute)
     if candidate.is_absolute():
         return candidate.resolve()
-    return (find_workspace_root() / candidate).resolve()
+    return (find_project_root() / candidate).resolve()
 
 
 def find_case_file(case_dir: Path, suffix: str) -> Path:
@@ -148,13 +148,13 @@ def parse_args() -> argparse.Namespace:
         "--src-root",
         type=Path,
         default=DEFAULT_SRC_ROOT_REL,
-        help="BraTS2020 raw source root. Relative paths are resolved from machine-learning-test.",
+        help="BraTS2020 raw source root. Relative paths are resolved from the BraTS project root.",
     )
     parser.add_argument(
         "--project-raw",
         type=Path,
         default=None,
-        help="Target raw dataset root. Relative paths are resolved from machine-learning-test. "
+        help="Target raw dataset root. Relative paths are resolved from the BraTS project root. "
         "Defaults to PROJECT_RAW or nnUNet_test/nnUNet_raw.",
     )
     parser.add_argument(

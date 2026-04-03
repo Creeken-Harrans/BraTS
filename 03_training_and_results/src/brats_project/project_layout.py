@@ -7,13 +7,6 @@ from pathlib import Path
 from typing import Any
 
 
-def _find_parent_by_name(start: Path, directory_name: str) -> Path | None:
-    for parent in [start, *start.parents]:
-        if parent.name == directory_name:
-            return parent
-    return None
-
-
 @lru_cache(maxsize=1)
 def get_project_root() -> Path:
     current = Path(__file__).resolve()
@@ -25,11 +18,7 @@ def get_project_root() -> Path:
 
 @lru_cache(maxsize=1)
 def get_workspace_root() -> Path:
-    project_root = get_project_root()
-    workspace_root = _find_parent_by_name(project_root, "machine-learning-test")
-    if workspace_root is not None:
-        return workspace_root
-    return project_root.parents[2]
+    return get_project_root()
 
 
 @lru_cache(maxsize=1)
@@ -38,29 +27,34 @@ def load_project_config() -> dict[str, Any]:
     return json.loads(config_path.read_text(encoding="utf-8"))
 
 
-def resolve_workspace_path(relative_or_absolute: str | os.PathLike[str]) -> Path:
+def resolve_project_path(relative_or_absolute: str | os.PathLike[str]) -> Path:
     candidate = Path(relative_or_absolute)
     if candidate.is_absolute():
         return candidate.resolve()
-    return (get_workspace_root() / candidate).resolve()
+    return (get_project_root() / candidate).resolve()
+
+
+def project_relative_string(path: str | os.PathLike[str]) -> str:
+    absolute = Path(path).resolve()
+    workspace_root = get_project_root()
+    return os.path.relpath(absolute, workspace_root)
+
+
+def resolve_workspace_path(relative_or_absolute: str | os.PathLike[str]) -> Path:
+    return resolve_project_path(relative_or_absolute)
 
 
 def workspace_relative_string(path: str | os.PathLike[str]) -> str:
-    absolute = Path(path).resolve()
-    workspace_root = get_workspace_root()
-    try:
-        return str(absolute.relative_to(workspace_root))
-    except ValueError:
-        return str(absolute)
+    return project_relative_string(path)
 
 
 def get_default_environment_paths() -> dict[str, str]:
     config = load_project_config()
     paths = config["paths"]
     return {
-        "PROJECT_RAW": str(resolve_workspace_path(paths["project_raw_root"])),
-        "PROJECT_PREPROCESSED": str(resolve_workspace_path(paths["project_preprocessed_root"])),
-        "PROJECT_RESULTS": str(resolve_workspace_path(paths["project_results_root"])),
+        "PROJECT_RAW": str(resolve_project_path(paths["project_raw_root"])),
+        "PROJECT_PREPROCESSED": str(resolve_project_path(paths["project_preprocessed_root"])),
+        "PROJECT_RESULTS": str(resolve_project_path(paths["project_results_root"])),
     }
 
 

@@ -1,0 +1,45 @@
+{
+  "include": [
+    "run.py",
+    "doctor.py",
+    "tests",
+    "00_first_case_visualization",
+    "01_data_preparation/scripts",
+    "03_training_and_results/src",
+    "04_inference_and_evaluation"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "03_training_and_results/results",
+    "04_inference_and_evaluation/predictions"
+  ],
+  "extraPaths": [
+    "03_training_and_results/src"
+  ],
+  "venvPath": "/home/Creeken/miniconda3/envs",
+  "venv": "pytorch",
+  "typeCheckingMode": "basic",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": false,
+  "reportMissingModuleSource": false,
+  "reportWildcardImportFromLibrary": false,
+  "reportOptionalMemberAccess": false,
+  "reportOptionalSubscript": false,
+  "reportOptionalIterable": false,
+  "reportOptionalCall": false,
+  "reportOptionalOperand": false,
+  "reportOptionalContextManager": false,
+  "reportArgumentType": false,
+  "reportAssignmentType": false,
+  "reportAttributeAccessIssue": false,
+  "reportCallIssue": false,
+  "reportFunctionMemberAccess": false,
+  "reportGeneralTypeIssues": false,
+  "reportIncompatibleMethodOverride": false,
+  "reportInvalidTypeForm": false,
+  "reportOperatorIssue": false,
+  "reportPossiblyUnboundVariable": false,
+  "reportPrivateImportUsage": false,
+  "reportReturnType": false,
+  "reportUndefinedVariable": false
+}

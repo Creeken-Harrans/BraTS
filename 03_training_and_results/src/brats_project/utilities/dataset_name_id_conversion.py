@@ -11,6 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+import os
 from typing import Union
 
 from brats_project.paths import PROJECT_PREPROCESSED, PROJECT_RAW, PROJECT_RESULTS

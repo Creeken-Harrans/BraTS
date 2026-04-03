@@ -1,5 +1,5 @@
 from multiprocessing import Pool
-from typing import Union, Tuple, Optional
+from typing import List, Optional, Tuple, Union
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
 
