@@ -1,909 +1,334 @@
 # BraTS2020 Project
 
-## 命令执行位置先看这里
+这个仓库是一个围绕 BraTS2020 数据集整理的本地 Python 工程。它把数据准备、preprocess、训练、推理、评估和报告统一到一个入口 `run.py` 下，并且把每个阶段的输入、输出和说明文件放在固定位置。
 
-本仓库有两种合法调用方式，取决于你当前站在哪个目录：
+## 快速开始
 
-- 当前目录就是 `BraTS` 仓库根目录：
-  - `python run.py train-all --npz`
-- 当前目录是它的上一级 `machine-learning-test`：
-  - `python BraTS/run.py train-all --npz`
+### 先分清命令写法
 
-本文后续命令默认全部按第一种写法展示，也就是默认你已经 `cd BraTS`。
-如果你在上一级目录执行，同一条命令只需要把脚本路径改成 `BraTS/run.py`。
-本文中未特别说明的相对路径，也默认都相对于 `BraTS` 仓库根目录。
+同一个仓库有两种合法调用方式，只取决于你当前站在哪个目录：
 
-这个目录不是“几个训练脚本的合集”，而是一套围绕你当前工作区、当前 BraTS2020 数据、当前 nnU-Net 派生代码整理出来的完整项目。
+| 你当前所在目录 | 正确命令写法 |
+| --- | --- |
+| `.../machine-learning-test/BraTS` | `python run.py ...` |
+| `.../machine-learning-test` | `python BraTS/run.py ...` |
 
-它有三个非常明确的目标：
+本文后续命令默认都按第一种写法展示，也就是默认你已经进入 `BraTS` 仓库根目录。
 
-1. 把原始 BraTS 数据转换成当前项目能稳定训练的格式。
-2. 把 nnU-Net 风格的自动规划、预处理、训练、推理链路本地化成统一入口。
-3. 把“数据 -> plans -> 训练 -> 推理 -> 评估”的每一层都留下可读文档和可检查产物。
-
-如果只用一句话概括整个项目：
-
-- 它是一个“本地化、流程化、文档化”的 BraTS2020 分割工程，而不是上游 nnU-Net 命令的简单搬运。
-
----
-
-## 1. 你先应该建立什么整体认识
-
-这个项目的主线不是“先看网络结构”，而是下面这条工程链：
-
-1. 看懂原始 BraTS 多模态 3D MRI 和标签
-2. 把原始病例整理成 `Dataset220_BraTS2020`
-3. 提取 fingerprint，生成 plans，完成 preprocess
-4. 用 `SegTrainer + ProjectPlans + 3d_fullres` 跑训练
-5. 汇总交叉验证结果，找最佳配置，做正式推理与评估
-
-你真正要先搞清楚的事情是：
-
-- 输入数据在磁盘上怎样组织
-- `dataset.json` 怎样定义任务
-- `dataset_fingerprint.json` 在记录什么
-- `ProjectPlans.json` 为什么长成现在这样
-- 训练结果会写到哪里
-- 推理和后处理到底依赖哪些训练产物
-
----
-
-## 2. 顶层目录说明
-
-### `00_first_case_visualization/`
-
-作用：建立 BraTS 原始病例的空间直觉、模态直觉、标签直觉。
-
-这一层的价值不是“画几张图”，而是先回答后面所有代码都默认成立的问题：
-
-- 四个模态和一个标签是不是严格对齐
-- 标签值到底表示什么
-- 3D volume 在三个平面上长什么样
-- 不同模态分别更容易看见什么病灶信息
-
-### `01_data_preparation/`
-
-作用：把原始 BraTS 目录转换成本项目训练目录。
-
-这一层会把原始病例重组为：
-
-- `imagesTr/`
-- `labelsTr/`
-- `dataset.json`
-
-并且统一：
-
-- 通道顺序
-- 文件命名
-- 标签映射
-- region-based training 所需的任务定义
-
-### `02_preprocess/`
-
-作用：把“训练目录”进一步变成“训练器真正读取的数据和计划”。
-
-这一层做四件事：
-
-1. 提取 dataset fingerprint
-2. 根据 fingerprint 生成 experiment plans
-3. 执行 preprocess
-4. 准备交叉验证 split
-
-### `03_training_and_results/`
-
-作用：放置训练核心代码和训练结果样例。
-
-这里最重要的部分是：
-
-- `src/brats_project/`
-  - 核心 Python 包
-- `results/`
-  - 历史训练输出样例，用于帮助理解产物结构
-
-### `04_inference_and_evaluation/`
-
-作用：承接训练之后的正式推理和评估阶段。
-
-这里包含：
-
-- 推理输入目录
-- 推理输出目录
-- 推理/评估文档
-
-### `Document/`
-
-作用：把项目 Markdown 文档批量导出成 PDF。
-
-它不参与模型训练，但参与项目文档交付。
-
----
-
-## 3. 统一入口与配置
-
-### 入口
-
-项目统一入口是：
-
-- [run.py](/home/Creeken/Desktop/machine-learning-test/BraTS/run.py)
-
-它本身不做训练，只做两件事：
-
-1. 把 `03_training_and_results/src` 放进 Python 搜索路径
-2. 把控制权交给 `brats_project.cli`
-
-所以真正的控制台核心在：
-
-- [cli.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/cli.py)
-
-### 配置
-
-项目的默认配置集中在：
-
-- [project_config.json](/home/Creeken/Desktop/machine-learning-test/BraTS/project_config.json)
-
-它管理三类默认值：
-
-- 数据集默认值
-  - `id=220`
-  - `name=Dataset220_BraTS2020`
-  - `trainer=SegTrainer`
-  - `plans=ProjectPlans`
-  - `default_configuration=3d_fullres`
-- 路径默认值
-  - 原始 BraTS 根目录
-  - raw/preprocessed/results 根目录
-  - 可视化输出目录
-  - 推理输入输出目录
-- 运行环境默认值
-  - 期望的 PyTorch/CUDA
-  - 默认并发参数
-
-你可以把它理解成“项目约定的总开关”，而不是“算法配置文件”。
-
-### 路径解析
-
-路径相关代码主要在：
-
-- [project_layout.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/project_layout.py)
-- [paths.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/paths.py)
-
-它们负责：
-
-- 找项目根目录
-- 找工作区根目录
-- 把相对路径解释成工作区路径
-- 设置并导出 `PROJECT_RAW / PROJECT_PREPROCESSED / PROJECT_RESULTS`
-
----
-
-## 4. 真实执行顺序
-
-在真正跑命令前，先把最关键的“文件从哪里来，到哪里去”看清楚。
-
-### 总数据流
-
-1. 原始 BraTS 训练集：
-   `archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
-2. 转换后的项目训练数据：
-   `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020`
-3. fingerprint、plans、预处理结果：
-   `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020`
-4. checkpoint、validation、crossval 汇总、最佳配置信息：
-   `nnUNet_test/nnUNet_results/Dataset220_BraTS2020`
-5. 项目内默认推理输入：
-   `BraTS/04_inference_and_evaluation/input`
-6. 项目内默认推理输出：
-   `BraTS/04_inference_and_evaluation/predictions`
-
-### 每一步到底读什么，写什么
-
-如果你关心的是“我现在敲这一条命令，它到底从哪里读、往哪里写”，直接看下面这个清单。
-
-#### `python run.py doctor`
-
-读取：
-
-- `BraTS/project_config.json`
-- 环境变量 `PROJECT_RAW / PROJECT_PREPROCESSED / PROJECT_RESULTS`
-- `torch` / CUDA 运行时
-
-写入：
-
-- 不写文件，只向终端打印环境检查结果
-
-#### `python run.py visualize-first-case`
-
-读取：
-
-- `archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
-
-写入：
-
-- `BraTS/00_first_case_visualization/output`
-
-#### `python run.py prepare-dataset`
-
-读取：
-
-- `archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
-
-写入：
-
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/labelsTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/dataset.json`
-- `BraTS/01_data_preparation/metadata/raw_dataset.json`
-- `BraTS/02_preprocess/metadata/dataset.json`
-
-#### `python run.py plan-preprocess`
-
-读取：
-
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/labelsTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/dataset.json`
-
-写入：
-
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/dataset_fingerprint.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans_2d/*`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans_3d_fullres/*`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/*`
-- `BraTS/02_preprocess/metadata/dataset_fingerprint.json`
-- `BraTS/02_preprocess/metadata/ProjectPlans.json`
-- `BraTS/02_preprocess/metadata/splits_final.json`
-- `BraTS/02_preprocess/logs/preprocess_*.log`
-- `BraTS/02_preprocess/logs/latest.log`
-
-#### `python run.py train --fold 0`
-
-读取：
-
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/dataset.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans_3d_fullres/*`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
-- 如果已有断点续训：
-  `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/checkpoint_*.pth`
-
-行为：
-
-- 默认会先检查当前 fold 是否已有可恢复训练状态
-- 如果有，会自动续训，选择顺序为 `checkpoint_final` -> `checkpoint_latest` -> `checkpoint_best`
-- 如果没有，会自动从头开始训练
-- 只有显式传 `--restart-training` 才会忽略已有 checkpoint
-- 训练决策会写入 `training_log_*.txt`
-- 每个 epoch 的训练记录图会写入并刷新 `progress.png`
-- `checkpoint_latest` 会在每个 epoch 后覆盖更新，尽量缩小中断恢复损失
-
-写入：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/checkpoint_best.pth`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/checkpoint_final.pth`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/checkpoint_latest.pth`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/training_log_*.txt`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/progress.png`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/validation/*`
-- `BraTS/03_training_and_results/results/fold_0/*`
-
-#### `python run.py train-all --npz`
-
-读取：
-
-- 和 `train --fold 0` 相同，只是对 `fold_0 ... fold_4` 逐个读取
-
-写入：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0 ... fold_4/*`
-- 每个 `fold_x/validation/` 里额外写出 `.npz` 概率文件
-
-行为：
-
-- 每个 fold 都独立判断“续训还是新开”
-- 有旧 checkpoint 的 fold 自动续训，没有的 fold 自动从头开始
-- 每个 fold 都会各自生成 `training_log_*.txt` 和 `progress.png`
-
-#### `python run.py find-best-config`
-
-读取：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/*/fold_x/validation/*`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/*/fold_x/validation/*.npz`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/*`
-
-写入：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<model>/crossval_results_folds_*/summary.json`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<model>/crossval_results_folds_*/postprocessing.pkl`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_instructions.txt`
-
-#### `python run.py predict`
-
-读取模型：
-
-- 默认优先读
-  `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
-- 再去读对应模型目录：
-  `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__<plans>__<configuration>/fold_x/checkpoint_*.pth`
-
-读取输入：
-
-- 默认读 `BraTS/04_inference_and_evaluation/input/*.nii.gz`
-- 如果这里没有输入病例，默认会从
-  `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr/*.nii.gz`
-  随机抽样一批病例复制进来
-
-写入：
-
-- `BraTS/04_inference_and_evaluation/input/sample_selection.json`
-- `BraTS/04_inference_and_evaluation/predictions/*.nii.gz`
-- `BraTS/04_inference_and_evaluation/predictions/dataset.json`
-- `BraTS/04_inference_and_evaluation/predictions/plans.json`
-- `BraTS/04_inference_and_evaluation/predictions/predict_from_raw_data_args.json`
-
-#### `python run.py evaluate`
-
-读取：
-
-- `BraTS/04_inference_and_evaluation/predictions/*.nii.gz`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/*.nii.gz`
-- 优先读
-  `BraTS/04_inference_and_evaluation/predictions/dataset.json`
-- 优先读
-  `BraTS/04_inference_and_evaluation/predictions/plans.json`
-- 如果预测目录里没有元数据，则回退读取
-  `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__<plans>__<configuration>/dataset.json`
-- 如果预测目录里没有元数据，则回退读取
-  `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__<plans>__<configuration>/plans.json`
-
-写入：
-
-- 默认写到 `BraTS/04_inference_and_evaluation/evaluation/summary.json`
-- 如果指定 `--output-file`，就写到该路径
-
-#### `visualize-first-case`
-
-从哪里读：
-
-- `archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
-
-写到哪里：
-
-- `BraTS/00_first_case_visualization/output`
-
-产物是什么：
-
-- 首个病例的多模态切片图
-- 标签可视化图
-- 帮助理解数据结构的说明文件
-
-#### `prepare-dataset`
-
-从哪里读：
-
-- `archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
-
-写到哪里：
-
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/labelsTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/dataset.json`
-
-顺手同步到哪里：
-
-- `BraTS/01_data_preparation/metadata/raw_dataset.json`
-- `BraTS/02_preprocess/metadata/dataset.json`
-
-产物是什么：
-
-- nnU-Net 风格的训练图像目录
-- nnU-Net 风格的标签目录
-- 数据集任务定义 `dataset.json`
-
-#### `plan-preprocess`
-
-从哪里读：
-
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/labelsTr`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/dataset.json`
-
-写到哪里：
-
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/dataset_fingerprint.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans_2d`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans_3d_fullres`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`
-
-顺手同步到哪里：
-
-- `BraTS/02_preprocess/metadata/dataset_fingerprint.json`
-- `BraTS/02_preprocess/metadata/ProjectPlans.json`
-- `BraTS/02_preprocess/metadata/splits_final.json`
-
-详细日志写到哪里：
-
-- `BraTS/02_preprocess/logs/preprocess_*.log`
-- `BraTS/02_preprocess/logs/latest.log`
-
-产物是什么：
-
-- 数据集统计 fingerprint
-- 自动规划出来的训练 plans
-- 训练器真正读取的 `.npz + .pkl` 预处理样本
-- 交叉验证分折文件
-- 用于后续评估的 GT 目录
-
-#### `train --fold 0`
-
-从哪里读：
-
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans_3d_fullres`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
-
-写到哪里：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0`
-
-里面会有什么：
-
-- `checkpoint_best.pth`
-- `checkpoint_final.pth`
-- `checkpoint_latest.pth`
-- `debug.json`
-- `progress.png`
-- `training_log_*.txt`
-- `validation/`
-
-顺手同步到哪里：
-
-- `BraTS/03_training_and_results/results/fold_0`
-
-产物是什么：
-
-- 当前 fold 的权重
-- 当前 fold 的训练日志和曲线
-- 当前 fold 的 validation 预测结果
-
-#### `train-all --npz`
-
-从哪里读：
-
-- 和单 fold 训练相同
-
-写到哪里：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0 ... fold_4`
-
-额外重要产物：
-
-- 每个 `fold_x/validation` 里会多出 `.npz` 概率文件
-
-为什么重要：
-
-- `find-best-config`
-- ensemble
-- 后处理搜索
-
-#### `find-best-config`
-
-从哪里读：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/*/fold_x/validation`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`
-
-写到哪里：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<model>/crossval_results_folds_*`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_instructions.txt`
-
-产物是什么：
-
-- 多 fold 汇总结果
-- 最佳单模型或 ensemble 的选择结果
-- 后处理建议
-- 后续推理该用什么 trainer/plans/configuration/folds 的说明
-
-#### `predict`
-
-默认从哪里读模型：
-
-- `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/...`
-- 如果你没显式指定模型参数，优先看
-  `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
-
-默认从哪里读输入：
-
-- `BraTS/04_inference_and_evaluation/input`
-
-默认写到哪里：
-
-- `BraTS/04_inference_and_evaluation/predictions`
-
-还会顺手写什么：
-
-- `BraTS/04_inference_and_evaluation/predictions/dataset.json`
-- `BraTS/04_inference_and_evaluation/predictions/plans.json`
-- `BraTS/04_inference_and_evaluation/predictions/predict_from_raw_data_args.json`
-
-注意：
-
-- `predict` 默认只写推理产物和推理元数据
-- `summary.json` 这类评估结果默认不再写到 `predictions/`
-
-如果输入目录是空的，会发生什么：
-
-- CLI 会从 `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr` 随机抽样少量训练病例
-- 把这批病例复制到 `BraTS/04_inference_and_evaluation/input`
-- 抽样记录写到 `BraTS/04_inference_and_evaluation/input/sample_selection.json`
-
-#### `evaluate`
-
-从哪里读预测：
-
-- 默认读 `BraTS/04_inference_and_evaluation/predictions`
-
-从哪里读 GT：
-
-- 默认读 `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`
-
-从哪里读元数据：
-
-- 优先读 `BraTS/04_inference_and_evaluation/predictions/dataset.json`
-- 优先读 `BraTS/04_inference_and_evaluation/predictions/plans.json`
-- 缺失时回退到对应 trained model 目录里的 `dataset.json/plans.json`
-
-写到哪里：
-
-- 默认写 `BraTS/04_inference_and_evaluation/evaluation/summary.json`
-- 如果你显式传 `--output-file`，就写到你指定的位置
-
-产物是什么：
-
-- `summary.json` 一类的结构化评估结果
-- 在默认严格模式下，是和 ground truth 完整对齐后的 Dice 等指标
-- 只有显式传 `--chill` 时，才允许对子集预测做评估
-
-#### `python run.py report-evaluation`
-
-读取：
-
-- `BraTS/04_inference_and_evaluation/evaluation/summary.json`
-- `BraTS/04_inference_and_evaluation/predictions/*.nii.gz`
-- `nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/*.nii.gz`
-- `nnUNet_test/nnUNet_raw/Dataset220_BraTS2020/imagesTr/*.nii.gz`
-- 如果存在，还会读取 `BraTS/04_inference_and_evaluation/input/sample_selection.json`
-
-写入：
-
-- `BraTS/04_inference_and_evaluation/report/report.md`
-- `BraTS/04_inference_and_evaluation/report/mean_dice_by_region.png`
-- `BraTS/04_inference_and_evaluation/report/case_ranking.png`
-- `BraTS/04_inference_and_evaluation/report/case_region_heatmap.png`
-- `BraTS/04_inference_and_evaluation/report/best_case_overlay.png`
-- `BraTS/04_inference_and_evaluation/report/worst_case_overlay.png`
-- `BraTS/04_inference_and_evaluation/report/summary.copy.json`
-- `BraTS/04_inference_and_evaluation/report/sample_selection.copy.json`
-
-### 第一步：检查环境
+### 先验证入口
 
 ```bash
+python run.py --help
 python run.py doctor
 ```
 
-快速冒烟测试也可以直接跑：
+如果你在上一级目录执行，对应命令是：
 
 ```bash
-python -m unittest tests.test_smoke
+python BraTS/run.py --help
+python BraTS/run.py doctor
 ```
 
-当前快速冒烟测试覆盖：
-
-- `python run.py` 无参数时能正常显示帮助
-- `doctor` 和 `doctor.py` 包装入口能正常执行
-- `prepare-dataset` 可重复执行
-- `prepare-dataset --help` 包含 `--force`
-- `plan-preprocess --help` 包含复用/重算开关
-- `plan-preprocess / train / predict / evaluate / find-best-config / report-evaluation --help` 能正常解析
-
-`doctor` 本身检查内容：
-
-- 工作区定位是否正确
-- `project_config.json` 是否可解析
-- raw/preprocessed/results 根目录是否存在
-- `torch` 是否已安装
-- CUDA 是否可见
-
-### 第二步：先看懂第一个病例
-
-```bash
-python run.py visualize-first-case
-```
-
-目的：
-
-- 先确认数据本身没有把你绕晕
-- 先建立 MRI 多模态与标签的空间直觉
-
-### 第三步：准备训练目录
+### 标准主线命令
 
 ```bash
 python run.py prepare-dataset
-```
-
-结果：
-
-- 第一次运行时构建 `PROJECT_RAW/Dataset220_BraTS2020`
-- 如果目标目录已经完整存在，则直接复用并成功退出
-- 如需强制重建，使用 `python run.py prepare-dataset --force`
-
-### 第四步：规划与预处理
-
-```bash
 python run.py plan-preprocess
-```
-
-结果：
-
-- 如果缺少 `dataset_fingerprint.json`，就生成它
-- 如果缺少 `ProjectPlans.json`，就生成它
-- 如果缺少某个 configuration 的预处理输出，就生成它
-- 已存在的 fingerprint / plans / preprocess 输出默认直接复用
-
-如需强制重算，可按需使用：
-
-```bash
-python run.py plan-preprocess --recompute-fingerprint
-python run.py plan-preprocess --recompute-plans
-python run.py plan-preprocess --force-preprocess
-python run.py plan-preprocess --clean
-```
-
-预处理时每个 case 的详细输出现在默认写到：
-
-- `BraTS/02_preprocess/logs/preprocess_*.log`
-- `BraTS/02_preprocess/logs/latest.log`
-
-终端默认只保留阶段信息和进度条。
-
-### 第五步：先跑 `fold_0`
-
-```bash
 python run.py train --fold 0
-```
-
-当前默认行为：
-
-- 默认 trainer 仍然是 `SegTrainer + ProjectPlans + 3d_fullres`
-- 默认训练轮数已经改成 `60 epochs`
-- 如果该 fold 已经存在 checkpoint，`train` 会默认自动续训
-- 只有显式加 `--restart-training` 才会忽略已有 checkpoint 从头开始
-
-目的：
-
-- 验证训练链路是否完整
-- 排除路径、plans、GPU、日志写入、checkpoint 等工程问题
-
-### 第六步：再跑完整五折
-
-```bash
 python run.py train-all --npz
-```
-
-为什么建议带 `--npz`：
-
-- 后面 `find-best-config` 和 ensemble 需要 validation 概率输出
-
-### 第七步：选择最佳配置
-
-```bash
 python run.py find-best-config
-```
-
-这一步会：
-
-- 汇总多折结果
-- 默认优先比较当前项目的默认训练组合
-- 如果默认组合还没有可用的 `fold_x/validation` 结果，会自动回退到当前数据集下实际已有 validation 输出的模型
-- 比较时不再允许“每个模型各用各的 fold 子集”；所有候选模型必须共享同一批 validation folds
-- 如果请求的 folds 不完整，系统会自动收缩到所有候选模型都共同拥有的 folds，并在终端明确打印
-- 如果候选模型之间连一个共享 fold 都没有，`find-best-config` 会直接报错，而不是继续输出不可比结果
-- 需要时可通过 `--configurations/--trainers/--plans-identifiers` 比较多组组合
-- 需要时比较 ensemble
-- 自动寻找最合适的后处理规则
-
-### 第八步：正式推理
-
-```bash
 python run.py predict
-```
-
-当前默认行为：
-
-- 如果你没有显式传 `--trainer/--configuration/--plans/--folds`，`predict` 会优先读取 `find-best-config` 生成的 `inference_information.json`
-- 也就是说，它会默认使用当前已经选出来的最佳单模型，而不是死用项目初始默认 trainer
-- 如果 `inference_information.json` 指向的是 ensemble，则需要你显式指定模型参数或按提示分别运行各成员模型
-- 如果默认输入目录 `BraTS/04_inference_and_evaluation/input` 是空的，CLI 会自动从 `PROJECT_RAW/Dataset220_BraTS2020/imagesTr` 随机抽样 `8` 个训练病例，把它们当成临时验证集来跑推理
-- 这批自动抽样病例会记录在 `BraTS/04_inference_and_evaluation/input/sample_selection.json`
-- 如需显式控制抽样数量和随机种子，可使用 `--sample-training-cases` 和 `--sample-seed`
-- 如需关闭这层默认自动抽样，可使用 `--disable-auto-sample-training`
-
-输入默认来自：
-
-- `BraTS/04_inference_and_evaluation/input`
-
-输出默认写到：
-
-- `BraTS/04_inference_and_evaluation/predictions`
-
-### 第九步：正式评估
-
-```bash
-python run.py evaluate
-```
-
-当前默认行为：
-
-- 如果预测目录为空，会直接提示你先跑 `predict`
-- 默认要求预测目录和 ground truth 完整一一对应；缺失病例或额外病例都会直接报错
-- 只有你显式传 `--chill` 时，才允许对子集预测做评估
-- 在未显式指定模型元数据参数时，`evaluate` 也会优先使用 `find-best-config` 选出的最佳模型元数据
-- 如果 `predict` 前一步用的是训练集随机抽样输入，评估这批样本时也需要显式加 `--chill`
-
-输出通常是：
-
-- `BraTS/04_inference_and_evaluation/evaluation/summary.json`
-- 按 case / 按 region 的结构化指标
-
-### 第十步：自动生成评估报告和可视化
-
-```bash
+python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
 python run.py report-evaluation
 ```
 
-输出默认写到：
+说明：
 
-- `BraTS/04_inference_and_evaluation/report`
+- `train --fold 0` 适合先验证训练链路。
+- `train-all --npz` 是完整五折训练的标准命令。
+- `evaluate` 目前请显式传 `--gt-dir ../nnUNet_test/.../gt_segmentations`。当前 CLI 的内置默认值与本仓库的真实目录布局不一致，直接省略 `--gt-dir` 会指到错误位置。这一项已在代码审查中记录为待修问题，因此 README 这里按真实实现给出可执行命令。
 
-这里会生成：
+## 仓库结构
 
-- `report.md`
-- 按 region 的 Dice 柱状图
-- 当前评估子集的病例排序图
-- 按病例 / 按 region 的 Dice heatmap
-- WT / TC / ET 三张单独的病例排序图
-- 最好病例和最差病例的 overlay 图
-- Precision / Recall 图
-- 预测体积相对 GT 的 volume bias 图
-- `analysis.json`
-- `case_metrics.csv`
-- `case_analysis.csv`
-- `case_analysis.md`
-- `cases/` 逐病例 Markdown 和 overlay 图
+### 根目录内主要内容
 
-这些 overlay 会直接把 MRI 底图、GT、预测和误差区域画出来，作用就是帮助你判断“哪里分得好、哪里分得差”。
+- `run.py`
+  统一 CLI 入口。真正调用的是 `03_training_and_results/src/brats_project/cli.py`。
+- `doctor.py`
+  入口包装脚本，等价于 `python run.py doctor`。
+- `project_config.json`
+  本项目默认数据集、路径和运行时参数的集中配置。
+- `00_first_case_visualization/`
+  原始病例可视化和数据直觉建立。
+- `01_data_preparation/`
+  原始 BraTS 病例转换成 `Dataset220_BraTS2020`。
+- `02_preprocess/`
+  fingerprint、plans、preprocess、日志和元数据快照。
+- `03_training_and_results/`
+  训练主代码和训练结果样例快照。
+- `04_inference_and_evaluation/`
+  推理输入、预测输出、评估结果和报告输出。
+- `tests/`
+  冒烟与回归测试。
 
----
+### 仓库外但由本项目默认使用的目录
 
-## 5. 推荐阅读顺序
+这些路径来自 [project_config.json](/home/Creeken/Desktop/machine-learning-test/BraTS/project_config.json)：
 
-如果你是第一次真正通读这套项目，建议按下面顺序：
+- `../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
+  原始 BraTS 数据根目录。
+- `../nnUNet_test/nnUNet_raw`
+  转换后的 raw 数据目录。
+- `../nnUNet_test/nnUNet_preprocessed`
+  fingerprint、plans、preprocess 和 `gt_segmentations`。
+- `../nnUNet_test/nnUNet_results`
+  checkpoint、validation 结果、cross-validation 汇总和 `inference_information.json`。
 
-1. [00_first_case_visualization/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/00_first_case_visualization/README.md)
-2. [01_data_preparation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/01_data_preparation/README.md)
-3. [01_data_preparation/docs/data_contract.md](/home/Creeken/Desktop/machine-learning-test/BraTS/01_data_preparation/docs/data_contract.md)
-4. [02_preprocess/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/02_preprocess/README.md)
-5. [02_preprocess/docs/preprocess_guide.md](/home/Creeken/Desktop/machine-learning-test/BraTS/02_preprocess/docs/preprocess_guide.md)
-6. [03_training_and_results/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/README.md)
-7. [03_training_and_results/docs/training_guide.md](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/docs/training_guide.md)
-8. [04_inference_and_evaluation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/README.md)
-9. [04_inference_and_evaluation/docs/inference_guide.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/docs/inference_guide.md)
-10. [TERMS_AND_THEORY.md](/home/Creeken/Desktop/machine-learning-test/BraTS/TERMS_AND_THEORY.md)
-11. [PIPELINE_EXPLANATION.md](/home/Creeken/Desktop/machine-learning-test/BraTS/PIPELINE_EXPLANATION.md)
-12. [explain.md](/home/Creeken/Desktop/machine-learning-test/BraTS/explain.md)
-13. [REFERENCES.md](/home/Creeken/Desktop/machine-learning-test/BraTS/REFERENCES.md)
+## 路径规则
 
-推荐这样读的原因不是“从浅到深”这么简单，而是为了让你先建立：
+这一点必须明确，因为它直接决定命令是否能跑通：
 
-- 数据契约
-- plans 语义
-- 训练目录结构
-- 推理依赖关系
+- CLI 里的相对路径不是相对于你当前 shell 的 `cwd` 解释，而是统一相对于 `BraTS` 项目根目录解释。
+- 因此，即使你在上一级目录执行 `python BraTS/run.py ...`，CLI 参数里的相对路径仍然要按 `BraTS` 根目录来写。
+- 例如 `predict` 的默认输入目录就是 `04_inference_and_evaluation/input`，不是 `BraTS/04_inference_and_evaluation/input`。
+- 对于仓库外目录，要显式写 `../...`，例如：
+  - `../archive/...`
+  - `../nnUNet_test/nnUNet_raw`
+  - `../nnUNet_test/nnUNet_preprocessed/...`
 
-之后再去看 `trainer` 和 `predictor` 源码，脑子里才不会只剩函数调用。
+### 典型对照
 
----
+| 目的 | 写法 |
+| --- | --- |
+| 仓库内推理输入目录 | `04_inference_and_evaluation/input` |
+| 仓库内预测输出目录 | `04_inference_and_evaluation/predictions` |
+| 仓库外 ground truth 目录 | `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations` |
+| 原始 BraTS 数据目录 | `../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData` |
 
-## 6. 你最应该先掌握的四个代码文件
+## 命令清单
 
-如果当前只能挑 4 个最关键的源码文件先吃透，建议优先看：
+### 环境与入口
 
-1. [cli.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/cli.py)
-2. [default_experiment_planner.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/experiment_planning/experiment_planners/default_experiment_planner.py)
-3. [default_preprocessor.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/preprocessing/preprocessors/default_preprocessor.py)
-4. [nnUNetTrainer.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/training/nnUNetTrainer/nnUNetTrainer.py)
+- `python run.py --help`
+  查看 CLI 总帮助，并确认当前应该使用 `python run.py ...` 还是 `python BraTS/run.py ...`。
+- `python run.py doctor`
+  打印项目根目录、默认数据集和关键路径状态。
+- `python doctor.py`
+  `doctor` 的包装入口。
 
-这四个文件几乎对应整套系统的四根主梁：
+### 数据准备
 
-- `cli.py`
-  - 调度层
-- `default_experiment_planner.py`
-  - 自动规划层
-- `default_preprocessor.py`
-  - 数据变换层
-- `nnUNetTrainer.py`
-  - 训练主控层
+- `python run.py visualize-first-case`
+  读取原始 BraTS 数据，生成首例病例可视化到 `00_first_case_visualization/output`。
+- `python run.py prepare-dataset`
+  将原始 BraTS 病例转换成 `../nnUNet_test/nnUNet_raw/Dataset220_BraTS2020`。
+- `python run.py prepare-dataset --force`
+  强制重建上述 raw 数据目录。
 
-如果你关心当前 PyTorch 兼容性，再额外看两个文件最值：
+### Preprocess
 
-1. [predict_from_raw_data.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/inference/predict_from_raw_data.py)
-2. [helpers.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/utilities/helpers.py)
+- `python run.py plan-preprocess`
+  复用已有 fingerprint、plans 和 preprocess 产物；缺什么补什么。
+- `python run.py plan-preprocess --verify-dataset --configurations 3d_fullres`
+  在 preprocess 前做数据完整性检查，并只处理 `3d_fullres`。
+- `python run.py plan-preprocess --recompute-fingerprint`
+  只重算 `dataset_fingerprint.json`。
+- `python run.py plan-preprocess --recompute-plans`
+  只重算 `ProjectPlans.json`。
+- `python run.py plan-preprocess --force-preprocess`
+  只重做预处理输出。
+- `python run.py plan-preprocess --clean`
+  三者都重做。
+
+### 训练
+
+- `python run.py train --fold 0`
+  先跑一个 fold 验证训练链路。
+- `python run.py train --fold 0 --validation-only --npz`
+  只对现有 fold 结果做最终 validation。
+- `python run.py train-all --npz`
+  跑默认五折，并保留 validation 概率输出，供 `find-best-config` 和 ensemble 使用。
+
+训练默认值与真实实现一致：
+
+- trainer: `SegTrainer`
+- plans: `ProjectPlans`
+- configuration: `3d_fullres`
+- epochs: `100`
+- folds: `0 1 2 3 4`
+
+训练恢复规则与真实实现一致：
+
+- 如果检测到当前 fold 已存在 checkpoint，CLI 会自动进入续训路径。
+- 自动恢复优先级是 `checkpoint_final.pth -> checkpoint_latest.pth -> checkpoint_best.pth`。
+- 如果你要强制从头开始，显式传 `--restart-training`。
+
+### 推理、评估与报告
+
+- `python run.py find-best-config`
+  汇总 shared folds 上的 validation 结果，确定最佳单模型或 ensemble，并写出 `inference_information.json`。
+- `python run.py predict`
+  默认从 `04_inference_and_evaluation/input` 读取，输出到 `04_inference_and_evaluation/predictions`。
+- `python run.py predict --sample-training-cases 12 --sample-seed 123`
+  从训练集随机抽样病例填充输入目录后执行推理。
+- `python run.py predict --disable-auto-sample-training`
+  禁止在默认输入目录为空时自动抽样。
+- `python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`
+  评估预测目录与 GT 目录。
+- `python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations --chill`
+  允许只评估一个预测子集。自动抽样出的临时验证集通常需要这一写法。
+- `python run.py report-evaluation`
+  从 `04_inference_and_evaluation/evaluation/summary.json` 和 `04_inference_and_evaluation/predictions` 生成 Markdown 报告和可视化。
+
+## 输入、输出和结果语义
+
+### 训练相关
+
+- 输入：
+  - `../nnUNet_test/nnUNet_raw/Dataset220_BraTS2020`
+  - `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020`
+- 输出：
+  - `../nnUNet_test/nnUNet_results/Dataset220_BraTS2020/...`
+- 仓库内同步快照：
+  - `02_preprocess/metadata/*`
+  - `02_preprocess/logs/*`
+  - `03_training_and_results/results/fold_*/*`
+
+### 推理相关
+
+- 默认输入目录：`04_inference_and_evaluation/input`
+- 默认预测目录：`04_inference_and_evaluation/predictions`
+- 默认评估输出：`04_inference_and_evaluation/evaluation/summary.json`
+- 默认报告输出：`04_inference_and_evaluation/report`
+
+### `input / predictions / evaluation / report` 的含义
+
+- `input`
+  推理输入目录。里面应该放待推理病例的四模态 NIfTI，或自动抽样生成的临时输入。
+- `predictions`
+  推理输出目录。包含 `.nii.gz` 预测分割，以及 `dataset.json`、`plans.json`、`predict_from_raw_data_args.json` 等推理元数据。
+- `evaluation`
+  评估结果目录。默认核心文件是 `summary.json`。
+- `report`
+  基于 `summary.json` 进一步生成的 Markdown 报告、图表、病例分析和 overlay 图。
+
+## 重新生成哪些结果
+
+### 重新生成 `input`
+
+- 手动删除 `04_inference_and_evaluation/input` 里的病例文件后重新放入新病例。
+- 如果你依赖自动抽样，也可以删除其中的 `.nii.gz` 和 `sample_selection.json`，再重新执行 `python run.py predict`。
+
+### 重新生成 `predictions`
+
+- 删除 `04_inference_and_evaluation/predictions` 下的预测输出后重新执行 `python run.py predict`。
+
+### 重新生成 `evaluation`
+
+- 删除 `04_inference_and_evaluation/evaluation/summary.json` 后重新执行 `python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`。
+
+### 重新生成 `report`
+
+- 删除 `04_inference_and_evaluation/report` 后重新执行 `python run.py report-evaluation`。
+
+## 哪些文件可以删，哪些不要删
+
+### 可以安全重建的仓库内产物
+
+- `00_first_case_visualization/output`
+- `02_preprocess/logs`
+- `02_preprocess/metadata`
+- `03_training_and_results/results`
+- `04_inference_and_evaluation/predictions`
+- `04_inference_and_evaluation/evaluation`
+- `04_inference_and_evaluation/report`
+- `04_inference_and_evaluation/input/sample_selection.json`
+
+### 需要谨慎处理的目录
+
+- `04_inference_and_evaluation/input`
+  里面可能是你手工放入的真实推理输入，不要在不了解内容时整目录删除。
+- `../nnUNet_test/nnUNet_raw`
+  这是训练数据集转换结果，删掉后需要重新 `prepare-dataset`。
+- `../nnUNet_test/nnUNet_preprocessed`
+  这是 preprocess 产物和 `gt_segmentations`，删掉后需要重新 `plan-preprocess`。
+- `../nnUNet_test/nnUNet_results`
+  这是 checkpoint 和验证结果，删掉会丢失训练恢复点和 `find-best-config` 依赖的 validation 产物。
+
+## 常见错误
+
+### 错误 1：在 `BraTS` 根目录里执行 `python BraTS/run.py ...`
+
+现象：
+
+```text
+python: can't open file '/.../BraTS/BraTS/run.py': [Errno 2] No such file or directory
+```
 
 原因：
 
-- 项目现在通过公共 helper 处理 compiled module 的识别与解包
-- 不再直接依赖私有的 `torch._dynamo.OptimizedModule`
-- DDP 下的 `torch.compile` 门控逻辑也已经按当前实现修正
+- 你已经在 `BraTS` 根目录里，不应该再写 `BraTS/run.py`。
 
----
+正确写法：
 
-## 7. 常见误解
+- 在 `BraTS` 根目录：`python run.py ...`
+- 在上一级目录：`python BraTS/run.py ...`
 
-### 误解 1：这就是一个普通训练脚本项目
+### 错误 2：显式路径忘了写 `../`
 
-不是。
+例如原始数据和 `nnUNet_test` 都在仓库外层，所以显式路径应该写成：
 
-这里的主角不是单个 `train.py`，而是一整条工程流水线。训练只是中间一环。
+- `../archive/...`
+- `../nnUNet_test/...`
 
-### 误解 2：只要知道训练命令就够了
+不要写成：
 
-不够。
+- `archive/...`
+- `nnUNet_test/...`
 
-这个项目里很多结果好坏，前因都在更早阶段：
+除非该路径本来就位于 `BraTS` 仓库内部。
 
-- 数据转换是否正确
-- labels 是否映射正确
-- plans 是否解释合理
-- preprocess 是否和 plans 一致
+### 错误 3：`predict` 能跑，但结果语义不对
 
-### 误解 3：`ProjectPlans.json` 只是个参数文件
+通常是输入命名契约错误：
 
-不只是。
+- `0000 = T1`
+- `0001 = T1ce`
+- `0002 = T2`
+- `0003 = Flair`
 
-它是 planner 针对当前数据集做出的正式配置决议，训练、预处理、推理都在依赖它。
+### 错误 4：`evaluate` 提示覆盖不一致
 
-### 误解 4：`find-best-config` 只是锦上添花
+原因通常是：
 
-不是。
+- 你评估的是预测子集；
+- 自动抽样只预测了一部分训练病例；
+- 或预测目录与 GT 目录文件名不完全对应。
 
-它在这个项目里承担“训练结果到最终推理方案”的桥梁作用。
+如果你是有意评估一个子集，显式传 `--chill`。
 
-### 误解 5：先读 trainer 最省事
+## 验证与测试
 
-通常相反。
+当前仓库至少应验证：
 
-如果你没先理解数据契约和 plans，trainer 里的很多逻辑会显得毫无上下文。
+```bash
+python run.py --help
+python run.py doctor
+python BraTS/run.py --help
+python BraTS/run.py doctor
+python -m unittest tests.test_smoke tests.test_regressions
+```
 
----
+## 进一步阅读
 
-## 8. 下一步应该去哪
-
-- 想先理解数据：
-  去看 [00_first_case_visualization/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/00_first_case_visualization/README.md)
-- 想先理解训练输入如何构造：
-  去看 [01_data_preparation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/01_data_preparation/README.md) 和 [data_contract.md](/home/Creeken/Desktop/machine-learning-test/BraTS/01_data_preparation/docs/data_contract.md)
-- 想先理解 nnU-Net 自动规划：
-  去看 [02_preprocess/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/02_preprocess/README.md)
-- 想先理解训练产物和 checkpoint：
-  去看 [03_training_and_results/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/README.md)
-- 想先理解正式推理和后处理：
-  去看 [04_inference_and_evaluation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/README.md)
-- 想按代码维度通读整个项目：
-  去看 [explain.md](/home/Creeken/Desktop/machine-learning-test/BraTS/explain.md)
+- [00_first_case_visualization/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/00_first_case_visualization/README.md)
+- [01_data_preparation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/01_data_preparation/README.md)
+- [01_data_preparation/docs/data_contract.md](/home/Creeken/Desktop/machine-learning-test/BraTS/01_data_preparation/docs/data_contract.md)
+- [02_preprocess/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/02_preprocess/README.md)
+- [02_preprocess/docs/preprocess_guide.md](/home/Creeken/Desktop/machine-learning-test/BraTS/02_preprocess/docs/preprocess_guide.md)
+- [03_training_and_results/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/README.md)
+- [03_training_and_results/docs/training_guide.md](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/docs/training_guide.md)
+- [04_inference_and_evaluation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/README.md)
+- [04_inference_and_evaluation/docs/inference_guide.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/docs/inference_guide.md)
+- [PIPELINE_EXPLANATION.md](/home/Creeken/Desktop/machine-learning-test/BraTS/PIPELINE_EXPLANATION.md)
+- [explain.md](/home/Creeken/Desktop/machine-learning-test/BraTS/explain.md)

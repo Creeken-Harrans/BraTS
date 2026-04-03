@@ -99,7 +99,7 @@ python run.py predict --disable-auto-sample-training
 
 项目会从这里读取输入，并把结果写到：
 
-- `BraTS/04_inference_and_evaluation/predictions`
+- `04_inference_and_evaluation/predictions`
 
 ---
 

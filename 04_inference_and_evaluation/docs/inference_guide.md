@@ -1,308 +1,132 @@
 # Inference Guide
 
 命令位置说明：
-- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
-- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
-- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
 
-这份 guide 的重点不是再解释一次命令，而是把：
+- 本文默认你当前目录就是 `BraTS` 项目根目录，所以命令写成 `python run.py ...`。
+- 如果你当前在上一级 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径也都默认相对于 `BraTS` 项目根目录。
 
-- best configuration selection
-- formal inference
-- postprocessing
-- evaluation
+这份 guide 重点解释四件事：最佳配置选择、推理默认值、评估严格模式和报告链路的依赖关系。
 
-这几层之间的依赖关系讲清楚。
+## 调用链
 
----
-
-## 1. 先记住这一阶段的三条调用链
-
-### 配置选择链
+### 最佳配置
 
 1. [run.py](/home/Creeken/Desktop/machine-learning-test/BraTS/run.py)
 2. [cli.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/cli.py)
 3. [find_best_configuration.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/evaluation/find_best_configuration.py)
 
-### 推理链
+### 推理
 
 1. [run.py](/home/Creeken/Desktop/machine-learning-test/BraTS/run.py)
 2. [cli.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/cli.py)
 3. [predict_from_raw_data.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/inference/predict_from_raw_data.py)
 
-### 评估链
+### 评估
 
 1. [run.py](/home/Creeken/Desktop/machine-learning-test/BraTS/run.py)
 2. [cli.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/cli.py)
 3. [evaluate_predictions.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/evaluation/evaluate_predictions.py)
 
-这三条链其实对应三个不同问题：
-
-- 哪个模型值得拿去用
-- 怎样把它用到正式数据上
-- 怎样证明结果到底好不好
-
----
-
-## 2. `find-best-config` 的真正职责
-
-它做的事远比“从若干结果里挑最好一个”更完整。
-
-### 它会先做什么
-
-- 找到当前可用的训练输出目录
-- 检查相应 configuration 是否真的存在
-- 汇总各 fold 的 validation 结果
-
-### 然后做什么
-
-- 只在所有候选模型共享的 validation folds 上比较单模型 cross-validation 表现
-- 如允许，构造并比较 ensemble
-
-### 最后做什么
-
-- 决定最佳单模型或最佳 ensemble
-- 自动搜索后处理规则
-- 生成：
-  - `inference_information.json`
-  - `inference_instructions.txt`
-
-也就是说，它在本项目中承担的是：
-
-- “从训练资产走向正式推理方案”的决策层
-
-这里有一个很重要的限制：
-
-- 不再允许模型 A 用一组 folds、模型 B 用另一组 folds 然后直接比较
-- 如果请求的 folds 不完整，系统会自动收缩到所有候选模型都共同拥有的 shared folds
-- 如果连一个共享 fold 都没有，`find-best-config` 会直接失败
-
----
-
-## 3. 为什么 `.npz` 概率输出会影响后面很多事
-
-如果训练时没保留 validation 概率图，后面会直接影响：
-
-- ensemble
-- 部分 best config 比较流程
-
-因为很多比较不是只看最终硬分割，而是需要：
-
-- 多 fold / 多模型概率输出做平均
-
-这也是为什么文档始终推荐：
+## 标准命令
 
 ```bash
 python run.py train-all --npz
+python run.py find-best-config
+python run.py predict
+python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py report-evaluation
 ```
 
----
+## `find-best-config` 真实在做什么
 
-## 4. predictor 在正式推理时真正依赖哪些东西
+它会：
 
-`predict_from_raw_data.py` 中的 predictor 会依赖：
+- 找出实际存在 validation 结果的候选模型；
+- 只在 shared folds 上比较；
+- 必要时尝试 ensemble；
+- 搜索后处理；
+- 生成正式推理说明文件。
 
-- 训练输出目录中的 `plans.json`
-- 训练输出目录中的 `dataset.json`
-- 一个或多个 fold checkpoint
-- 正式推理输入文件
+如果候选模型之间没有任何共享 fold，它会直接失败，而不是输出不可比较的“最佳模型”。
 
-然后做：
+## `predict` 依赖哪些东西
 
-1. 恢复 plans 和 dataset 定义
-2. 恢复 trainer 对应的网络结构
-3. 对输入执行与训练一致的 preprocess
-4. 做滑窗推理
-5. 多 fold 权重平均
-6. 把结果逆重采样、逆裁剪并导回原始空间
+最少需要：
 
-这说明：
+- 训练结果目录中的 checkpoint；
+- 训练结果目录中的 `plans.json`；
+- 训练结果目录中的 `dataset.json`；
+- 合法命名的四模态输入。
 
-- 正式推理并不是“把 NIfTI 丢给模型一下就完了”
-- 它依赖完整的训练上下文
+如果你不显式传模型参数，CLI 会优先读取 `inference_information.json`。
 
----
+## 默认输入命名契约
 
-## 5. 正式推理前最应该检查的前提
+每个 case 必须包含：
 
-### 前提 1：模型目录完整
+- `{case_id}_0000.nii.gz`
+- `{case_id}_0001.nii.gz`
+- `{case_id}_0002.nii.gz`
+- `{case_id}_0003.nii.gz`
 
-至少应包含：
+对应语义：
 
-- checkpoint
-- `plans.json`
-- `dataset.json`
+- `0000 = T1`
+- `0001 = T1ce`
+- `0002 = T2`
+- `0003 = Flair`
 
-### 前提 2：使用的 trainer / configuration / plans 一致
+如果顺序错了，命令通常仍能执行，但结果语义会直接错。
 
-不要训练时一个组合，推理时又手工换成另一个组合。
+## 自动抽样行为
 
-### 前提 3：输入目录命名正确
+默认输入目录 `04_inference_and_evaluation/input` 为空时，CLI 会：
 
-尤其要检查：
+- 从训练集抽样 `8` 个病例；
+- 复制到 `input`；
+- 写出 `input/sample_selection.json`。
 
-- case identifier 是否一致
-- `0000~0003` 是否完整
-- 通道顺序是否和训练保持一致
+如果你不希望这样，使用：
 
-### 前提 4：如果是 cascade 或 ensemble，前置产物是否齐全
+```bash
+python run.py predict --disable-auto-sample-training
+```
 
-某些 configuration 或 ensemble 依赖前一步预测结果或概率输出。
+## `evaluate` 的真实限制
 
----
+### 当前推荐写法
 
-## 6. 滑窗推理在做什么
+```bash
+python run.py evaluate \
+  --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+```
 
-当前 predictor 不会直接整幅吞下 3D volume。
+### 为什么要显式传 `--gt-dir`
 
-原因很简单：
+因为当前 CLI 的内置默认 `--gt-dir` 没有包含仓库外层所需的 `../`，与当前项目真实目录布局不一致。文档这里按真实可执行写法给出命令，代码问题已单独记录在 review findings 中。
 
-- 大多数 3D 医学图像无法整幅放进显存
+### 子集评估
 
-所以它会：
+如果你评估的是自动抽样生成的子集，使用：
 
-1. 按 patch size 对图像做切块
-2. 计算每个窗口的滑动位置
-3. 对每个 tile 分别预测
-4. 使用 Gaussian 权重融合重叠区域
+```bash
+python run.py evaluate \
+  --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations \
+  --chill
+```
 
-这一步和训练的 patch-based 思路在理念上是对齐的：
+## `report-evaluation` 依赖什么
 
-- 训练是 patch 输入
-- 推理也是 patch 化处理后再融合
+默认依赖：
 
----
+- `04_inference_and_evaluation/evaluation/summary.json`
+- `04_inference_and_evaluation/predictions`
+- `PROJECT_RAW/Dataset220_BraTS2020`
 
-## 7. 预测结果为什么还要“逆回原始空间”
+其中最后一项意味着当前 CLI 报告链路默认面向本项目数据集本身的病例。如果你评估的是完全外部的一批病例，报告 overlay 所需的原始模态目录需要单独处理。
 
-这是新手最容易忽略的点之一。
+## 相关文档
 
-因为模型看到的不是原始 NIfTI：
-
-- 它看到的是 preprocess 后的表示
-
-所以导出预测结果时，系统必须把它一步步变回原始空间：
-
-1. 逆重采样
-2. 逆裁剪
-3. 逆 transpose
-4. 用原始 metadata 写回 segmentation
-
-如果你不理解这一点，就很难真正看懂：
-
-- `export_prediction.py`
-- `write_seg`
-- 推理输出的 geometry 恢复逻辑
-
----
-
-## 8. 后处理在这一阶段为什么是“决策的一部分”
-
-很多项目里后处理只是手工加一条规则，但当前项目不是这样。
-
-这里的后处理模块会在验证集上尝试：
-
-- 去除小连通域
-- 只保留最大前景
-- 按 region/label 逐个测试
-
-然后只在指标真的更好时才采用。
-
-所以在这个项目里：
-
-- 后处理不是拍脑袋的附加脚本
-- 而是最终推理方案的一部分
-
----
-
-## 9. 评估阶段到底输出什么
-
-`evaluate_predictions.py` 不只是算一个平均 Dice。
-
-它通常会输出：
-
-- 每个 case 的结果
-- 每个 label / region 的结果
-- 前景平均
-- TP / FP / FN / TN
-- Dice / IoU
-
-这意味着评估结果既可用于：
-
-- 最终汇报
-
-也可用于：
-
-- 排查具体哪些病例或哪些 region 表现异常
-
-当前项目默认不会再静默跳过缺失预测：
-
-- 默认要求 prediction folder 和 gt folder 文件名完整对应
-- 只有显式传 `--chill` 时，才允许对子集预测做评估
-
----
-
-## 10. 建议检查目录顺序
-
-如果你正在做正式推理，推荐按下面顺序检查：
-
-1. `PROJECT_RESULTS/.../inference_information.json`
-2. `PROJECT_RESULTS/.../inference_instructions.txt`
-3. `BraTS/04_inference_and_evaluation/input`
-4. `BraTS/04_inference_and_evaluation/predictions`
-5. `BraTS/04_inference_and_evaluation/evaluation/summary.json`
-
-这个顺序的好处是：
-
-- 先明确系统推荐方案
-- 再检查你提供的输入
-- 再检查导出的结果
-- 最后检查评估指标
-
----
-
-## 11. 常见误解
-
-### 误解 1：best config 只是“看哪个 Dice 最大”
-
-不完整。
-
-它还要考虑：
-
-- 多折汇总
-- ensemble
-- 后处理
-
-### 误解 2：推理能跑完就说明输入没问题
-
-不对。
-
-输入通道顺序错误时，程序往往能跑，但结果语义错。
-
-### 误解 3：评估只在最终交付时才有用
-
-不对。
-
-评估结果也是回头定位问题的重要入口。
-
-### 误解 4：后处理只是“修修边缘”
-
-在这个项目里，后处理是通过验证集比较自动选出来的正式步骤，不只是修饰。
-
----
-
-## 12. 最后建议
-
-如果你要继续深挖源码，推荐顺序：
-
-1. [find_best_configuration.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/evaluation/find_best_configuration.py)
-2. [predict_from_raw_data.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/inference/predict_from_raw_data.py)
-3. [export_prediction.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/inference/export_prediction.py)
-4. [evaluate_predictions.py](/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/src/brats_project/evaluation/evaluate_predictions.py)
-
-这样你会先看到：
-
-- 最终怎么选模型
-- 选完之后怎么真正预测
-- 预测后怎么导回原始空间
-- 最后怎么量化结果
+- [04_inference_and_evaluation/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/README.md)
+- [04_inference_and_evaluation/input/README.md](/home/Creeken/Desktop/machine-learning-test/BraTS/04_inference_and_evaluation/input/README.md)

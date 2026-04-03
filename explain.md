@@ -1100,10 +1100,10 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 - 如果你没有显式传 `--trainer/--configuration/--plans/--folds`
 - CLI 会优先读取 `PROJECT_RESULTS/Dataset220_BraTS2020/inference_information.json`
 - 然后自动切换到 `find-best-config` 当前选出来的最佳单模型
-- 如果默认输入目录 `BraTS/04_inference_and_evaluation/input` 为空
+- 如果默认输入目录 `04_inference_and_evaluation/input` 为空
 - CLI 会进一步从 `PROJECT_RAW/Dataset220_BraTS2020/imagesTr` 随机抽样少量训练病例，把它们复制成临时验证输入
 - 默认抽样数量是 `8`，随机种子默认是 `42`
-- 抽样清单会落到 `BraTS/04_inference_and_evaluation/input/sample_selection.json`
+- 抽样清单会落到 `04_inference_and_evaluation/input/sample_selection.json`
 
 这意味着项目默认推理不再是“死用初始默认 trainer”，而是“优先跟随当前最佳模型结论”。
 
@@ -1181,7 +1181,13 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
   - IoU
 - 汇总成 `summary.json`
 
-在当前项目的 CLI 封装里，`python run.py evaluate` 现在默认是严格模式：
+在当前项目的 CLI 封装里，建议按下面这个可执行写法运行评估：
+
+```bash
+python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+```
+
+它现在默认是严格模式：
 
 - 如果预测目录为空，会直接报“先跑 predict”的清晰错误
 - 如果预测文件名和 ground-truth 集不完全一致，也会直接报错，而不是静默跳过缺失病例

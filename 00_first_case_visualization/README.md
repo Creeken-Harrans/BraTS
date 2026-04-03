@@ -41,7 +41,7 @@
 
 默认输出目录：
 
-- `BraTS/00_first_case_visualization/output`
+- `00_first_case_visualization/output`
 
 典型产物：
 
@@ -61,8 +61,8 @@ python run.py visualize-first-case
 
 ```bash
 python run.py visualize-first-case \
-  --data-root archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
-  --output-dir BraTS/00_first_case_visualization/output
+  --data-root ../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
+  --output-dir 00_first_case_visualization/output
 ```
 
 ---
