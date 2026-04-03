@@ -1,5 +1,10 @@
 # Preprocess Guide
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这份 guide 的目标不是重复命令，而是解释：
 
 - preprocess 阶段真正决定了什么

@@ -1,5 +1,18 @@
 # BraTS2020 Project
 
+## 命令执行位置先看这里
+
+本仓库有两种合法调用方式，取决于你当前站在哪个目录：
+
+- 当前目录就是 `BraTS` 仓库根目录：
+  - `python run.py train-all --npz`
+- 当前目录是它的上一级 `machine-learning-test`：
+  - `python BraTS/run.py train-all --npz`
+
+本文后续命令默认全部按第一种写法展示，也就是默认你已经 `cd BraTS`。
+如果你在上一级目录执行，同一条命令只需要把脚本路径改成 `BraTS/run.py`。
+本文中未特别说明的相对路径，也默认都相对于 `BraTS` 仓库根目录。
+
 这个目录不是“几个训练脚本的合集”，而是一套围绕你当前工作区、当前 BraTS2020 数据、当前 nnU-Net 派生代码整理出来的完整项目。
 
 它有三个非常明确的目标：
@@ -186,7 +199,7 @@
 
 如果你关心的是“我现在敲这一条命令，它到底从哪里读、往哪里写”，直接看下面这个清单。
 
-#### `python BraTS/run.py doctor`
+#### `python run.py doctor`
 
 读取：
 
@@ -198,7 +211,7 @@
 
 - 不写文件，只向终端打印环境检查结果
 
-#### `python BraTS/run.py visualize-first-case`
+#### `python run.py visualize-first-case`
 
 读取：
 
@@ -208,7 +221,7 @@
 
 - `BraTS/00_first_case_visualization/output`
 
-#### `python BraTS/run.py prepare-dataset`
+#### `python run.py prepare-dataset`
 
 读取：
 
@@ -222,7 +235,7 @@
 - `BraTS/01_data_preparation/metadata/raw_dataset.json`
 - `BraTS/02_preprocess/metadata/dataset.json`
 
-#### `python BraTS/run.py plan-preprocess`
+#### `python run.py plan-preprocess`
 
 读取：
 
@@ -244,7 +257,7 @@
 - `BraTS/02_preprocess/logs/preprocess_*.log`
 - `BraTS/02_preprocess/logs/latest.log`
 
-#### `python BraTS/run.py train --fold 0`
+#### `python run.py train --fold 0`
 
 读取：
 
@@ -275,7 +288,7 @@
 - `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__ProjectPlans__3d_fullres/fold_0/validation/*`
 - `BraTS/03_training_and_results/results/fold_0/*`
 
-#### `python BraTS/run.py train-all --npz`
+#### `python run.py train-all --npz`
 
 读取：
 
@@ -292,7 +305,7 @@
 - 有旧 checkpoint 的 fold 自动续训，没有的 fold 自动从头开始
 - 每个 fold 都会各自生成 `training_log_*.txt` 和 `progress.png`
 
-#### `python BraTS/run.py find-best-config`
+#### `python run.py find-best-config`
 
 读取：
 
@@ -307,7 +320,7 @@
 - `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
 - `nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_instructions.txt`
 
-#### `python BraTS/run.py predict`
+#### `python run.py predict`
 
 读取模型：
 
@@ -331,7 +344,7 @@
 - `BraTS/04_inference_and_evaluation/predictions/plans.json`
 - `BraTS/04_inference_and_evaluation/predictions/predict_from_raw_data_args.json`
 
-#### `python BraTS/run.py evaluate`
+#### `python run.py evaluate`
 
 读取：
 
@@ -558,7 +571,7 @@
 - 在默认严格模式下，是和 ground truth 完整对齐后的 Dice 等指标
 - 只有显式传 `--chill` 时，才允许对子集预测做评估
 
-#### `python BraTS/run.py report-evaluation`
+#### `python run.py report-evaluation`
 
 读取：
 
@@ -582,18 +595,18 @@
 ### 第一步：检查环境
 
 ```bash
-python BraTS/run.py doctor
+python run.py doctor
 ```
 
 快速冒烟测试也可以直接跑：
 
 ```bash
-python -m unittest BraTS.tests.test_smoke
+python -m unittest tests.test_smoke
 ```
 
 当前快速冒烟测试覆盖：
 
-- `python BraTS/run.py` 无参数时能正常显示帮助
+- `python run.py` 无参数时能正常显示帮助
 - `doctor` 和 `doctor.py` 包装入口能正常执行
 - `prepare-dataset` 可重复执行
 - `prepare-dataset --help` 包含 `--force`
@@ -611,7 +624,7 @@ python -m unittest BraTS.tests.test_smoke
 ### 第二步：先看懂第一个病例
 
 ```bash
-python BraTS/run.py visualize-first-case
+python run.py visualize-first-case
 ```
 
 目的：
@@ -622,19 +635,19 @@ python BraTS/run.py visualize-first-case
 ### 第三步：准备训练目录
 
 ```bash
-python BraTS/run.py prepare-dataset
+python run.py prepare-dataset
 ```
 
 结果：
 
 - 第一次运行时构建 `PROJECT_RAW/Dataset220_BraTS2020`
 - 如果目标目录已经完整存在，则直接复用并成功退出
-- 如需强制重建，使用 `python BraTS/run.py prepare-dataset --force`
+- 如需强制重建，使用 `python run.py prepare-dataset --force`
 
 ### 第四步：规划与预处理
 
 ```bash
-python BraTS/run.py plan-preprocess
+python run.py plan-preprocess
 ```
 
 结果：
@@ -647,10 +660,10 @@ python BraTS/run.py plan-preprocess
 如需强制重算，可按需使用：
 
 ```bash
-python BraTS/run.py plan-preprocess --recompute-fingerprint
-python BraTS/run.py plan-preprocess --recompute-plans
-python BraTS/run.py plan-preprocess --force-preprocess
-python BraTS/run.py plan-preprocess --clean
+python run.py plan-preprocess --recompute-fingerprint
+python run.py plan-preprocess --recompute-plans
+python run.py plan-preprocess --force-preprocess
+python run.py plan-preprocess --clean
 ```
 
 预处理时每个 case 的详细输出现在默认写到：
@@ -663,7 +676,7 @@ python BraTS/run.py plan-preprocess --clean
 ### 第五步：先跑 `fold_0`
 
 ```bash
-python BraTS/run.py train --fold 0
+python run.py train --fold 0
 ```
 
 当前默认行为：
@@ -681,7 +694,7 @@ python BraTS/run.py train --fold 0
 ### 第六步：再跑完整五折
 
 ```bash
-python BraTS/run.py train-all --npz
+python run.py train-all --npz
 ```
 
 为什么建议带 `--npz`：
@@ -691,7 +704,7 @@ python BraTS/run.py train-all --npz
 ### 第七步：选择最佳配置
 
 ```bash
-python BraTS/run.py find-best-config
+python run.py find-best-config
 ```
 
 这一步会：
@@ -709,7 +722,7 @@ python BraTS/run.py find-best-config
 ### 第八步：正式推理
 
 ```bash
-python BraTS/run.py predict
+python run.py predict
 ```
 
 当前默认行为：
@@ -733,7 +746,7 @@ python BraTS/run.py predict
 ### 第九步：正式评估
 
 ```bash
-python BraTS/run.py evaluate
+python run.py evaluate
 ```
 
 当前默认行为：
@@ -752,7 +765,7 @@ python BraTS/run.py evaluate
 ### 第十步：自动生成评估报告和可视化
 
 ```bash
-python BraTS/run.py report-evaluation
+python run.py report-evaluation
 ```
 
 输出默认写到：

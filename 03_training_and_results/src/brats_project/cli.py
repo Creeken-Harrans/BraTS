@@ -26,6 +26,31 @@ def _project_file(relative_path: str) -> Path:
     return get_project_root() / relative_path
 
 
+def _invocation_examples() -> tuple[str, str]:
+    return (
+        "BraTS project root (`.../machine-learning-test/BraTS`): python run.py ...",
+        "Parent workspace (`.../machine-learning-test`): python BraTS/run.py ...",
+    )
+
+
+def _invocation_epilog() -> str:
+    project_root_example, parent_workspace_example = _invocation_examples()
+    return (
+        "Command location guide:\n"
+        f"  - {project_root_example}\n"
+        f"  - {parent_workspace_example}\n"
+        "All relative paths in this CLI are resolved from the BraTS project root."
+    )
+
+
+def _predict_command_hint() -> str:
+    return (
+        "Run predict first with one of these forms:\n"
+        "  - python run.py predict\n"
+        "  - python BraTS/run.py predict"
+    )
+
+
 def _default_evaluation_output_file() -> Path:
     output_dir = _project_file("04_inference_and_evaluation/evaluation")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -390,6 +415,9 @@ def cmd_doctor(_: argparse.Namespace) -> int:
     print("BraTS project doctor")
     print(f"path_base: {workspace_relative_string(get_project_root())}")
     print(f"project_root: {workspace_relative_string(get_project_root())}")
+    project_root_example, parent_workspace_example = _invocation_examples()
+    print(f"invoke_from_project_root: {project_root_example}")
+    print(f"invoke_from_parent_workspace: {parent_workspace_example}")
     print(f"dataset: {dataset['name']} (id={dataset['id']})")
     print(f"archive_root: {paths['archive_root']}")
     print(f"project_raw_root: {workspace_relative_string(env['PROJECT_RAW'])}")
@@ -580,7 +608,9 @@ def cmd_train(args: argparse.Namespace) -> int:
             "Preprocessed training data is missing or incomplete for the requested configuration.\n"
             f"Expected complete directory: {preprocessed_dir / configuration_manager.data_identifier}\n"
             "Repair it with:\n"
-            f"python BraTS/run.py plan-preprocess --plans {args.plans} "
+            f"  - python run.py plan-preprocess --plans {args.plans} "
+            f"--configurations {args.configuration} --force-preprocess\n"
+            f"  - python BraTS/run.py plan-preprocess --plans {args.plans} "
             f"--configurations {args.configuration} --force-preprocess"
         )
     continue_training = args.continue_training
@@ -794,8 +824,8 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     if len(predicted_files) == 0:
         raise RuntimeError(
             f"Prediction folder is empty: {pred_dir}\n"
-            "Run `python BraTS/run.py predict` first, or pass --pred-dir to a folder that already contains "
-            "predicted segmentations."
+            f"{_predict_command_hint()}\n"
+            "Or pass --pred-dir to a folder that already contains predicted segmentations."
         )
     gt_dir = resolve_workspace_path(args.gt_dir)
     gt_files = sorted(p.name for p in gt_dir.glob(f"*{file_ending}"))
@@ -890,7 +920,9 @@ def build_parser() -> argparse.ArgumentParser:
     runtime = config["runtime"]
 
     parser = argparse.ArgumentParser(
-        description="Standalone BraTS2020 project entrypoint"
+        description="Standalone BraTS2020 project entrypoint",
+        epilog=_invocation_epilog(),
+        formatter_class=argparse.RawTextHelpFormatter,
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -1026,8 +1058,22 @@ def build_parser() -> argparse.ArgumentParser:
     best.set_defaults(func=cmd_find_best_config)
 
     predict = subparsers.add_parser("predict", help="Run model inference")
-    predict.add_argument("--input-dir", default=paths["prediction_input_root"])
-    predict.add_argument("--output-dir", default=paths["prediction_output_root"])
+    predict.add_argument(
+        "--input-dir",
+        default=paths["prediction_input_root"],
+        help=(
+            "Prediction input directory. Relative paths are resolved from the BraTS project root. "
+            "Default: 04_inference_and_evaluation/input"
+        ),
+    )
+    predict.add_argument(
+        "--output-dir",
+        default=paths["prediction_output_root"],
+        help=(
+            "Prediction output directory. Relative paths are resolved from the BraTS project root. "
+            "Default: 04_inference_and_evaluation/predictions"
+        ),
+    )
     predict.add_argument("--configuration", default=dataset["default_configuration"])
     predict.add_argument("--trainer", default=dataset["trainer"])
     predict.add_argument("--plans", default=dataset["plans"])
@@ -1080,8 +1126,18 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument(
         "--gt-dir",
         default="nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations",
+        help=(
+            "Ground-truth segmentation directory. Relative paths are resolved from the BraTS project root."
+        ),
     )
-    evaluate.add_argument("--pred-dir", default=paths["prediction_output_root"])
+    evaluate.add_argument(
+        "--pred-dir",
+        default=paths["prediction_output_root"],
+        help=(
+            "Prediction directory. Relative paths are resolved from the BraTS project root. "
+            "Default: 04_inference_and_evaluation/predictions"
+        ),
+    )
     evaluate.add_argument(
         "--dataset-json",
         default=None,
@@ -1098,7 +1154,7 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument(
         "--output-file",
         default=None,
-        help="Defaults to BraTS/04_inference_and_evaluation/evaluation/summary.json.",
+        help="Defaults to 04_inference_and_evaluation/evaluation/summary.json.",
     )
     evaluate.add_argument(
         "--num-processes", type=int, default=runtime["default_num_processes"]
@@ -1113,19 +1169,31 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument(
         "--summary-file",
         default=None,
-        help="Defaults to BraTS/04_inference_and_evaluation/evaluation/summary.json.",
+        help="Defaults to 04_inference_and_evaluation/evaluation/summary.json.",
     )
     report.add_argument(
         "--predictions-dir",
         default=paths["prediction_output_root"],
+        help=(
+            "Prediction directory consumed by the report generator. Relative paths are resolved "
+            "from the BraTS project root. Default: 04_inference_and_evaluation/predictions"
+        ),
     )
     report.add_argument(
         "--sample-selection-file",
-        default="BraTS/04_inference_and_evaluation/input/sample_selection.json",
+        default="04_inference_and_evaluation/input/sample_selection.json",
+        help=(
+            "Sampling metadata file written by predict auto-sampling. Relative paths are resolved "
+            "from the BraTS project root. Default: 04_inference_and_evaluation/input/sample_selection.json"
+        ),
     )
     report.add_argument(
         "--output-dir",
-        default="BraTS/04_inference_and_evaluation/report",
+        default="04_inference_and_evaluation/report",
+        help=(
+            "Report output directory. Relative paths are resolved from the BraTS project root. "
+            "Default: 04_inference_and_evaluation/report"
+        ),
     )
     report.set_defaults(func=cmd_report_evaluation)
 

@@ -1,5 +1,10 @@
 # 01 Data Preparation
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这一阶段做的不是“复制文件”，而是把原始 BraTS 病例转换成当前项目训练链路真正承认的输入目录。
 
 如果把整个项目看成一条流水线，那么这一层就是：
@@ -52,13 +57,13 @@
 ### 运行命令
 
 ```bash
-python BraTS/run.py prepare-dataset
+python run.py prepare-dataset
 ```
 
 也可以显式指定：
 
 ```bash
-python BraTS/run.py prepare-dataset \
+python run.py prepare-dataset \
   --src-root archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
   --project-raw nnUNet_test/nnUNet_raw
 ```
@@ -71,13 +76,13 @@ python BraTS/run.py prepare-dataset \
 也就是说，重复执行时直接运行默认命令即可：
 
 ```bash
-python BraTS/run.py prepare-dataset
+python run.py prepare-dataset
 ```
 
 只有确实要重建时，才运行：
 
 ```bash
-python BraTS/run.py prepare-dataset --force
+python run.py prepare-dataset --force
 ```
 
 ---

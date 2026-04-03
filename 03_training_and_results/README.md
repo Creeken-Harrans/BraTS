@@ -1,5 +1,10 @@
 # 03 Training And Results
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这一阶段负责把 preprocess 后的数据真正送入训练器，并产生日志、checkpoint、validation 结果和后续推理所需的模型产物。
 
 这层的重点不是“命令怎么敲”，而是：
@@ -44,7 +49,7 @@
 先验证链路：
 
 ```bash
-python BraTS/run.py train --fold 0
+python run.py train --fold 0
 ```
 
 补充说明：
@@ -60,7 +65,7 @@ python BraTS/run.py train --fold 0
 再跑完整五折：
 
 ```bash
-python BraTS/run.py train-all --npz
+python run.py train-all --npz
 ```
 
 `train-all` 也遵循同样规则：
@@ -72,7 +77,7 @@ python BraTS/run.py train-all --npz
 必要时只补验证：
 
 ```bash
-python BraTS/run.py train --fold 0 --validation-only --npz
+python run.py train --fold 0 --validation-only --npz
 ```
 
 ### 输出
@@ -156,7 +161,7 @@ trainer 主体：
 
 - CLI 会在进入 trainer 之前先检查当前 configuration 的 preprocess 输出是否完整
 - 如果训练结果目录里已经存在 checkpoint，则默认把这次调用视为“继续训练”
-- 因此 `python BraTS/run.py train --fold 0` 在当前项目里更接近“确保 fold_0 处于继续可跑状态”，而不是机械地每次都从 epoch 0 开始
+- 因此 `python run.py train --fold 0` 在当前项目里更接近“确保 fold_0 处于继续可跑状态”，而不是机械地每次都从 epoch 0 开始
 
 ---
 
@@ -242,7 +247,7 @@ trainer 初始化至少依赖下面这些输入：
 完整五折训练时，推荐：
 
 ```bash
-python BraTS/run.py train-all --npz
+python run.py train-all --npz
 ```
 
 原因不是“多存点东西保险”，而是因为后面的：

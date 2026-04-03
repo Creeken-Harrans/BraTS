@@ -114,8 +114,13 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
             new_state_dict[key] = value
 
         self.my_init_kwargs = checkpoint["init_args"]
-        self.current_epoch = checkpoint["current_epoch"]
         self.logger.load_checkpoint(checkpoint["logging"])
+        (
+            self.current_epoch,
+            logged_epochs,
+            state_next_epoch,
+            text_log_next_epoch,
+        ) = self._resolve_resume_epoch(checkpoint_path, checkpoint)
         self._best_ema = checkpoint["_best_ema"]
         self.inference_allowed_mirroring_axes = (
             checkpoint["inference_allowed_mirroring_axes"]
@@ -140,7 +145,24 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
         if self.grad_scaler is not None:
             if checkpoint["grad_scaler_state"] is not None:
                 self.grad_scaler.load_state_dict(checkpoint["grad_scaler_state"])
+        self.resume_checkpoint_path = checkpoint_path
+        basename = checkpoint_path.split("/")[-1]
+        if basename == "checkpoint_latest.pth":
+            self.latest_checkpoint_path = checkpoint_path
+        elif basename == "checkpoint_best.pth":
+            self.best_checkpoint_path = checkpoint_path
+        elif basename == "checkpoint_final.pth":
+            self.final_checkpoint_path = checkpoint_path
         self.print_to_log_file(
-            f"Loaded checkpoint state from {checkpoint_path}. Resuming at epoch {self.current_epoch}.",
+            "Loaded checkpoint state",
+            {
+                "checkpoint_path": checkpoint_path,
+                "resuming_at_epoch": self.current_epoch,
+                "display_epoch": f"{self.current_epoch + 1}/{self.num_epochs}",
+                "logged_epochs": logged_epochs,
+                "state_next_epoch": state_next_epoch,
+                "text_log_next_epoch": text_log_next_epoch,
+            },
             also_print_to_console=True,
         )
+        self._write_training_state("running")

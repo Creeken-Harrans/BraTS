@@ -1,5 +1,10 @@
 # 02 Preprocess
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这一阶段是整套项目里最接近 nnU-Net 核心思想的一层。
 
 如果说：
@@ -53,13 +58,13 @@
 ### 运行命令
 
 ```bash
-python BraTS/run.py plan-preprocess
+python run.py plan-preprocess
 ```
 
 常用参数示例：
 
 ```bash
-python BraTS/run.py plan-preprocess \
+python run.py plan-preprocess \
   --verify-dataset \
   --plans ProjectPlans \
   --configurations 3d_fullres
@@ -76,10 +81,10 @@ python BraTS/run.py plan-preprocess \
 只有在你明确要求时才重算：
 
 ```bash
-python BraTS/run.py plan-preprocess --recompute-fingerprint
-python BraTS/run.py plan-preprocess --recompute-plans
-python BraTS/run.py plan-preprocess --force-preprocess
-python BraTS/run.py plan-preprocess --clean
+python run.py plan-preprocess --recompute-fingerprint
+python run.py plan-preprocess --recompute-plans
+python run.py plan-preprocess --force-preprocess
+python run.py plan-preprocess --clean
 ```
 
 其中：

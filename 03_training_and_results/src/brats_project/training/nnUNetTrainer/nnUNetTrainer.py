@@ -4,8 +4,10 @@ import os
 import shutil
 import sys
 import warnings
+from ast import literal_eval
 from copy import deepcopy
 from datetime import datetime
+from glob import glob
 from time import time, sleep
 from typing import Tuple, Union, List, Optional
 
@@ -276,6 +278,11 @@ class nnUNetTrainer(object):
                 timestamp.second,
             ),
         )
+        self.training_state_file = join(self.output_folder, "training_state.json")
+        self.resume_checkpoint_path = None
+        self.latest_checkpoint_path = None
+        self.best_checkpoint_path = None
+        self.final_checkpoint_path = None
         self.logger = MetaLogger(self.output_folder, continue_training)
         self.logger.update_config(logger_config)
 
@@ -452,6 +459,92 @@ class nnUNetTrainer(object):
             dct["torch_version"] = torch_version
             dct["cudnn_version"] = cudnn_version
             save_json(dct, join(self.output_folder, "debug.json"))
+
+    def _read_training_state(self) -> Optional[dict]:
+        if not isfile(self.training_state_file):
+            return None
+        try:
+            return load_json(self.training_state_file)
+        except Exception as exc:
+            self.print_to_log_file(
+                f"WARNING: Failed to read training state file {self.training_state_file}: {exc}",
+                also_print_to_console=True,
+            )
+            return None
+
+    def _write_training_state(self, status: str) -> None:
+        if self.local_rank != 0:
+            return
+
+        logged_epochs = self.logger.get_num_logged_epochs()
+        next_epoch = max(int(self.current_epoch), int(logged_epochs))
+        current_completed_epoch = logged_epochs - 1 if logged_epochs > 0 else None
+        payload = {
+            "status": status,
+            "timestamp": datetime.now().isoformat(),
+            "trainer_name": self.__class__.__name__,
+            "configuration": self.configuration_name,
+            "fold": self.fold,
+            "output_folder": self.output_folder,
+            "log_file": self.log_file,
+            "training_state_file": self.training_state_file,
+            "resume_checkpoint_path": self.resume_checkpoint_path,
+            "latest_checkpoint_path": self.latest_checkpoint_path,
+            "best_checkpoint_path": self.best_checkpoint_path,
+            "final_checkpoint_path": self.final_checkpoint_path,
+            "num_epochs": self.num_epochs,
+            "logged_epochs": logged_epochs,
+            "current_completed_epoch": current_completed_epoch,
+            "next_epoch": next_epoch,
+            "remaining_epochs": max(self.num_epochs - next_epoch, 0),
+        }
+        save_json(payload, self.training_state_file, sort_keys=False)
+
+    def _infer_next_epoch_from_text_logs(self) -> Optional[int]:
+        next_epoch = None
+        log_files = sorted(glob(join(self.output_folder, "training_log_*.txt")))
+        for log_file in log_files:
+            try:
+                with open(log_file, "r") as f:
+                    for line in f:
+                        if "Epoch summary" in line and "{" in line and "}" in line:
+                            payload = line[line.find("{") : line.rfind("}") + 1]
+                            parsed = literal_eval(payload)
+                            if isinstance(parsed, dict) and "next_epoch" in parsed:
+                                next_epoch = max(
+                                    next_epoch or 0, int(parsed["next_epoch"])
+                                )
+            except (IOError, OSError, SyntaxError, ValueError, TypeError):
+                continue
+        return next_epoch
+
+    def _resolve_resume_epoch(
+        self, checkpoint_path: str, checkpoint: dict
+    ) -> Tuple[int, int, Optional[int], Optional[int]]:
+        logged_epochs = self.logger.get_num_logged_epochs()
+        resolved_epoch = max(int(checkpoint["current_epoch"]), int(logged_epochs))
+
+        state_next_epoch = None
+        training_state = self._read_training_state()
+        matching_checkpoint_paths = (
+            {
+                training_state.get("resume_checkpoint_path"),
+                training_state.get("latest_checkpoint_path"),
+                training_state.get("best_checkpoint_path"),
+                training_state.get("final_checkpoint_path"),
+            }
+            if training_state is not None
+            else set()
+        )
+        if training_state is not None and checkpoint_path in matching_checkpoint_paths:
+            state_next_epoch = int(training_state.get("next_epoch", 0))
+            resolved_epoch = max(resolved_epoch, state_next_epoch)
+
+        text_log_next_epoch = self._infer_next_epoch_from_text_logs()
+        if text_log_next_epoch is not None:
+            resolved_epoch = max(resolved_epoch, text_log_next_epoch)
+
+        return resolved_epoch, logged_epochs, state_next_epoch, text_log_next_epoch
 
     @staticmethod
     def build_network_architecture(
@@ -1273,6 +1366,25 @@ class nnUNetTrainer(object):
         self.plot_network_architecture()
 
         self._save_debug_information()
+        self._write_training_state("running")
+        self.print_to_log_file(
+            "Training session state:",
+            {
+                "output_folder": self.output_folder,
+                "log_file": self.log_file,
+                "training_state_file": self.training_state_file,
+                "starting_epoch": self.current_epoch,
+                "logged_epochs": self.logger.get_num_logged_epochs(),
+                "num_epochs": self.num_epochs,
+                "remaining_epochs": max(
+                    self.num_epochs
+                    - max(self.current_epoch, self.logger.get_num_logged_epochs()),
+                    0,
+                ),
+                "resume_checkpoint_path": self.resume_checkpoint_path,
+            },
+            also_print_to_console=True,
+        )
 
         # print(f"batch size: {self.batch_size}")
         # print(f"oversample: {self.oversample_foreground_percent}")
@@ -1283,12 +1395,14 @@ class nnUNetTrainer(object):
         self.current_epoch -= 1
         self.save_checkpoint(join(self.output_folder, "checkpoint_final.pth"))
         self.current_epoch += 1
+        self.final_checkpoint_path = join(self.output_folder, "checkpoint_final.pth")
 
         # now we can delete latest
         if self.local_rank == 0 and isfile(
             join(self.output_folder, "checkpoint_latest.pth")
         ):
             os.remove(join(self.output_folder, "checkpoint_latest.pth"))
+            self.latest_checkpoint_path = None
 
         # shut down dataloaders
         old_stdout = sys.stdout
@@ -1307,13 +1421,16 @@ class nnUNetTrainer(object):
             sys.stdout = old_stdout
 
         empty_cache(self.device)
+        self._write_training_state("completed")
         self.print_to_log_file("Training done.")
 
     def on_train_epoch_start(self):
         self.network.train()
         self.lr_scheduler.step(self.current_epoch)
         self.print_to_log_file("")
-        self.print_to_log_file(f"Epoch {self.current_epoch}")
+        self.print_to_log_file(
+            f"Epoch {self.current_epoch} (run {self.current_epoch + 1}/{self.num_epochs})"
+        )
         self.print_to_log_file(
             f"Current learning rate: {np.round(self.optimizer.param_groups[0]['lr'], decimals=5)}"
         )
@@ -1514,6 +1631,16 @@ class nnUNetTrainer(object):
         self.print_to_log_file(
             f"Epoch time: {np.round(epoch_end - epoch_start, decimals=2)} s"
         )
+        self.print_to_log_file(
+            "Epoch summary",
+            {
+                "completed_epoch": self.current_epoch,
+                "next_epoch": self.current_epoch + 1,
+                "logged_epochs": self.logger.get_num_logged_epochs(),
+                "remaining_epochs": max(self.num_epochs - (self.current_epoch + 1), 0),
+                "resume_checkpoint_path": self.resume_checkpoint_path,
+            },
+        )
 
         # keep a rolling resume checkpoint up to date so crashes only lose the current epoch.
         current_epoch = self.current_epoch
@@ -1532,9 +1659,14 @@ class nnUNetTrainer(object):
             self.save_checkpoint(join(self.output_folder, "checkpoint_best.pth"))
 
         if self.local_rank == 0:
-            self.logger.plot_progress_png(self.output_folder)
+            self.logger.plot_progress_png(
+                self.output_folder,
+                total_epochs=self.num_epochs,
+                current_epoch=self.current_epoch,
+            )
 
         self.current_epoch += 1
+        self._write_training_state("running")
 
     def save_checkpoint(self, filename: str) -> None:
         if self.local_rank == 0:
@@ -1561,6 +1693,22 @@ class nnUNetTrainer(object):
                     "inference_allowed_mirroring_axes": self.inference_allowed_mirroring_axes,
                 }
                 torch.save(checkpoint, filename)
+                basename = os.path.basename(filename)
+                if basename == "checkpoint_latest.pth":
+                    self.latest_checkpoint_path = filename
+                elif basename == "checkpoint_best.pth":
+                    self.best_checkpoint_path = filename
+                elif basename == "checkpoint_final.pth":
+                    self.final_checkpoint_path = filename
+                self.print_to_log_file(
+                    "Saved checkpoint",
+                    {
+                        "path": filename,
+                        "next_epoch": self.current_epoch + 1,
+                        "logged_epochs": self.logger.get_num_logged_epochs(),
+                    },
+                )
+                self._write_training_state("running")
             else:
                 self.print_to_log_file(
                     "No checkpoint written, checkpointing is disabled"
@@ -1585,8 +1733,13 @@ class nnUNetTrainer(object):
             new_state_dict[key] = value
 
         self.my_init_kwargs = checkpoint["init_args"]
-        self.current_epoch = checkpoint["current_epoch"]
         self.logger.load_checkpoint(checkpoint["logging"])
+        (
+            self.current_epoch,
+            logged_epochs,
+            state_next_epoch,
+            text_log_next_epoch,
+        ) = self._resolve_resume_epoch(checkpoint_path, checkpoint)
         self._best_ema = checkpoint["_best_ema"]
         self.inference_allowed_mirroring_axes = (
             checkpoint["inference_allowed_mirroring_axes"]
@@ -1603,10 +1756,27 @@ class nnUNetTrainer(object):
         if self.grad_scaler is not None:
             if checkpoint["grad_scaler_state"] is not None:
                 self.grad_scaler.load_state_dict(checkpoint["grad_scaler_state"])
+        self.resume_checkpoint_path = checkpoint_path
+        basename = os.path.basename(checkpoint_path)
+        if basename == "checkpoint_latest.pth":
+            self.latest_checkpoint_path = checkpoint_path
+        elif basename == "checkpoint_best.pth":
+            self.best_checkpoint_path = checkpoint_path
+        elif basename == "checkpoint_final.pth":
+            self.final_checkpoint_path = checkpoint_path
         self.print_to_log_file(
-            f"Loaded checkpoint state from {checkpoint_path}. Resuming at epoch {self.current_epoch}.",
+            "Loaded checkpoint state",
+            {
+                "checkpoint_path": checkpoint_path,
+                "resuming_at_epoch": self.current_epoch,
+                "display_epoch": f"{self.current_epoch + 1}/{self.num_epochs}",
+                "logged_epochs": logged_epochs,
+                "state_next_epoch": state_next_epoch,
+                "text_log_next_epoch": text_log_next_epoch,
+            },
             also_print_to_console=True,
         )
+        self._write_training_state("running")
 
     def perform_actual_validation(self, save_probabilities: bool = False):
         self.set_deep_supervision_enabled(False)

@@ -1,5 +1,10 @@
 # BraTS 项目代码总解释
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这份 `explain.md` 的目标不是复述 README，而是把 `/home/Creeken/Desktop/machine-learning-test/BraTS/` 里真正会参与运行、组织流程、产出结果的代码和关键文件逐层讲清楚。
 
 你可以把它理解成：
@@ -106,7 +111,7 @@ run.py
 也就是说：
 
 - `run.py` 本身没有业务逻辑。
-- 它只是把这个本地项目包装成一个可直接 `python BraTS/run.py ...` 调用的程序。
+- 它只是把这个本地项目包装成一个可直接 `python run.py ...` 调用的程序。
 
 ### `pyproject.toml`
 
@@ -1090,7 +1095,7 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 5. 多 fold 权重平均
 6. 把 logits 导出成原始空间 segmentation
 
-在当前项目的 CLI 封装里，`python BraTS/run.py predict` 还有一层额外默认逻辑：
+在当前项目的 CLI 封装里，`python run.py predict` 还有一层额外默认逻辑：
 
 - 如果你没有显式传 `--trainer/--configuration/--plans/--folds`
 - CLI 会优先读取 `PROJECT_RESULTS/Dataset220_BraTS2020/inference_information.json`
@@ -1176,7 +1181,7 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
   - IoU
 - 汇总成 `summary.json`
 
-在当前项目的 CLI 封装里，`python BraTS/run.py evaluate` 现在默认是严格模式：
+在当前项目的 CLI 封装里，`python run.py evaluate` 现在默认是严格模式：
 
 - 如果预测目录为空，会直接报“先跑 predict”的清晰错误
 - 如果预测文件名和 ground-truth 集不完全一致，也会直接报错，而不是静默跳过缺失病例
@@ -1339,7 +1344,7 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 ### 16.1 数据准备
 
 ```text
-python BraTS/run.py prepare-dataset
+python run.py prepare-dataset
 -> cli.cmd_prepare_dataset
 -> prepare_brats2020_for_project.main
 -> 生成 PROJECT_RAW/Dataset220_BraTS2020
@@ -1349,12 +1354,12 @@ python BraTS/run.py prepare-dataset
 
 - 这条命令默认是幂等的
 - 如果 `Dataset220_BraTS2020` 已经完整存在，会直接复用
-- 如果你要从原始 BraTS 数据重新生成，才使用 `python BraTS/run.py prepare-dataset --force`
+- 如果你要从原始 BraTS 数据重新生成，才使用 `python run.py prepare-dataset --force`
 
 ### 16.2 规划与预处理
 
 ```text
-python BraTS/run.py plan-preprocess
+python run.py plan-preprocess
 -> cli.cmd_plan_preprocess
 -> 如缺少 fingerprint，则 extract_fingerprints
    -> DatasetFingerprintExtractor.run
@@ -1367,7 +1372,7 @@ python BraTS/run.py plan-preprocess
 ### 16.3 训练
 
 ```text
-python BraTS/run.py train --fold 0
+python run.py train --fold 0
 -> cli.cmd_train
 -> run_training.run_training
 -> get_trainer_from_args(..., trainer='SegTrainer')
@@ -1390,7 +1395,7 @@ python BraTS/run.py train --fold 0
 ### 16.5 选择最优配置
 
 ```text
-python BraTS/run.py find-best-config
+python run.py find-best-config
 -> evaluation.find_best_configuration
 -> accumulate_cv_results
 -> optional ensemble
@@ -1412,7 +1417,7 @@ python BraTS/run.py find-best-config
 ### 16.6 正式推理
 
 ```text
-python BraTS/run.py predict ...
+python run.py predict ...
 -> cli 先尝试读取 inference_information.json
 -> 若存在最佳单模型，则自动解析 trainer / plans / configuration / folds
 -> nnUNetPredictor.initialize_from_trained_model_folder

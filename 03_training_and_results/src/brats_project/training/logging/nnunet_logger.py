@@ -105,13 +105,24 @@ class MetaLogger(object):
         """
         return self.local_logger.get_value(key, step)
 
-    def plot_progress_png(self, output_folder: str):
+    def plot_progress_png(
+        self,
+        output_folder: str,
+        total_epochs: int | None = None,
+        current_epoch: int | None = None,
+    ):
         """Write a progress plot PNG using local logger data.
 
         Args:
             output_folder: Directory where the plot image is saved.
+            total_epochs: Configured total number of epochs for x-axis scaling.
+            current_epoch: Current epoch index for plot titling.
         """
-        self.local_logger.plot_progress_png(output_folder)
+        self.local_logger.plot_progress_png(output_folder, total_epochs, current_epoch)
+
+    def get_num_logged_epochs(self) -> int:
+        """Return the number of epochs available in the local logger."""
+        return self.local_logger.get_num_logged_epochs()
 
     def get_checkpoint(self):
         """Return the local logger checkpoint data.
@@ -191,11 +202,17 @@ class LocalLogger:
         else:
             return self.my_fantastic_logging[key]
 
-    def plot_progress_png(self, output_folder):
+    def plot_progress_png(
+        self,
+        output_folder,
+        total_epochs: int | None = None,
+        current_epoch: int | None = None,
+    ):
         # we infer the epoch form our internal logging
-        epoch = (
-            min([len(i) for i in self.my_fantastic_logging.values()]) - 1
-        )  # lists of epoch 0 have len 1
+        epoch = self.get_num_logged_epochs() - 1  # lists of epoch 0 have len 1
+        if epoch < 0:
+            return
+
         sns.set(font_scale=2.5)
         fig, ax_all = plt.subplots(3, 1, figsize=(30, 54))
         # regular progress.png as we are used to from previous nnU-Net versions
@@ -237,6 +254,13 @@ class LocalLogger:
         ax.set_xlabel("epoch")
         ax.set_ylabel("loss")
         ax2.set_ylabel("pseudo dice")
+        if total_epochs is not None and total_epochs > 0:
+            ax.set_xlim(0, max(total_epochs - 1, 0))
+            ax2.set_xlim(0, max(total_epochs - 1, 0))
+        if total_epochs is not None and current_epoch is not None:
+            ax.set_title(
+                f"Training Progress ({current_epoch + 1}/{total_epochs} epochs)"
+            )
         ax.legend(loc=(0, 1))
         ax2.legend(loc=(0.2, 1))
 
@@ -261,6 +285,8 @@ class LocalLogger:
         ax.set(ylim=ylim)
         ax.set_xlabel("epoch")
         ax.set_ylabel("time [s]")
+        if total_epochs is not None and total_epochs > 0:
+            ax.set_xlim(0, max(total_epochs - 1, 0))
         ax.legend(loc=(0, 1))
 
         # learning rate
@@ -275,12 +301,19 @@ class LocalLogger:
         )
         ax.set_xlabel("epoch")
         ax.set_ylabel("learning rate")
+        if total_epochs is not None and total_epochs > 0:
+            ax.set_xlim(0, max(total_epochs - 1, 0))
         ax.legend(loc=(0, 1))
 
         plt.tight_layout()
 
         fig.savefig(join(output_folder, "progress.png"))
         plt.close()
+
+    def get_num_logged_epochs(self) -> int:
+        if not self.my_fantastic_logging:
+            return 0
+        return min(len(i) for i in self.my_fantastic_logging.values())
 
     def get_checkpoint(self):
         return self.my_fantastic_logging

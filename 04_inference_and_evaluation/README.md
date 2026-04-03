@@ -1,5 +1,10 @@
 # 04 Inference And Evaluation
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这一阶段负责把训练阶段的中间产物，变成真正可比较、可部署、可评估的最终结果。
 
 它不是“训练后补一下命令”的尾声，而是完整工程闭环的最后几层：
@@ -41,11 +46,11 @@
 ### 典型命令顺序
 
 ```bash
-python BraTS/run.py train-all --npz
-python BraTS/run.py find-best-config
-python BraTS/run.py predict
-python BraTS/run.py evaluate
-python BraTS/run.py report-evaluation
+python run.py train-all --npz
+python run.py find-best-config
+python run.py predict
+python run.py evaluate
+python run.py report-evaluation
 ```
 
 补充说明：
@@ -59,7 +64,7 @@ python BraTS/run.py report-evaluation
 
 - `BraTS/04_inference_and_evaluation/input`
 
-如果这个默认输入目录是空的，当前项目的 `python BraTS/run.py predict` 会自动从训练集
+如果这个默认输入目录是空的，当前项目的 `python run.py predict` 会自动从训练集
 `PROJECT_RAW/Dataset220_BraTS2020/imagesTr` 随机抽样 `8` 个病例，把它们复制到这里，作为临时验证集来跑推理。
 抽样记录会写到：
 
@@ -68,13 +73,13 @@ python BraTS/run.py report-evaluation
 如果你想显式控制这件事，可以使用：
 
 ```bash
-python BraTS/run.py predict --sample-training-cases 12 --sample-seed 123
+python run.py predict --sample-training-cases 12 --sample-seed 123
 ```
 
 如果你不想自动抽样，就自己先准备输入，或者：
 
 ```bash
-python BraTS/run.py predict --disable-auto-sample-training
+python run.py predict --disable-auto-sample-training
 ```
 
 ### 默认推理输出目录
@@ -146,7 +151,7 @@ python BraTS/run.py predict --disable-auto-sample-training
 因此，五折训练时推荐带：
 
 ```bash
-python BraTS/run.py train-all --npz
+python run.py train-all --npz
 ```
 
 ---
@@ -169,7 +174,7 @@ python BraTS/run.py train-all --npz
 
 当前项目里的 CLI 还额外做了一层自动化：
 
-- 如果你没有显式传 `--trainer/--configuration/--plans/--folds`，`python BraTS/run.py predict` 会优先读取 `find-best-config` 生成的 `inference_information.json`
+- 如果你没有显式传 `--trainer/--configuration/--plans/--folds`，`python run.py predict` 会优先读取 `find-best-config` 生成的 `inference_information.json`
 - 因此默认推理会跟随当前已经选出来的最佳单模型
 - 如果 `inference_information.json` 指向的是 ensemble，CLI 会要求你显式指定模型参数，而不是默认只跑其中一个成员
 - 如果默认输入目录为空，CLI 还会自动从训练集抽样少量病例到输入目录里，便于立即验证推理链路
@@ -222,7 +227,7 @@ python BraTS/run.py train-all --npz
 如果你确实只想评估一个明确的子集，必须显式加：
 
 ```bash
-python BraTS/run.py evaluate --chill
+python run.py evaluate --chill
 ```
 
 这意味着如果 `predict` 前一步用的是“从训练集随机抽样一些病例作为临时验证集”，评估这批病例时也要显式声明你就是在做子集评估。
@@ -230,7 +235,7 @@ python BraTS/run.py evaluate --chill
 如果你还想进一步看“哪里分得好、哪里分得差”，当前项目已经补了：
 
 ```bash
-python BraTS/run.py report-evaluation
+python run.py report-evaluation
 ```
 
 它会基于 `BraTS/04_inference_and_evaluation/evaluation/summary.json` 再生成：

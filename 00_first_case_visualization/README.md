@@ -1,5 +1,10 @@
 # 00 First Case Visualization
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这一阶段不是训练必须步骤，但它是整套项目里最值得先做的“认知准备”。
 
 它解决的不是模型问题，而是数据理解问题：
@@ -49,13 +54,13 @@
 ### 运行命令
 
 ```bash
-python BraTS/run.py visualize-first-case
+python run.py visualize-first-case
 ```
 
 常见参数：
 
 ```bash
-python BraTS/run.py visualize-first-case \
+python run.py visualize-first-case \
   --data-root archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
   --output-dir BraTS/00_first_case_visualization/output
 ```

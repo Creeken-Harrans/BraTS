@@ -1,5 +1,10 @@
 # Data Contract
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这份文档定义的是当前 BraTS 项目最底层的数据契约。
 
 它不是“建议格式”，而是后面的：
@@ -277,7 +282,7 @@
 如果你已经跑过：
 
 ```bash
-python BraTS/run.py visualize-first-case
+python run.py visualize-first-case
 ```
 
 那么你至少已经对 geometry 和模态角色有了一次可视化确认。

@@ -1,5 +1,10 @@
 # Prediction Input
 
+命令位置说明：
+- 本文默认假设你当前目录就是 `BraTS` 项目根目录，因此命令示例写成 `python run.py ...`。
+- 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
+- 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
+
 这里是当前项目默认的正式推理输入目录。
 
 它不是一个随便放 NIfTI 的临时文件夹，而是需要严格遵守训练期输入契约的目录。
@@ -72,7 +77,7 @@
 默认命令：
 
 ```bash
-python BraTS/run.py predict
+python run.py predict
 ```
 
 如果这个目录当前是空的，项目现在会自动从训练集 `imagesTr/` 里随机挑选一小批病例复制到这里，把它们当成临时验证集来跑推理。
@@ -83,13 +88,13 @@ python BraTS/run.py predict
 如果你想手动控制抽样数量和随机种子，可以使用：
 
 ```bash
-python BraTS/run.py predict --sample-training-cases 12 --sample-seed 123
+python run.py predict --sample-training-cases 12 --sample-seed 123
 ```
 
 如果你不想自动抽样，就自己先准备好输入，或者使用：
 
 ```bash
-python BraTS/run.py predict --disable-auto-sample-training
+python run.py predict --disable-auto-sample-training
 ```
 
 项目会从这里读取输入，并把结果写到：
