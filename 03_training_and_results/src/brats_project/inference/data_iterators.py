@@ -3,7 +3,7 @@ import queue
 from torch.multiprocessing import Manager
 
 from time import sleep
-from typing import Any, Union, List
+from typing import Any, List, Optional, Union
 
 import numpy as np
 import torch

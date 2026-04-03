@@ -1,7 +1,7 @@
 import argparse
 import multiprocessing
 import shutil
-from typing import Union, Tuple, List, Callable
+from typing import Callable, List, Optional, Tuple, Union
 
 import numpy as np
 from acvl_utils.morphology.morphology_helper import remove_all_but_largest_component

@@ -165,16 +165,10 @@ def _resolve_existing_training_checkpoint(
     fold: str | int,
 ) -> Path | None:
     configure_environment()
-    from brats_project.utilities.file_path_utilities import get_output_folder
+    from brats_project.run.run_training import resolve_training_resume_checkpoint
 
-    if str(fold) == "all":
-        return None
-    output_dir = Path(get_output_folder(dataset_name, trainer, plans, configuration, fold=int(fold)))
-    for checkpoint_name in ("checkpoint_latest.pth", "checkpoint_final.pth", "checkpoint_best.pth"):
-        checkpoint_path = output_dir / checkpoint_name
-        if checkpoint_path.is_file():
-            return checkpoint_path
-    return None
+    checkpoint = resolve_training_resume_checkpoint(dataset_name, configuration, fold, trainer, plans)
+    return Path(checkpoint) if checkpoint is not None else None
 
 
 def _sync_preprocess_metadata(dataset_name: str, plans_name: str) -> None:

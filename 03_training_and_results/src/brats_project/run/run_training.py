@@ -13,12 +13,13 @@ from brats_project.run.load_pretrained_weights import load_pretrained_weights
 from brats_project.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
 from brats_project.utilities.dataset_name_id_conversion import maybe_convert_to_dataset_name
 from brats_project.utilities.find_class_by_name import recursive_find_python_class
+from brats_project.utilities.file_path_utilities import get_output_folder
 from torch.backends import cudnn
 
 
 TRAINING_RESUME_CHECKPOINTS = (
-    'checkpoint_latest.pth',
     'checkpoint_final.pth',
+    'checkpoint_latest.pth',
     'checkpoint_best.pth',
 )
 
@@ -77,18 +78,38 @@ def get_trainer_from_args(dataset_name_or_id: Union[int, str],
     return nnunet_trainer
 
 
+def resolve_training_resume_checkpoint(
+    dataset_name_or_id: Union[int, str],
+    configuration: str,
+    fold: Union[int, str],
+    trainer_name: str = 'SegTrainer',
+    plans_identifier: str = 'ProjectPlans',
+) -> Optional[str]:
+    if str(fold) == 'all':
+        return None
+
+    output_folder = get_output_folder(
+        dataset_name_or_id,
+        trainer_name,
+        plans_identifier,
+        configuration,
+        fold=int(fold),
+    )
+    for checkpoint_name in TRAINING_RESUME_CHECKPOINTS:
+        candidate = join(output_folder, checkpoint_name)
+        if isfile(candidate):
+            return candidate
+    return None
+
+
 def maybe_load_checkpoint(nnunet_trainer: nnUNetTrainer, continue_training: bool, validation_only: bool,
-                          pretrained_weights_file: Optional[str] = None):
+                          pretrained_weights_file: Optional[str] = None,
+                          resume_checkpoint_file: Optional[str] = None):
     if continue_training and pretrained_weights_file is not None:
         raise RuntimeError('Cannot both continue a training AND load pretrained weights. Pretrained weights can only '
                            'be used at the beginning of the training.')
     if continue_training:
-        expected_checkpoint_file = None
-        for checkpoint_name in TRAINING_RESUME_CHECKPOINTS:
-            candidate = join(nnunet_trainer.output_folder, checkpoint_name)
-            if isfile(candidate):
-                expected_checkpoint_file = candidate
-                break
+        expected_checkpoint_file = resume_checkpoint_file
         if expected_checkpoint_file is None:
             nnunet_trainer.print_to_log_file(
                 'No existing checkpoint found. Starting a new training run from scratch.',
@@ -137,14 +158,17 @@ def run_ddp(rank, dataset_name_or_id, configuration, fold, tr, p, disable_checkp
     setup_ddp(rank, world_size)
     torch.cuda.set_device(torch.device('cuda', dist.get_rank()))
 
-    nnunet_trainer = get_trainer_from_args(dataset_name_or_id, configuration, fold, tr, p, c)
+    resume_checkpoint = resolve_training_resume_checkpoint(dataset_name_or_id, configuration, fold, tr, p) if c else None
+    effective_continue_training = c and resume_checkpoint is not None
+
+    nnunet_trainer = get_trainer_from_args(dataset_name_or_id, configuration, fold, tr, p, effective_continue_training)
 
     if disable_checkpointing:
         nnunet_trainer.disable_checkpointing = disable_checkpointing
 
     assert not (c and val), f'Cannot set --c and --val flag at the same time. Dummy.'
 
-    maybe_load_checkpoint(nnunet_trainer, c, val, pretrained_weights)
+    maybe_load_checkpoint(nnunet_trainer, effective_continue_training, val, pretrained_weights, resume_checkpoint)
 
     if torch.cuda.is_available():
         cudnn.deterministic = False
@@ -208,15 +232,30 @@ def run_training(dataset_name_or_id: Union[str, int],
                  nprocs=num_gpus,
                  join=True)
     else:
+        resume_checkpoint = resolve_training_resume_checkpoint(
+            dataset_name_or_id,
+            configuration,
+            fold,
+            trainer_class_name,
+            plans_identifier,
+        ) if continue_training else None
+        effective_continue_training = continue_training and resume_checkpoint is not None
+
         nnunet_trainer = get_trainer_from_args(dataset_name_or_id, configuration, fold, trainer_class_name,
-                                               plans_identifier, continue_training, device=device)
+                                               plans_identifier, effective_continue_training, device=device)
 
         if disable_checkpointing:
             nnunet_trainer.disable_checkpointing = disable_checkpointing
 
         assert not (continue_training and only_run_validation), f'Cannot set --c and --val flag at the same time. Dummy.'
 
-        maybe_load_checkpoint(nnunet_trainer, continue_training, only_run_validation, pretrained_weights)
+        maybe_load_checkpoint(
+            nnunet_trainer,
+            effective_continue_training,
+            only_run_validation,
+            pretrained_weights,
+            resume_checkpoint,
+        )
 
         if torch.cuda.is_available():
             cudnn.deterministic = False

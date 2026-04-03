@@ -191,7 +191,6 @@ class nnUNetTrainer(object):
         # self.configure_rotation_dummyDA_mirroring_and_inital_patch_size and will be saved in checkpoints
 
         ### checkpoint saving stuff
-        self.save_every = 50
         self.disable_checkpointing = False
 
         self.was_initialized = False
@@ -1157,9 +1156,9 @@ class nnUNetTrainer(object):
         epoch_start = float(self.logger.get_value('epoch_start_timestamps', step=-1))
         self.print_to_log_file(f"Epoch time: {np.round(epoch_end - epoch_start, decimals=2)} s")
 
-        # handling periodic checkpointing
+        # keep a rolling resume checkpoint up to date so crashes only lose the current epoch.
         current_epoch = self.current_epoch
-        if (current_epoch + 1) % self.save_every == 0 and current_epoch != (self.num_epochs - 1):
+        if not self.disable_checkpointing and current_epoch != (self.num_epochs - 1):
             self.save_checkpoint(join(self.output_folder, 'checkpoint_latest.pth'))
 
         # handle 'best' checkpointing. ema_fg_dice is computed by the logger and can be accessed like this
@@ -1197,14 +1196,11 @@ class nnUNetTrainer(object):
             else:
                 self.print_to_log_file('No checkpoint written, checkpointing is disabled')
 
-    def load_checkpoint(self, filename_or_checkpoint: Union[dict, str]) -> None:
+    def load_checkpoint(self, checkpoint_path: str) -> None:
         if not self.was_initialized:
             self.initialize()
 
-        checkpoint_source = None
-        if isinstance(filename_or_checkpoint, str):
-            checkpoint_source = filename_or_checkpoint
-            checkpoint = torch.load(filename_or_checkpoint, map_location=self.device, weights_only=False)
+        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
         # if state dict comes from nn.DataParallel but we use non-parallel model here then the state dict keys do not
         # match. Use heuristic to make it match
         new_state_dict = {}
@@ -1230,11 +1226,10 @@ class nnUNetTrainer(object):
         if self.grad_scaler is not None:
             if checkpoint['grad_scaler_state'] is not None:
                 self.grad_scaler.load_state_dict(checkpoint['grad_scaler_state'])
-        if checkpoint_source is not None:
-            self.print_to_log_file(
-                f"Loaded checkpoint state from {checkpoint_source}. Resuming at epoch {self.current_epoch}.",
-                also_print_to_console=True,
-            )
+        self.print_to_log_file(
+            f"Loaded checkpoint state from {checkpoint_path}. Resuming at epoch {self.current_epoch}.",
+            also_print_to_console=True,
+        )
 
     def perform_actual_validation(self, save_probabilities: bool = False):
         self.set_deep_supervision_enabled(False)

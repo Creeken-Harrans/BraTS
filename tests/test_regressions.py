@@ -36,7 +36,7 @@ class DummyReaderWriter:
 
 
 class RegressionTests(unittest.TestCase):
-    def test_resolve_existing_training_checkpoint_prefers_latest_for_resume(self) -> None:
+    def test_resolve_existing_training_checkpoint_prefers_final_for_resume(self) -> None:
         try:
             file_path_utilities = importlib.import_module("brats_project.utilities.file_path_utilities")
         except ModuleNotFoundError as exc:
@@ -55,7 +55,7 @@ class RegressionTests(unittest.TestCase):
                     0,
                 )
 
-        self.assertEqual(checkpoint, output_dir / "checkpoint_latest.pth")
+        self.assertEqual(checkpoint, output_dir / "checkpoint_final.pth")
 
     def test_compile_helpers_detect_and_unwrap_orig_mod(self) -> None:
         try:
@@ -74,6 +74,48 @@ class RegressionTests(unittest.TestCase):
         self.assertIs(unwrap_compiled_module(wrapped), wrapped._orig_mod)
         self.assertFalse(is_compiled_module(plain))
         self.assertIs(unwrap_compiled_module(plain), plain)
+
+    def test_run_training_disables_resume_state_when_continue_requested_but_no_checkpoint_exists(self) -> None:
+        try:
+            import brats_project.run.run_training as run_training_module
+        except ModuleNotFoundError as exc:
+            self.skipTest(f"training dependencies missing: {exc}")
+
+        fake_trainer = type(
+            "Trainer",
+            (),
+            {
+                "run_training": lambda self: None,
+                "perform_actual_validation": lambda self, _: None,
+            },
+        )()
+
+        with patch.object(
+            run_training_module,
+            "resolve_training_resume_checkpoint",
+            return_value=None,
+        ), patch.object(
+            run_training_module,
+            "get_trainer_from_args",
+            return_value=fake_trainer,
+        ) as get_trainer_mock, patch.object(
+            run_training_module,
+            "maybe_load_checkpoint",
+        ), patch.object(
+            run_training_module,
+            "torch",
+        ) as torch_mock:
+            torch_mock.cuda.is_available.return_value = False
+            run_training_module.run_training(
+                dataset_name_or_id="Dataset220_BraTS2020",
+                configuration="3d_fullres",
+                fold=0,
+                continue_training=True,
+                only_run_validation=False,
+                device=type("D", (), {"type": "cpu"})(),
+            )
+
+        self.assertFalse(get_trainer_mock.call_args.args[5])
 
     def test_compute_metrics_on_folder_rejects_empty_prediction_dir(self) -> None:
         try:

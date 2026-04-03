@@ -55,7 +55,7 @@
 
 - 发现当前 fold 存在旧训练状态时，自动续训
 - 找不到可恢复 checkpoint 时，自动从头开始
-- 自动续训的 checkpoint 优先级是：`checkpoint_latest` -> `checkpoint_final` -> `checkpoint_best`
+- 自动续训的 checkpoint 优先级是：`checkpoint_final` -> `checkpoint_latest` -> `checkpoint_best`
 - 只有显式传 `--restart-training`，才会忽略已有 checkpoint
 
 也就是说，它真正回答的是：
@@ -176,9 +176,10 @@
 
 负责：
 
-- 周期保存 latest
+- 每个 epoch 覆盖更新 latest
 - 记录 best
 - 收尾保存 final
+- 恢复训练时只从磁盘上的 checkpoint 文件恢复，不再暴露“传入内存 checkpoint dict”这种未实现接口
 
 ### 真实 validation 阶段
 
@@ -239,6 +240,7 @@ python BraTS/run.py train-all --npz
 - checkpoint 是否保存
 - 这次到底是从头训练，还是从哪个 checkpoint 继续
 - checkpoint 恢复后当前接续到哪个 epoch
+- 恢复来源是哪个 checkpoint 文件路径
 
 ### `progress.png`
 

@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import Union, Tuple, List
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch

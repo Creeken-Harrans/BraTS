@@ -5,6 +5,7 @@ import argparse
 import csv
 import json
 import math
+import os
 from pathlib import Path
 from typing import Any
 
@@ -19,7 +20,6 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.patches import Patch
 
 
-WORKSPACE_MARKER = "machine-learning-test"
 FIG_DPI = 220
 MODALITY_ORDER = ("t1", "t1ce", "t2", "flair")
 PLANE_ORDER = ("axial", "coronal", "sagittal")
@@ -52,15 +52,15 @@ ERROR_COLORS = {
 }
 
 
-def find_workspace_root() -> Path:
+def find_project_root() -> Path:
     current = Path(__file__).resolve()
     for parent in current.parents:
-        if parent.name == WORKSPACE_MARKER:
+        if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError(f"Unable to locate workspace root '{WORKSPACE_MARKER}'")
+    raise RuntimeError("Unable to locate BraTS project root from generate_evaluation_report.py")
 
 
-WORKSPACE_ROOT = find_workspace_root()
+WORKSPACE_ROOT = find_project_root()
 
 
 def resolve_workspace_path(relative_or_absolute: str | Path) -> Path:
@@ -72,10 +72,7 @@ def resolve_workspace_path(relative_or_absolute: str | Path) -> Path:
 
 def to_workspace_relative_string(path: Path) -> str:
     absolute = path.resolve()
-    try:
-        return str(absolute.relative_to(WORKSPACE_ROOT))
-    except ValueError:
-        return str(absolute)
+    return os.path.relpath(absolute, WORKSPACE_ROOT)
 
 
 def ensure_output_dir(path: Path) -> None:

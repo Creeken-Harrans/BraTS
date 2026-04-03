@@ -51,10 +51,11 @@ python BraTS/run.py train --fold 0
 
 - 默认会训练 `100` 轮
 - 如果 `fold_0` 已经有旧训练结果，会自动判断是续训还是新开
-- 自动续训时的 checkpoint 选择顺序是：`checkpoint_latest` -> `checkpoint_final` -> `checkpoint_best`
+- 自动续训时的 checkpoint 选择顺序是：`checkpoint_final` -> `checkpoint_latest` -> `checkpoint_best`
 - 如果你想强制从头开始，要显式加 `--restart-training`
 - 无论是续训还是新开，都会把决策写进 `training_log_*.txt`
 - 每个 epoch 的训练曲线会持续更新到 `progress.png`
+- `checkpoint_latest` 现在会在每个 epoch 后覆盖更新，减少异常中断时的进度回退
 
 再跑完整五折：
 

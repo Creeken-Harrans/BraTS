@@ -902,10 +902,17 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 - `run_training`
 - `run_ddp`
 
+这里还有一个现在已经明确收口的约束：
+
+- trainer 恢复只支持从磁盘上的 checkpoint 文件加载
+- 不再保留“`load_checkpoint` 可以直接接收内存 dict”这种未真正实现的僵尸接口
+
 当前项目里的实际默认行为还有两点需要特别记住：
 
 - 默认训练轮数已经改成 `100`
 - 如果当前 fold 已经存在 checkpoint，CLI 会优先把这次训练解释成“继续训练”
+- 自动续训时会优先拿 `checkpoint_final`，其次才是 `checkpoint_latest` 和 `checkpoint_best`
+- `checkpoint_latest` 现在按 epoch 持续覆盖更新，不再长时间停留在很旧的恢复点
 
 ### `run/load_pretrained_weights.py`
 

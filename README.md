@@ -258,11 +258,12 @@
 行为：
 
 - 默认会先检查当前 fold 是否已有可恢复训练状态
-- 如果有，会自动续训，选择顺序为 `checkpoint_latest` -> `checkpoint_final` -> `checkpoint_best`
+- 如果有，会自动续训，选择顺序为 `checkpoint_final` -> `checkpoint_latest` -> `checkpoint_best`
 - 如果没有，会自动从头开始训练
 - 只有显式传 `--restart-training` 才会忽略已有 checkpoint
 - 训练决策会写入 `training_log_*.txt`
 - 每个 epoch 的训练记录图会写入并刷新 `progress.png`
+- `checkpoint_latest` 会在每个 epoch 后覆盖更新，尽量缩小中断恢复损失
 
 写入：
 

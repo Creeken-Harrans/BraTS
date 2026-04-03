@@ -1,5 +1,3 @@
-from typing import Union
-
 import torch
 
 from brats_project.training.lr_scheduler.warmup import Lin_incr_LRScheduler, PolyLRScheduler_offset
@@ -73,7 +71,7 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
 
         super().on_train_epoch_start()
 
-    def load_checkpoint(self, filename_or_checkpoint: Union[dict, str]) -> None:
+    def load_checkpoint(self, checkpoint_path: str) -> None:
         """
         We need to overwrite that entire function because we need to fiddle the correct optimizer in between
         loading the checkpoint and applying the optimizer states. Yuck.
@@ -81,8 +79,7 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
         if not self.was_initialized:
             self.initialize()
 
-        if isinstance(filename_or_checkpoint, str):
-            checkpoint = torch.load(filename_or_checkpoint, map_location=self.device)
+        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
         # if state dict comes from nn.DataParallel but we use non-parallel model here then the state dict keys do not
         # match. Use heuristic to make it match
         new_state_dict = {}
@@ -119,3 +116,7 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
         if self.grad_scaler is not None:
             if checkpoint["grad_scaler_state"] is not None:
                 self.grad_scaler.load_state_dict(checkpoint["grad_scaler_state"])
+        self.print_to_log_file(
+            f"Loaded checkpoint state from {checkpoint_path}. Resuming at epoch {self.current_epoch}.",
+            also_print_to_console=True,
+        )
