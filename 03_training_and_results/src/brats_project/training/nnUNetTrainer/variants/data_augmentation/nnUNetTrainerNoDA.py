@@ -10,24 +10,30 @@ from brats_project.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
 class nnUNetTrainerNoDA(nnUNetTrainer):
     @staticmethod
     def get_training_transforms(
-            patch_size: Union[np.ndarray, Tuple[int]],
-            rotation_for_DA: RandomScalar,
-            deep_supervision_scales: Optional[Union[List, Tuple]],
-            mirror_axes: Tuple[int, ...],
-            do_dummy_2d_data_aug: bool,
-            use_mask_for_norm: Optional[List[bool]] = None,
-            is_cascaded: bool = False,
-            foreground_labels: Optional[Union[Tuple[int, ...], List[int]]] = None,
-            regions: Optional[List[Union[List[int], Tuple[int, ...], int]]] = None,
-            ignore_label: Optional[int] = None,
+        patch_size: Union[np.ndarray, Tuple[int]],
+        rotation_for_DA: RandomScalar,
+        deep_supervision_scales: Optional[Union[List, Tuple]],
+        mirror_axes: Tuple[int, ...],
+        do_dummy_2d_data_aug: bool,
+        use_mask_for_norm: Optional[List[bool]] = None,
+        is_cascaded: bool = False,
+        foreground_labels: Optional[Union[Tuple[int, ...], List[int]]] = None,
+        regions: Optional[List[Union[List[int], Tuple[int, ...], int]]] = None,
+        ignore_label: Optional[int] = None,
     ) -> BasicTransform:
-        return nnUNetTrainer.get_validation_transforms(deep_supervision_scales, is_cascaded, foreground_labels,
-                                                       regions, ignore_label)
+        return nnUNetTrainer.get_validation_transforms(
+            deep_supervision_scales,
+            is_cascaded,
+            foreground_labels,
+            regions,
+            ignore_label,
+        )
 
     def configure_rotation_dummyDA_mirroring_and_inital_patch_size(self):
         # we need to disable mirroring here so that no mirroring will be applied in inference!
-        rotation_for_DA, do_dummy_2d_data_aug, _, _ = \
+        rotation_for_DA, do_dummy_2d_data_aug, _, _ = (
             super().configure_rotation_dummyDA_mirroring_and_inital_patch_size()
+        )
         mirror_axes = None
         self.inference_allowed_mirroring_axes = None
         initial_patch_size = self.configuration_manager.patch_size

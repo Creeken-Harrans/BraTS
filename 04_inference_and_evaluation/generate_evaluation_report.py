@@ -19,7 +19,6 @@ import numpy as np
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.patches import Patch
 
-
 FIG_DPI = 220
 MODALITY_ORDER = ("t1", "t1ce", "t2", "flair")
 PLANE_ORDER = ("axial", "coronal", "sagittal")
@@ -57,7 +56,9 @@ def find_project_root() -> Path:
     for parent in current.parents:
         if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError("Unable to locate BraTS project root from generate_evaluation_report.py")
+    raise RuntimeError(
+        "Unable to locate BraTS project root from generate_evaluation_report.py"
+    )
 
 
 WORKSPACE_ROOT = find_project_root()
@@ -89,7 +90,11 @@ def compute_display_range(volume: np.ndarray) -> tuple[float, float]:
     if values.size == 0:
         return 0.0, 1.0
     vmin, vmax = np.percentile(values, [1.0, 99.0])
-    if not np.isfinite(vmin) or not np.isfinite(vmax) or math.isclose(float(vmin), float(vmax)):
+    if (
+        not np.isfinite(vmin)
+        or not np.isfinite(vmax)
+        or math.isclose(float(vmin), float(vmax))
+    ):
         vmin = float(np.min(values))
         vmax = float(np.max(values))
         if math.isclose(vmin, vmax):
@@ -203,7 +208,8 @@ def parse_case_metrics(summary: dict[str, Any]) -> list[dict[str, Any]]:
                 "fn_et": float(item["metrics"]["(3,)"]["FN"]),
                 "precision_wt": safe_ratio(
                     item["metrics"]["(1, 2, 3)"]["TP"],
-                    item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FP"],
+                    item["metrics"]["(1, 2, 3)"]["TP"]
+                    + item["metrics"]["(1, 2, 3)"]["FP"],
                 ),
                 "precision_tc": safe_ratio(
                     item["metrics"]["(2, 3)"]["TP"],
@@ -215,7 +221,8 @@ def parse_case_metrics(summary: dict[str, Any]) -> list[dict[str, Any]]:
                 ),
                 "recall_wt": safe_ratio(
                     item["metrics"]["(1, 2, 3)"]["TP"],
-                    item["metrics"]["(1, 2, 3)"]["TP"] + item["metrics"]["(1, 2, 3)"]["FN"],
+                    item["metrics"]["(1, 2, 3)"]["TP"]
+                    + item["metrics"]["(1, 2, 3)"]["FN"],
                 ),
                 "recall_tc": safe_ratio(
                     item["metrics"]["(2, 3)"]["TP"],
@@ -234,10 +241,15 @@ def parse_case_metrics(summary: dict[str, Any]) -> list[dict[str, Any]]:
 
 def find_case_modalities(case_id: str, raw_dataset_dir: Path) -> dict[str, Path]:
     images_tr = raw_dataset_dir / "imagesTr"
-    modality_files = {role: images_tr / f"{case_id}_{index:04d}.nii.gz" for index, role in enumerate(MODALITY_ORDER)}
+    modality_files = {
+        role: images_tr / f"{case_id}_{index:04d}.nii.gz"
+        for index, role in enumerate(MODALITY_ORDER)
+    }
     missing = [str(path) for path in modality_files.values() if not path.is_file()]
     if missing:
-        raise FileNotFoundError(f"Missing raw image modalities for {case_id}: {missing}")
+        raise FileNotFoundError(
+            f"Missing raw image modalities for {case_id}: {missing}"
+        )
     return modality_files
 
 
@@ -261,7 +273,13 @@ def plot_region_mean_dice(summary: dict[str, Any], output_path: Path) -> None:
     ax.set_ylabel("Dice")
     ax.set_title("Mean Dice by BraTS region")
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, value + 0.02, f"{value:.3f}", ha="center", va="bottom")
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            value + 0.02,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+        )
     fig.tight_layout()
     save_figure(fig, output_path)
 
@@ -270,7 +288,10 @@ def plot_case_ranking(case_metrics: list[dict[str, Any]], output_path: Path) -> 
     labels = [item["case_id"] for item in case_metrics]
     values = [item["dice_mean"] for item in case_metrics]
     plot_values = [metric_plot_value(value) for value in values]
-    colors = ["#2a9d8f" if idx < 3 else "#e76f51" if idx >= len(values) - 3 else "#577590" for idx in range(len(values))]
+    colors = [
+        "#2a9d8f" if idx < 3 else "#e76f51" if idx >= len(values) - 3 else "#577590"
+        for idx in range(len(values))
+    ]
 
     fig, ax = plt.subplots(figsize=(12, 6), dpi=FIG_DPI)
     bars = ax.bar(range(len(labels)), plot_values, color=colors)
@@ -280,15 +301,27 @@ def plot_case_ranking(case_metrics: list[dict[str, Any]], output_path: Path) -> 
     ax.set_ylabel("Mean Dice across WT / TC / ET")
     ax.set_title("Per-case Dice ranking on the evaluated subset")
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, metric_plot_value(value) + 0.01, metric_display(value), ha="center", va="bottom", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            metric_plot_value(value) + 0.01,
+            metric_display(value),
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
     fig.tight_layout()
     save_figure(fig, output_path)
 
 
-def plot_case_region_heatmap(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
+def plot_case_region_heatmap(
+    case_metrics: list[dict[str, Any]], output_path: Path
+) -> None:
     region_keys = ["(1, 2, 3)", "(2, 3)", "(3,)"]
     data = np.asarray(
-        [[float(item["metrics"][key]["Dice"]) for key in region_keys] for item in case_metrics],
+        [
+            [float(item["metrics"][key]["Dice"]) for key in region_keys]
+            for item in case_metrics
+        ],
         dtype=float,
     )
     labels = [item["case_id"] for item in case_metrics]
@@ -303,21 +336,37 @@ def plot_case_region_heatmap(case_metrics: list[dict[str, Any]], output_path: Pa
     ax.set_title("Per-case region Dice heatmap")
     for row in range(data.shape[0]):
         for col in range(data.shape[1]):
-            ax.text(col, row, metric_display(float(data[row, col])), ha="center", va="center", color="white", fontsize=8)
+            ax.text(
+                col,
+                row,
+                metric_display(float(data[row, col])),
+                ha="center",
+                va="center",
+                color="white",
+                fontsize=8,
+            )
     fig.colorbar(image, ax=ax, label="Dice")
     fig.tight_layout()
     save_figure(fig, output_path)
 
 
-def plot_region_error_breakdown(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
+def plot_region_error_breakdown(
+    case_metrics: list[dict[str, Any]], output_path: Path
+) -> None:
     region_specs = [
         ("WT", "fp_wt", "fn_wt", "#355070"),
         ("TC", "fp_tc", "fn_tc", "#b56576"),
         ("ET", "fp_et", "fn_et", "#e56b6f"),
     ]
     labels = [spec[0] for spec in region_specs]
-    fp_values = [float(np.mean([item[spec[1]] for item in case_metrics])) for spec in region_specs]
-    fn_values = [float(np.mean([item[spec[2]] for item in case_metrics])) for spec in region_specs]
+    fp_values = [
+        float(np.mean([item[spec[1]] for item in case_metrics]))
+        for spec in region_specs
+    ]
+    fn_values = [
+        float(np.mean([item[spec[2]] for item in case_metrics]))
+        for spec in region_specs
+    ]
 
     x = np.arange(len(labels))
     width = 0.35
@@ -332,28 +381,45 @@ def plot_region_error_breakdown(case_metrics: list[dict[str, Any]], output_path:
     for bars in (bars_fp, bars_fn):
         for bar in bars:
             value = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width() / 2.0, value, f"{value:.0f}", ha="center", va="bottom", fontsize=8)
+            ax.text(
+                bar.get_x() + bar.get_width() / 2.0,
+                value,
+                f"{value:.0f}",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
     fig.tight_layout()
     save_figure(fig, output_path)
 
 
-def plot_region_precision_recall(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
+def plot_region_precision_recall(
+    case_metrics: list[dict[str, Any]], output_path: Path
+) -> None:
     region_specs = [
         ("WT", "precision_wt", "recall_wt", "#355070"),
         ("TC", "precision_tc", "recall_tc", "#b56576"),
         ("ET", "precision_et", "recall_et", "#e56b6f"),
     ]
     labels = [spec[0] for spec in region_specs]
-    precision_values = [safe_nanmean([item[spec[1]] for item in case_metrics]) for spec in region_specs]
-    recall_values = [safe_nanmean([item[spec[2]] for item in case_metrics]) for spec in region_specs]
+    precision_values = [
+        safe_nanmean([item[spec[1]] for item in case_metrics]) for spec in region_specs
+    ]
+    recall_values = [
+        safe_nanmean([item[spec[2]] for item in case_metrics]) for spec in region_specs
+    ]
     plot_precision_values = [metric_plot_value(value) for value in precision_values]
     plot_recall_values = [metric_plot_value(value) for value in recall_values]
 
     x = np.arange(len(labels))
     width = 0.35
     fig, ax = plt.subplots(figsize=(9, 6), dpi=FIG_DPI)
-    bars_precision = ax.bar(x - width / 2, plot_precision_values, width, label="Precision", color="#2a9d8f")
-    bars_recall = ax.bar(x + width / 2, plot_recall_values, width, label="Recall", color="#e9c46a")
+    bars_precision = ax.bar(
+        x - width / 2, plot_precision_values, width, label="Precision", color="#2a9d8f"
+    )
+    bars_recall = ax.bar(
+        x + width / 2, plot_recall_values, width, label="Recall", color="#e9c46a"
+    )
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_ylim(0.0, 1.0)
@@ -361,14 +427,30 @@ def plot_region_precision_recall(case_metrics: list[dict[str, Any]], output_path
     ax.set_title("Average precision and recall by region")
     ax.legend()
     for bar, value in zip(bars_precision, precision_values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, bar.get_height(), metric_display(value), ha="center", va="bottom", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            bar.get_height(),
+            metric_display(value),
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
     for bar, value in zip(bars_recall, recall_values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, bar.get_height(), metric_display(value), ha="center", va="bottom", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            bar.get_height(),
+            metric_display(value),
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
     fig.tight_layout()
     save_figure(fig, output_path)
 
 
-def plot_dice_vs_reference_volume(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
+def plot_dice_vs_reference_volume(
+    case_metrics: list[dict[str, Any]], output_path: Path
+) -> None:
     x = [item["metrics"]["(1, 2, 3)"]["n_ref"] for item in case_metrics]
     y = [item["dice_wt"] for item in case_metrics]
     labels = [item["case_id"] for item in case_metrics]
@@ -384,7 +466,9 @@ def plot_dice_vs_reference_volume(case_metrics: list[dict[str, Any]], output_pat
     save_figure(fig, output_path)
 
 
-def plot_region_volume_bias(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
+def plot_region_volume_bias(
+    case_metrics: list[dict[str, Any]], output_path: Path
+) -> None:
     region_specs = [
         ("WT", "(1, 2, 3)", "#355070"),
         ("TC", "(2, 3)", "#b56576"),
@@ -392,7 +476,15 @@ def plot_region_volume_bias(case_metrics: list[dict[str, Any]], output_path: Pat
     ]
     labels = [spec[0] for spec in region_specs]
     pred_minus_ref = [
-        float(np.mean([item["metrics"][spec[1]]["n_pred"] - item["metrics"][spec[1]]["n_ref"] for item in case_metrics]))
+        float(
+            np.mean(
+                [
+                    item["metrics"][spec[1]]["n_pred"]
+                    - item["metrics"][spec[1]]["n_ref"]
+                    for item in case_metrics
+                ]
+            )
+        )
         for spec in region_specs
     ]
 
@@ -402,12 +494,21 @@ def plot_region_volume_bias(case_metrics: list[dict[str, Any]], output_path: Pat
     ax.set_ylabel("Mean predicted voxels - reference voxels")
     ax.set_title("Average volume bias by region")
     for bar, value in zip(bars, pred_minus_ref):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, value, f"{value:.0f}", ha="center", va="bottom" if value >= 0 else "top", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            value,
+            f"{value:.0f}",
+            ha="center",
+            va="bottom" if value >= 0 else "top",
+            fontsize=8,
+        )
     fig.tight_layout()
     save_figure(fig, output_path)
 
 
-def plot_region_case_ranking(case_metrics: list[dict[str, Any]], region_key: str, output_path: Path) -> None:
+def plot_region_case_ranking(
+    case_metrics: list[dict[str, Any]], region_key: str, output_path: Path
+) -> None:
     region_to_attr = {
         "(1, 2, 3)": "dice_wt",
         "(2, 3)": "dice_tc",
@@ -415,7 +516,9 @@ def plot_region_case_ranking(case_metrics: list[dict[str, Any]], region_key: str
     }
     region_name = REGION_DISPLAY_NAMES[region_key]
     attr = region_to_attr[region_key]
-    ordered = sorted(case_metrics, key=lambda item: metric_sort_value(item[attr]), reverse=True)
+    ordered = sorted(
+        case_metrics, key=lambda item: metric_sort_value(item[attr]), reverse=True
+    )
     labels = [item["case_id"] for item in ordered]
     values = [item[attr] for item in ordered]
     plot_values = [metric_plot_value(value) for value in values]
@@ -428,12 +531,21 @@ def plot_region_case_ranking(case_metrics: list[dict[str, Any]], region_key: str
     ax.set_ylabel("Dice")
     ax.set_title(f"{region_name} case ranking")
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2.0, metric_plot_value(value) + 0.01, metric_display(value), ha="center", va="bottom", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            metric_plot_value(value) + 0.01,
+            metric_display(value),
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
     fig.tight_layout()
     save_figure(fig, output_path)
 
 
-def compute_case_error_analysis(case_metrics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def compute_case_error_analysis(
+    case_metrics: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
     analysis: list[dict[str, Any]] = []
     for item in case_metrics:
         dominant_issue = max(
@@ -449,10 +561,18 @@ def compute_case_error_analysis(case_metrics: list[dict[str, Any]]) -> list[dict
         )[0]
         finite_regions = [
             (name, value)
-            for name, value in [("WT", item["dice_wt"]), ("TC", item["dice_tc"]), ("ET", item["dice_et"])]
+            for name, value in [
+                ("WT", item["dice_wt"]),
+                ("TC", item["dice_tc"]),
+                ("ET", item["dice_et"]),
+            ]
             if np.isfinite(value)
         ]
-        strongest_region = min(finite_regions, key=lambda pair: pair[1])[0] if finite_regions else "n/a"
+        strongest_region = (
+            min(finite_regions, key=lambda pair: pair[1])[0]
+            if finite_regions
+            else "n/a"
+        )
         analysis.append(
             {
                 "case_id": item["case_id"],
@@ -478,7 +598,9 @@ def compute_case_error_analysis(case_metrics: list[dict[str, Any]]) -> list[dict
     return analysis
 
 
-def write_case_metrics_csv(case_metrics: list[dict[str, Any]], output_path: Path) -> None:
+def write_case_metrics_csv(
+    case_metrics: list[dict[str, Any]], output_path: Path
+) -> None:
     fieldnames = [
         "case_id",
         "dice_mean",
@@ -510,7 +632,9 @@ def write_case_metrics_csv(case_metrics: list[dict[str, Any]], output_path: Path
             writer.writerow({key: item[key] for key in fieldnames})
 
 
-def write_case_analysis_csv(case_analysis: list[dict[str, Any]], output_path: Path) -> None:
+def write_case_analysis_csv(
+    case_analysis: list[dict[str, Any]], output_path: Path
+) -> None:
     fieldnames = list(case_analysis[0].keys())
     with output_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -519,8 +643,14 @@ def write_case_analysis_csv(case_analysis: list[dict[str, Any]], output_path: Pa
             writer.writerow(item)
 
 
-def build_dataset_analysis(case_metrics: list[dict[str, Any]], summary: dict[str, Any]) -> dict[str, Any]:
-    sorted_by_mean = sorted(case_metrics, key=lambda item: metric_sort_value(item["dice_mean"]), reverse=True)
+def build_dataset_analysis(
+    case_metrics: list[dict[str, Any]], summary: dict[str, Any]
+) -> dict[str, Any]:
+    sorted_by_mean = sorted(
+        case_metrics,
+        key=lambda item: metric_sort_value(item["dice_mean"]),
+        reverse=True,
+    )
     weakest_cases = [item["case_id"] for item in sorted_by_mean[-3:]]
     strongest_cases = [item["case_id"] for item in sorted_by_mean[:3]]
     return {
@@ -534,18 +664,36 @@ def build_dataset_analysis(case_metrics: list[dict[str, Any]], summary: dict[str
         "worst_case": weakest_cases[-1],
         "top3_cases": strongest_cases,
         "bottom3_cases": weakest_cases,
-        "mean_dice_std": float(np.std([item["dice_mean"] for item in case_metrics if np.isfinite(item["dice_mean"])]))
-        if any(np.isfinite(item["dice_mean"]) for item in case_metrics)
-        else math.nan,
-        "cases_with_et_zero_dice": [item["case_id"] for item in case_metrics if np.isfinite(item["dice_et"]) and item["dice_et"] <= 1e-8],
+        "mean_dice_std": (
+            float(
+                np.std(
+                    [
+                        item["dice_mean"]
+                        for item in case_metrics
+                        if np.isfinite(item["dice_mean"])
+                    ]
+                )
+            )
+            if any(np.isfinite(item["dice_mean"]) for item in case_metrics)
+            else math.nan
+        ),
+        "cases_with_et_zero_dice": [
+            item["case_id"]
+            for item in case_metrics
+            if np.isfinite(item["dice_et"]) and item["dice_et"] <= 1e-8
+        ],
     }
 
 
 def write_analysis_json(analysis: dict[str, Any], output_path: Path) -> None:
-    output_path.write_text(json.dumps(analysis, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    output_path.write_text(
+        json.dumps(analysis, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
 
-def render_case_analysis_markdown(case_analysis: list[dict[str, Any]], output_path: Path) -> None:
+def render_case_analysis_markdown(
+    case_analysis: list[dict[str, Any]], output_path: Path
+) -> None:
     lines = [
         "# Case Analysis",
         "",
@@ -595,8 +743,12 @@ def plot_case_region_error_map(
     for col, plane in enumerate(PLANE_ORDER):
         index = select_best_slice(focus_mask, plane)
         base_slice = get_display_slice(base_volume, plane, index)
-        gt_slice = get_display_slice(gt_mask.astype(np.uint8), plane, index).astype(bool)
-        pred_slice = get_display_slice(pred_mask.astype(np.uint8), plane, index).astype(bool)
+        gt_slice = get_display_slice(gt_mask.astype(np.uint8), plane, index).astype(
+            bool
+        )
+        pred_slice = get_display_slice(pred_mask.astype(np.uint8), plane, index).astype(
+            bool
+        )
 
         tp = gt_slice & pred_slice
         fp = (~gt_slice) & pred_slice
@@ -609,7 +761,9 @@ def plot_case_region_error_map(
         overlay[gt_slice] = [0.0, 0.7, 1.0, 0.30]
         overlay[pred_slice] = [1.0, 0.0, 0.6, 0.30]
         ax_mask.imshow(overlay, origin="lower")
-        ax_mask.set_title(f"{region_name} | {plane} | GT cyan / Pred magenta", fontsize=11)
+        ax_mask.set_title(
+            f"{region_name} | {plane} | GT cyan / Pred magenta", fontsize=11
+        )
         ax_mask.axis("off")
 
         ax_err.imshow(base_slice, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
@@ -621,13 +775,17 @@ def plot_case_region_error_map(
         ax_err.set_title(f"{region_name} error | {plane}", fontsize=11)
         ax_err.axis("off")
 
-    fig.suptitle(f"{case_id} | {region_name} region-specific error analysis", fontsize=16)
+    fig.suptitle(
+        f"{case_id} | {region_name} region-specific error analysis", fontsize=16
+    )
     fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.02), ncol=3)
     fig.tight_layout(rect=(0, 0.06, 1, 0.94))
     save_figure(fig, output_path)
 
 
-def build_conclusion_lines(case_metrics: list[dict[str, Any]], dataset_analysis: dict[str, Any]) -> list[str]:
+def build_conclusion_lines(
+    case_metrics: list[dict[str, Any]], dataset_analysis: dict[str, Any]
+) -> list[str]:
     mean_wt = safe_nanmean([item["dice_wt"] for item in case_metrics])
     mean_tc = safe_nanmean([item["dice_tc"] for item in case_metrics])
     mean_et = safe_nanmean([item["dice_et"] for item in case_metrics])
@@ -636,15 +794,35 @@ def build_conclusion_lines(case_metrics: list[dict[str, Any]], dataset_analysis:
         for name, value in [("WT", mean_wt), ("TC", mean_tc), ("ET", mean_et)]
         if np.isfinite(value)
     ]
-    weakest_region = min(finite_regions, key=lambda pair: pair[1])[0] if finite_regions else "n/a"
+    weakest_region = (
+        min(finite_regions, key=lambda pair: pair[1])[0] if finite_regions else "n/a"
+    )
     dominant_error_mode = max(
         [
-            ("WT false negatives", float(np.mean([item["fn_wt"] for item in case_metrics]))),
-            ("WT false positives", float(np.mean([item["fp_wt"] for item in case_metrics]))),
-            ("TC false negatives", float(np.mean([item["fn_tc"] for item in case_metrics]))),
-            ("TC false positives", float(np.mean([item["fp_tc"] for item in case_metrics]))),
-            ("ET false negatives", float(np.mean([item["fn_et"] for item in case_metrics]))),
-            ("ET false positives", float(np.mean([item["fp_et"] for item in case_metrics]))),
+            (
+                "WT false negatives",
+                float(np.mean([item["fn_wt"] for item in case_metrics])),
+            ),
+            (
+                "WT false positives",
+                float(np.mean([item["fp_wt"] for item in case_metrics])),
+            ),
+            (
+                "TC false negatives",
+                float(np.mean([item["fn_tc"] for item in case_metrics])),
+            ),
+            (
+                "TC false positives",
+                float(np.mean([item["fp_tc"] for item in case_metrics])),
+            ),
+            (
+                "ET false negatives",
+                float(np.mean([item["fn_et"] for item in case_metrics])),
+            ),
+            (
+                "ET false positives",
+                float(np.mean([item["fp_et"] for item in case_metrics])),
+            ),
         ],
         key=lambda pair: pair[1],
     )[0]
@@ -656,11 +834,15 @@ def build_conclusion_lines(case_metrics: list[dict[str, Any]], dataset_analysis:
     ]
     et_zero = dataset_analysis.get("cases_with_et_zero_dice", [])
     if et_zero:
-        lines.append(f"- `ET Dice = 0` 的病例有：`{', '.join(et_zero)}`，这通常意味着增强肿瘤区域几乎没有被正确抓到。")
+        lines.append(
+            f"- `ET Dice = 0` 的病例有：`{', '.join(et_zero)}`，这通常意味着增强肿瘤区域几乎没有被正确抓到。"
+        )
     return lines
 
 
-def render_per_case_markdown(case_metrics: dict[str, Any], output_path: Path, overlay_filename: str) -> None:
+def render_per_case_markdown(
+    case_metrics: dict[str, Any], output_path: Path, overlay_filename: str
+) -> None:
     lines = [
         f"# {case_metrics['case_id']}",
         "",
@@ -758,10 +940,22 @@ def plot_case_overlay_panel(
             ax.imshow(base_slice, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
             ax.axis("off")
 
-        ax_gt.imshow(np.ma.masked_where(gt_slice == 0, gt_slice), cmap=seg_cmap, norm=seg_norm, origin="lower", alpha=0.45)
+        ax_gt.imshow(
+            np.ma.masked_where(gt_slice == 0, gt_slice),
+            cmap=seg_cmap,
+            norm=seg_norm,
+            origin="lower",
+            alpha=0.45,
+        )
         ax_gt.set_title(f"GT | {plane} | slice {index}", fontsize=11)
 
-        ax_pred.imshow(np.ma.masked_where(pred_slice == 0, pred_slice), cmap=seg_cmap, norm=seg_norm, origin="lower", alpha=0.45)
+        ax_pred.imshow(
+            np.ma.masked_where(pred_slice == 0, pred_slice),
+            cmap=seg_cmap,
+            norm=seg_norm,
+            origin="lower",
+            alpha=0.45,
+        )
         ax_pred.set_title(f"Prediction | {plane} | slice {index}", fontsize=11)
 
         error_rgb = np.zeros((*tp.shape, 4), dtype=float)
@@ -793,7 +987,9 @@ def render_report_markdown(
     lines.append(f"- summary source: `{to_workspace_relative_string(summary_path)}`")
     lines.append(f"- evaluated cases: `{len(case_metrics)}`")
     if sample_selection is not None:
-        lines.append(f"- sampled from training set: `{sample_selection.get('sample_count')}` cases")
+        lines.append(
+            f"- sampled from training set: `{sample_selection.get('sample_count')}` cases"
+        )
         lines.append(f"- sample seed: `{sample_selection.get('sample_seed')}`")
     lines.append("")
     lines.append("## Conclusions")
@@ -824,9 +1020,15 @@ def render_report_markdown(
     lines.append("")
     lines.append("## Case Highlights")
     lines.append("")
-    lines.append(f"- best case: `{best_case['case_id']}` with mean Dice `{metric_display(best_case['dice_mean'])}`")
-    lines.append(f"- median case: `{median_case['case_id']}` with mean Dice `{metric_display(median_case['dice_mean'])}`")
-    lines.append(f"- worst case: `{worst_case['case_id']}` with mean Dice `{metric_display(worst_case['dice_mean'])}`")
+    lines.append(
+        f"- best case: `{best_case['case_id']}` with mean Dice `{metric_display(best_case['dice_mean'])}`"
+    )
+    lines.append(
+        f"- median case: `{median_case['case_id']}` with mean Dice `{metric_display(median_case['dice_mean'])}`"
+    )
+    lines.append(
+        f"- worst case: `{worst_case['case_id']}` with mean Dice `{metric_display(worst_case['dice_mean'])}`"
+    )
     lines.append("")
     lines.append(f"### Best Case: `{best_case['case_id']}`")
     lines.append("")
@@ -840,7 +1042,9 @@ def render_report_markdown(
     lines.append("")
     lines.append("## Metric Formulas")
     lines.append("")
-    lines.append(r"$$TP = |Y_{pred}=1 \land Y_{ref}=1|, \quad FP = |Y_{pred}=1 \land Y_{ref}=0|, \quad FN = |Y_{pred}=0 \land Y_{ref}=1|$$")
+    lines.append(
+        r"$$TP = |Y_{pred}=1 \land Y_{ref}=1|, \quad FP = |Y_{pred}=1 \land Y_{ref}=0|, \quad FN = |Y_{pred}=0 \land Y_{ref}=1|$$"
+    )
     lines.append("")
     lines.append(r"$$\mathrm{Dice} = \frac{2TP}{2TP + FP + FN}$$")
     lines.append("")
@@ -854,7 +1058,9 @@ def render_report_markdown(
     lines.append("")
     lines.append("- `analysis.json`: dataset-level summary and failure-pattern digest")
     lines.append("- `case_metrics.csv`: per-case Dice and TP/FP/FN statistics")
-    lines.append("- `case_analysis.csv`: per-case dominant failure mode and FP/FN balance")
+    lines.append(
+        "- `case_analysis.csv`: per-case dominant failure mode and FP/FN balance"
+    )
     lines.append("- `case_analysis.md`: markdown table version of the case analysis")
     lines.append("- `cases/`: per-case markdown pages and overlay figures")
     lines.append("")
@@ -885,7 +1091,9 @@ def main(
         raise RuntimeError(f"No cases found in summary file: {summary_file}")
 
     summary_copy = output_dir / "summary.copy.json"
-    summary_copy.write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    summary_copy.write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     case_analysis = compute_case_error_analysis(case_metrics)
     dataset_analysis = build_dataset_analysis(case_metrics, summary)
@@ -898,22 +1106,47 @@ def main(
     plot_case_ranking(case_metrics, output_dir / "case_ranking.png")
     plot_case_region_heatmap(case_metrics, output_dir / "case_region_heatmap.png")
     plot_region_error_breakdown(case_metrics, output_dir / "region_error_breakdown.png")
-    plot_region_precision_recall(case_metrics, output_dir / "region_precision_recall.png")
+    plot_region_precision_recall(
+        case_metrics, output_dir / "region_precision_recall.png"
+    )
     plot_region_volume_bias(case_metrics, output_dir / "region_volume_bias.png")
-    plot_dice_vs_reference_volume(case_metrics, output_dir / "dice_vs_reference_volume.png")
-    plot_region_case_ranking(case_metrics, "(1, 2, 3)", output_dir / "wt_case_ranking.png")
+    plot_dice_vs_reference_volume(
+        case_metrics, output_dir / "dice_vs_reference_volume.png"
+    )
+    plot_region_case_ranking(
+        case_metrics, "(1, 2, 3)", output_dir / "wt_case_ranking.png"
+    )
     plot_region_case_ranking(case_metrics, "(2, 3)", output_dir / "tc_case_ranking.png")
     plot_region_case_ranking(case_metrics, "(3,)", output_dir / "et_case_ranking.png")
-    plot_case_overlay_panel(case_metrics[0], raw_dataset_dir, output_dir / "best_case_overlay.png")
-    plot_case_overlay_panel(case_metrics[-1], raw_dataset_dir, output_dir / "worst_case_overlay.png")
+    plot_case_overlay_panel(
+        case_metrics[0], raw_dataset_dir, output_dir / "best_case_overlay.png"
+    )
+    plot_case_overlay_panel(
+        case_metrics[-1], raw_dataset_dir, output_dir / "worst_case_overlay.png"
+    )
 
     for item in case_metrics:
         case_overlay = cases_output_dir / f"{item['case_id']}_overlay.png"
         case_markdown = cases_output_dir / f"{item['case_id']}.md"
         plot_case_overlay_panel(item, raw_dataset_dir, case_overlay)
-        plot_case_region_error_map(item, raw_dataset_dir, "(1, 2, 3)", cases_output_dir / f"{item['case_id']}_wt_error.png")
-        plot_case_region_error_map(item, raw_dataset_dir, "(2, 3)", cases_output_dir / f"{item['case_id']}_tc_error.png")
-        plot_case_region_error_map(item, raw_dataset_dir, "(3,)", cases_output_dir / f"{item['case_id']}_et_error.png")
+        plot_case_region_error_map(
+            item,
+            raw_dataset_dir,
+            "(1, 2, 3)",
+            cases_output_dir / f"{item['case_id']}_wt_error.png",
+        )
+        plot_case_region_error_map(
+            item,
+            raw_dataset_dir,
+            "(2, 3)",
+            cases_output_dir / f"{item['case_id']}_tc_error.png",
+        )
+        plot_case_region_error_map(
+            item,
+            raw_dataset_dir,
+            "(3,)",
+            cases_output_dir / f"{item['case_id']}_et_error.png",
+        )
         render_per_case_markdown(item, case_markdown, case_overlay.name)
 
     sample_selection = None
@@ -924,11 +1157,19 @@ def main(
             encoding="utf-8",
         )
 
-    render_report_markdown(output_dir / "report.md", summary_file, case_metrics, sample_selection, dataset_analysis)
+    render_report_markdown(
+        output_dir / "report.md",
+        summary_file,
+        case_metrics,
+        sample_selection,
+        dataset_analysis,
+    )
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate a markdown evaluation report with visualizations.")
+    parser = argparse.ArgumentParser(
+        description="Generate a markdown evaluation report with visualizations."
+    )
     parser.add_argument("--summary-file", required=True)
     parser.add_argument("--predictions-dir", required=True)
     parser.add_argument("--raw-dataset-dir", required=True)

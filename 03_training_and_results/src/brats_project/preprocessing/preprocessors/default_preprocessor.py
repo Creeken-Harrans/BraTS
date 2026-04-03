@@ -28,10 +28,18 @@ import brats_project
 from brats_project.paths import PROJECT_PREPROCESSED, PROJECT_RAW
 from brats_project.preprocessing.cropping.cropping import crop_to_nonzero
 from brats_project.preprocessing.resampling.default_resampling import compute_new_shape
-from brats_project.training.dataloading.nnunet_dataset import nnUNetDatasetBlosc2, nnUNetDatasetNumpy
-from brats_project.utilities.dataset_name_id_conversion import maybe_convert_to_dataset_name
+from brats_project.training.dataloading.nnunet_dataset import (
+    nnUNetDatasetBlosc2,
+    nnUNetDatasetNumpy,
+)
+from brats_project.utilities.dataset_name_id_conversion import (
+    maybe_convert_to_dataset_name,
+)
 from brats_project.utilities.find_class_by_name import recursive_find_python_class
-from brats_project.utilities.plans_handling.plans_handler import PlansManager, ConfigurationManager
+from brats_project.utilities.plans_handling.plans_handler import (
+    PlansManager,
+    ConfigurationManager,
+)
 from brats_project.utilities.utils import get_filenames_of_train_images_and_targets
 
 
@@ -56,13 +64,21 @@ class DefaultPreprocessor(object):
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(f"{timestamp} {message}\n")
 
-    def run_case_npy(self, data: np.ndarray, seg: Optional[np.ndarray], properties: dict,
-                     plans_manager: PlansManager, configuration_manager: ConfigurationManager,
-                     dataset_json: Union[dict, str]):
+    def run_case_npy(
+        self,
+        data: np.ndarray,
+        seg: Optional[np.ndarray],
+        properties: dict,
+        plans_manager: PlansManager,
+        configuration_manager: ConfigurationManager,
+        dataset_json: Union[dict, str],
+    ):
         # let's not mess up the inputs!
         data = data.astype(np.float32)  # this creates a copy
         if seg is not None:
-            assert data.shape[1:] == seg.shape[1:], "Shape mismatch between image and segmentation. Please fix your dataset and make use of the --verify_dataset_integrity flag to ensure everything is correct"
+            assert (
+                data.shape[1:] == seg.shape[1:]
+            ), "Shape mismatch between image and segmentation. Please fix your dataset and make use of the --verify_dataset_integrity flag to ensure everything is correct"
             seg = np.copy(seg)
 
         has_seg = seg is not None
@@ -71,19 +87,23 @@ class DefaultPreprocessor(object):
         data = data.transpose([0, *[i + 1 for i in plans_manager.transpose_forward]])
         if seg is not None:
             seg = seg.transpose([0, *[i + 1 for i in plans_manager.transpose_forward]])
-        original_spacing = [properties['spacing'][i] for i in plans_manager.transpose_forward]
+        original_spacing = [
+            properties["spacing"][i] for i in plans_manager.transpose_forward
+        ]
 
         # crop, remember to store size before cropping!
         shape_before_cropping = data.shape[1:]
-        properties['shape_before_cropping'] = shape_before_cropping
+        properties["shape_before_cropping"] = shape_before_cropping
         # this command will generate a segmentation. This is important because of the nonzero mask which we may need
         data, seg, bbox = crop_to_nonzero(data, seg)
-        properties['bbox_used_for_cropping'] = bbox
+        properties["bbox_used_for_cropping"] = bbox
         # print(data.shape, seg.shape)
-        properties['shape_after_cropping_and_before_resampling'] = data.shape[1:]
+        properties["shape_after_cropping_and_before_resampling"] = data.shape[1:]
 
         # resample
-        target_spacing = configuration_manager.spacing  # this should already be transposed
+        target_spacing = (
+            configuration_manager.spacing
+        )  # this should already be transposed
 
         if len(target_spacing) < len(data.shape[1:]):
             # target spacing for 2d has 2 entries but the data and original_spacing have three because everything is 3d
@@ -94,18 +114,26 @@ class DefaultPreprocessor(object):
         # normalize
         # normalization MUST happen before resampling or we get huge problems with resampled nonzero masks no
         # longer fitting the images perfectly!
-        data = self._normalize(data, seg, configuration_manager,
-                               plans_manager.foreground_intensity_properties_per_channel)
+        data = self._normalize(
+            data,
+            seg,
+            configuration_manager,
+            plans_manager.foreground_intensity_properties_per_channel,
+        )
 
         # print('current shape', data.shape[1:], 'current_spacing', original_spacing,
         #       '\ntarget shape', new_shape, 'target_spacing', target_spacing)
         old_shape = data.shape[1:]
-        data = configuration_manager.resampling_fn_data(data, new_shape, original_spacing, target_spacing)
-        seg = configuration_manager.resampling_fn_seg(seg, new_shape, original_spacing, target_spacing)
+        data = configuration_manager.resampling_fn_data(
+            data, new_shape, original_spacing, target_spacing
+        )
+        seg = configuration_manager.resampling_fn_seg(
+            seg, new_shape, original_spacing, target_spacing
+        )
         if self.verbose:
             self._log_detail(
-                f'old shape: {old_shape}, new_shape: {new_shape}, old_spacing: {original_spacing}, '
-                f'new_spacing: {target_spacing}, fn_data: {configuration_manager.resampling_fn_data}'
+                f"old shape: {old_shape}, new_shape: {new_shape}, old_spacing: {original_spacing}, "
+                f"new_spacing: {target_spacing}, fn_data: {configuration_manager.resampling_fn_data}"
             )
 
         # if we have a segmentation, sample foreground locations for oversampling and add those to properties
@@ -114,8 +142,11 @@ class DefaultPreprocessor(object):
             # with a LabelManager Instance in this function because that's all its used for. Dunno what's better.
             # LabelManager is pretty light computation-wise.
             label_manager = plans_manager.get_label_manager(dataset_json)
-            collect_for_this = label_manager.foreground_regions if label_manager.has_regions \
+            collect_for_this = (
+                label_manager.foreground_regions
+                if label_manager.has_regions
                 else label_manager.foreground_labels
+            )
 
             # when using the ignore label we want to sample only from annotated regions. Therefore we also need to
             # collect samples uniformly from all classes (incl background)
@@ -124,18 +155,26 @@ class DefaultPreprocessor(object):
 
             # no need to filter background in regions because it is already filtered in handle_labels
             # print(all_labels, regions)
-            properties['class_locations'] = self._sample_foreground_locations(seg, collect_for_this,
-                                                                              verbose=self.verbose)
-            seg = self.modify_seg_fn(seg, plans_manager, dataset_json, configuration_manager)
+            properties["class_locations"] = self._sample_foreground_locations(
+                seg, collect_for_this, verbose=self.verbose
+            )
+            seg = self.modify_seg_fn(
+                seg, plans_manager, dataset_json, configuration_manager
+            )
         if np.max(seg) > 127:
             seg = seg.astype(np.int16)
         else:
             seg = seg.astype(np.int8)
         return data, seg, properties
 
-    def run_case(self, image_files: List[str], seg_file: Optional[str], plans_manager: PlansManager,
-                 configuration_manager: ConfigurationManager,
-                 dataset_json: Union[dict, str]):
+    def run_case(
+        self,
+        image_files: List[str],
+        seg_file: Optional[str],
+        plans_manager: PlansManager,
+        configuration_manager: ConfigurationManager,
+        dataset_json: Union[dict, str],
+    ):
         """
         seg file can be none (test cases)
 
@@ -159,69 +198,102 @@ class DefaultPreprocessor(object):
 
         if self.verbose:
             self._log_detail(str(seg_file))
-        data, seg, data_properties = self.run_case_npy(data, seg, data_properties, plans_manager, configuration_manager,
-                                      dataset_json)
+        data, seg, data_properties = self.run_case_npy(
+            data,
+            seg,
+            data_properties,
+            plans_manager,
+            configuration_manager,
+            dataset_json,
+        )
         return data, seg, data_properties
 
-    def run_case_save(self, output_filename_truncated: str, image_files: List[str], seg_file: str,
-                      plans_manager: PlansManager, configuration_manager: ConfigurationManager,
-                      dataset_json: Union[dict, str]):
-        data, seg, properties = self.run_case(image_files, seg_file, plans_manager, configuration_manager, dataset_json)
+    def run_case_save(
+        self,
+        output_filename_truncated: str,
+        image_files: List[str],
+        seg_file: str,
+        plans_manager: PlansManager,
+        configuration_manager: ConfigurationManager,
+        dataset_json: Union[dict, str],
+    ):
+        data, seg, properties = self.run_case(
+            image_files, seg_file, plans_manager, configuration_manager, dataset_json
+        )
         data = data.astype(np.float32, copy=False)
         seg = seg.astype(np.int16, copy=False)
         # print('dtypes', data.dtype, seg.dtype)
         nnUNetDatasetNumpy.save_case(data, seg, properties, output_filename_truncated)
 
     def _run_serial(
-            self,
-            dataset: dict,
-            output_directory: str,
-            plans_manager: PlansManager,
-            configuration_manager: ConfigurationManager,
-            dataset_json: dict,
+        self,
+        dataset: dict,
+        output_directory: str,
+        plans_manager: PlansManager,
+        configuration_manager: ConfigurationManager,
+        dataset_json: dict,
     ) -> None:
-        for case_id in tqdm(dataset.keys(), desc="Preprocessing cases",
-                            disable=not getattr(self, 'show_progress_bar', True)):
+        for case_id in tqdm(
+            dataset.keys(),
+            desc="Preprocessing cases",
+            disable=not getattr(self, "show_progress_bar", True),
+        ):
             self.run_case_save(
                 join(output_directory, case_id),
-                dataset[case_id]['images'],
-                dataset[case_id]['label'],
+                dataset[case_id]["images"],
+                dataset[case_id]["label"],
                 plans_manager,
                 configuration_manager,
                 dataset_json,
             )
 
     def _run_parallel(
-            self,
-            dataset: dict,
-            output_directory: str,
-            plans_manager: PlansManager,
-            configuration_manager: ConfigurationManager,
-            dataset_json: dict,
-            num_processes: int,
+        self,
+        dataset: dict,
+        output_directory: str,
+        plans_manager: PlansManager,
+        configuration_manager: ConfigurationManager,
+        dataset_json: dict,
+        num_processes: int,
     ) -> None:
         r = []
         with multiprocessing.get_context("spawn").Pool(num_processes) as p:
             remaining = list(range(len(dataset)))
             workers = [j for j in p._pool]
             for k in dataset.keys():
-                r.append(p.starmap_async(self.run_case_save,
-                                         ((join(output_directory, k), dataset[k]['images'], dataset[k]['label'],
-                                           plans_manager, configuration_manager,
-                                           dataset_json),)))
+                r.append(
+                    p.starmap_async(
+                        self.run_case_save,
+                        (
+                            (
+                                join(output_directory, k),
+                                dataset[k]["images"],
+                                dataset[k]["label"],
+                                plans_manager,
+                                configuration_manager,
+                                dataset_json,
+                            ),
+                        ),
+                    )
+                )
 
-            with tqdm(desc="Preprocessing cases", total=len(dataset),
-                      disable=not getattr(self, 'show_progress_bar', True)) as pbar:
+            with tqdm(
+                desc="Preprocessing cases",
+                total=len(dataset),
+                disable=not getattr(self, "show_progress_bar", True),
+            ) as pbar:
                 while len(remaining) > 0:
                     all_alive = all([j.is_alive() for j in workers])
                     if not all_alive:
-                        raise RuntimeError('Some background worker is 6 feet under. Yuck. \n'
-                                           'OK jokes aside.\n'
-                                           'One of your background processes is missing. This could be because of '
-                                           'an error (look for an error message) or because it was killed '
-                                           'by your OS due to running out of RAM. If you don\'t see '
-                                           'an error message, out of RAM is likely the problem. In that case '
-                                           'reducing the number of workers might help')
+                        raise RuntimeError(
+                            "Some background worker is 6 feet under. Yuck. \n"
+                            "OK jokes aside.\n"
+                            "One of your background processes is missing. This could be because of "
+                            "an error (look for an error message) or because it was killed "
+                            "by your OS due to running out of RAM. If you don't see "
+                            "an error message, out of RAM is likely the problem. In that case "
+                            "reducing the number of workers might help"
+                        )
                     done = [i for i in remaining if r[i].ready()]
                     for i in done:
                         r[i].get()
@@ -248,12 +320,12 @@ class DefaultPreprocessor(object):
 
     @staticmethod
     def _sample_foreground_locations(
-            seg: np.ndarray,
-            classes_or_regions: Union[List[int], List[Tuple[int, ...]]],
-            seed: int = 1234,
-            verbose: bool = False,
-            min_num_samples=10000,
-            min_percent_coverage = 0.01
+        seg: np.ndarray,
+        classes_or_regions: Union[List[int], List[Tuple[int, ...]]],
+        seed: int = 1234,
+        verbose: bool = False,
+        min_num_samples=10000,
+        min_percent_coverage=0.01,
     ):
 
         rndst = np.random.RandomState(seed)
@@ -298,7 +370,9 @@ class DefaultPreprocessor(object):
         ends = np.r_[change, n]
         labels_present = lab_sorted[starts]
 
-        label_to_range = {int(l): (int(s), int(e)) for l, s, e in zip(labels_present, starts, ends)}
+        label_to_range = {
+            int(l): (int(s), int(e)) for l, s, e in zip(labels_present, starts, ends)
+        }
         present_labels = set(label_to_range.keys())
 
         for c in classes_or_regions:
@@ -330,7 +404,9 @@ class DefaultPreprocessor(object):
 
             total = int(np.sum(counts))
             target_num_samples = min(min_num_samples, total)
-            target_num_samples = max(target_num_samples, int(np.ceil(total * min_percent_coverage)))
+            target_num_samples = max(
+                target_num_samples, int(np.ceil(total * min_percent_coverage))
+            )
 
             # Sample uniformly without replacement from the union of ranges, without building an n-sized mask
             # Draw target_num_samples unique offsets in [0, total)
@@ -343,14 +419,16 @@ class DefaultPreprocessor(object):
             in_range = offsets - prev[which]
 
             # Convert to indices in coords_sorted
-            starts_for_pick = np.fromiter((ranges[i][0] for i in which), dtype=np.int64, count=which.size)
+            starts_for_pick = np.fromiter(
+                (ranges[i][0] for i in which), dtype=np.int64, count=which.size
+            )
             picked_idx = starts_for_pick + in_range.astype(np.int64)
 
             selected = coords_sorted[picked_idx]
             class_locs[k] = selected
 
             if verbose:
-                DefaultPreprocessor._log_detail(f'{c} {target_num_samples}')
+                DefaultPreprocessor._log_detail(f"{c} {target_num_samples}")
 
         return class_locs
 
@@ -412,69 +490,123 @@ class DefaultPreprocessor(object):
     #         foreground_coords = foreground_coords[~mask]
     #     return class_locs
 
-    def _normalize(self, data: np.ndarray, seg: np.ndarray, configuration_manager: ConfigurationManager,
-                   foreground_intensity_properties_per_channel: dict) -> np.ndarray:
+    def _normalize(
+        self,
+        data: np.ndarray,
+        seg: np.ndarray,
+        configuration_manager: ConfigurationManager,
+        foreground_intensity_properties_per_channel: dict,
+    ) -> np.ndarray:
         for c in range(data.shape[0]):
             scheme = configuration_manager.normalization_schemes[c]
-            normalizer_class = recursive_find_python_class(join(brats_project.__path__[0], "preprocessing", "normalization"),
-                                                           scheme,
-                                                           'brats_project.preprocessing.normalization')
+            normalizer_class = recursive_find_python_class(
+                join(brats_project.__path__[0], "preprocessing", "normalization"),
+                scheme,
+                "brats_project.preprocessing.normalization",
+            )
             if normalizer_class is None:
-                raise RuntimeError(f'Unable to locate class \'{scheme}\' for normalization')
-            normalizer = normalizer_class(use_mask_for_norm=configuration_manager.use_mask_for_norm[c],
-                                          intensityproperties=foreground_intensity_properties_per_channel[str(c)])
+                raise RuntimeError(
+                    f"Unable to locate class '{scheme}' for normalization"
+                )
+            normalizer = normalizer_class(
+                use_mask_for_norm=configuration_manager.use_mask_for_norm[c],
+                intensityproperties=foreground_intensity_properties_per_channel[str(c)],
+            )
             data[c] = normalizer.run(data[c], seg[0])
         return data
 
-    def run(self, dataset_name_or_id: Union[int, str], configuration_name: str, plans_identifier: str,
-            num_processes: int):
+    def run(
+        self,
+        dataset_name_or_id: Union[int, str],
+        configuration_name: str,
+        plans_identifier: str,
+        num_processes: int,
+    ):
         """
         data identifier = configuration name in plans. EZ.
         """
         dataset_name = maybe_convert_to_dataset_name(dataset_name_or_id)
 
-        assert isdir(join(PROJECT_RAW, dataset_name)), "The requested dataset could not be found in PROJECT_RAW"
+        assert isdir(
+            join(PROJECT_RAW, dataset_name)
+        ), "The requested dataset could not be found in PROJECT_RAW"
 
-        plans_file = join(PROJECT_PREPROCESSED, dataset_name, plans_identifier + '.json')
-        assert isfile(plans_file), "Expected plans file (%s) not found. Run corresponding nnUNet_plan_experiment " \
-                                   "first." % plans_file
+        plans_file = join(
+            PROJECT_PREPROCESSED, dataset_name, plans_identifier + ".json"
+        )
+        assert isfile(plans_file), (
+            "Expected plans file (%s) not found. Run corresponding nnUNet_plan_experiment "
+            "first." % plans_file
+        )
         plans = load_json(plans_file)
         plans_manager = PlansManager(plans)
         configuration_manager = plans_manager.get_configuration(configuration_name)
 
-        dataset_json_file = join(PROJECT_PREPROCESSED, dataset_name, 'dataset.json')
+        dataset_json_file = join(PROJECT_PREPROCESSED, dataset_name, "dataset.json")
         dataset_json = load_json(dataset_json_file)
 
-        output_directory = join(PROJECT_PREPROCESSED, dataset_name, configuration_manager.data_identifier)
+        output_directory = join(
+            PROJECT_PREPROCESSED, dataset_name, configuration_manager.data_identifier
+        )
 
         self._reset_output_directory(output_directory)
 
-        dataset = get_filenames_of_train_images_and_targets(join(PROJECT_RAW, dataset_name), dataset_json)
+        dataset = get_filenames_of_train_images_and_targets(
+            join(PROJECT_RAW, dataset_name), dataset_json
+        )
 
         # identifiers = [os.path.basename(i[:-len(dataset_json['file_ending'])]) for i in seg_fnames]
         # output_filenames_truncated = [join(output_directory, i) for i in identifiers]
 
         try:
             if num_processes == 1:
-                self._run_serial(dataset, output_directory, plans_manager, configuration_manager, dataset_json)
+                self._run_serial(
+                    dataset,
+                    output_directory,
+                    plans_manager,
+                    configuration_manager,
+                    dataset_json,
+                )
             else:
-                self._run_parallel(dataset, output_directory, plans_manager, configuration_manager, dataset_json,
-                                   num_processes)
+                self._run_parallel(
+                    dataset,
+                    output_directory,
+                    plans_manager,
+                    configuration_manager,
+                    dataset_json,
+                    num_processes,
+                )
         except RuntimeError as exc:
             message = str(exc)
             blosc2_write_failed = any(
-                marker in message for marker in ('NDArray', 'setting the slice', 'creating the NDArray')
+                marker in message
+                for marker in ("NDArray", "setting the slice", "creating the NDArray")
             )
             if num_processes <= 1 or not blosc2_write_failed:
                 raise
-            print('Parallel blosc2 preprocessing failed while creating an NDArray. '
-                  'Falling back to a clean single-process retry.')
-            self._log_detail('Parallel blosc2 preprocessing failed while creating an NDArray. Falling back to a clean single-process retry.')
+            print(
+                "Parallel blosc2 preprocessing failed while creating an NDArray. "
+                "Falling back to a clean single-process retry."
+            )
+            self._log_detail(
+                "Parallel blosc2 preprocessing failed while creating an NDArray. Falling back to a clean single-process retry."
+            )
             self._reset_output_directory(output_directory)
-            self._run_serial(dataset, output_directory, plans_manager, configuration_manager, dataset_json)
+            self._run_serial(
+                dataset,
+                output_directory,
+                plans_manager,
+                configuration_manager,
+                dataset_json,
+            )
 
-    def modify_seg_fn(self, seg: np.ndarray, plans_manager: PlansManager, dataset_json: dict,
-                      configuration_manager: ConfigurationManager) -> np.ndarray:
+    def modify_seg_fn(
+        self,
+        seg: np.ndarray,
+        plans_manager: PlansManager,
+        dataset_json: dict,
+        configuration_manager: ConfigurationManager,
+    ) -> np.ndarray:
         # this function will be called at the end of self.run_case. Can be used to change the segmentation
         # after resampling. Useful for experimenting with sparse annotations: I can introduce sparsity after resampling
         # and don't have to create a new dataset each time I modify my experiments
@@ -483,11 +615,13 @@ class DefaultPreprocessor(object):
 
 def example_test_case_preprocessing():
     # (paths to files may need adaptations)
-    plans_file = '/home/isensee/drives/gpu_data/PROJECT_PREPROCESSED/Dataset219_AMOS2022_postChallenge_task2/nnUNetPlans.json'
-    dataset_json_file = '/home/isensee/drives/gpu_data/PROJECT_PREPROCESSED/Dataset219_AMOS2022_postChallenge_task2/dataset.json'
-    input_images = ['/home/isensee/drives/e132-rohdaten/nnUNetv2/Dataset219_AMOS2022_postChallenge_task2/imagesTr/amos_0600_0000.nii.gz', ]  # if you only have one channel, you still need a list: ['case000_0000.nii.gz']
+    plans_file = "/home/isensee/drives/gpu_data/PROJECT_PREPROCESSED/Dataset219_AMOS2022_postChallenge_task2/nnUNetPlans.json"
+    dataset_json_file = "/home/isensee/drives/gpu_data/PROJECT_PREPROCESSED/Dataset219_AMOS2022_postChallenge_task2/dataset.json"
+    input_images = [
+        "/home/isensee/drives/e132-rohdaten/nnUNetv2/Dataset219_AMOS2022_postChallenge_task2/imagesTr/amos_0600_0000.nii.gz",
+    ]  # if you only have one channel, you still need a list: ['case000_0000.nii.gz']
 
-    configuration = '3d_fullres'
+    configuration = "3d_fullres"
     pp = DefaultPreprocessor()
 
     # _ because this position would be the segmentation if seg_file was not None (training case)
@@ -495,12 +629,17 @@ def example_test_case_preprocessing():
     # resolution. What comes out of the preprocessor might have been resampled to some other image resolution (as
     # specified by plans)
     plans_manager = PlansManager(plans_file)
-    data, _, properties = pp.run_case(input_images, seg_file=None, plans_manager=plans_manager,
-                                      configuration_manager=plans_manager.get_configuration(configuration),
-                                      dataset_json=dataset_json_file)
+    data, _, properties = pp.run_case(
+        input_images,
+        seg_file=None,
+        plans_manager=plans_manager,
+        configuration_manager=plans_manager.get_configuration(configuration),
+        dataset_json=dataset_json_file,
+    )
 
     # voila. Now plug data into your prediction function of choice. We of course recommend nnU-Net's default (TODO)
     return data
+
 
 def _verify_class_locations(shape, outfile, class_locs):
     import numpy as np
@@ -518,15 +657,23 @@ def _verify_class_locations(shape, outfile, class_locs):
 
         # Expect coords in (N, 3) as (z, y, x)
         if class_coords.ndim != 2 or class_coords.shape[1] != 3:
-            raise ValueError(f"class_locs[{k}] must have shape (N, 3), got {class_coords.shape}")
+            raise ValueError(
+                f"class_locs[{k}] must have shape (N, 3), got {class_coords.shape}"
+            )
 
         z = class_coords[:, 0].astype(np.int64)
         y = class_coords[:, 1].astype(np.int64)
         x = class_coords[:, 2].astype(np.int64)
 
         # Optional bounds check (cheap and prevents hard-to-debug indexing errors)
-        if (z.min() < 0 or y.min() < 0 or x.min() < 0 or
-                z.max() >= shape[0] or y.max() >= shape[1] or x.max() >= shape[2]):
+        if (
+            z.min() < 0
+            or y.min() < 0
+            or x.min() < 0
+            or z.max() >= shape[0]
+            or y.max() >= shape[1]
+            or x.max() >= shape[2]
+        ):
             raise ValueError(f"Coordinates for {k} are out of bounds for shape={shape}")
 
         out[z, y, x] = i + 1  # label 1..K
@@ -535,7 +682,7 @@ def _verify_class_locations(shape, outfile, class_locs):
     sitk.WriteImage(img, outfile)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # example_test_case_preprocessing()
     # pp = DefaultPreprocessor()
     # pp.run(2, '2d', 'nnUNetPlans', 8)
@@ -543,7 +690,11 @@ if __name__ == '__main__':
     ###########################################################################################################
     # how to process a test cases? This is an example:
     # example_test_case_preprocessing()
-    seg = SimpleITK.GetArrayFromImage(SimpleITK.ReadImage('/home/isensee/temp/H-mito-val-v2.nii.gz'))[None]
-    a = DefaultPreprocessor._sample_foreground_locations(seg, np.arange(1, np.max(seg) + 1), min_percent_coverage=0.50)
+    seg = SimpleITK.GetArrayFromImage(
+        SimpleITK.ReadImage("/home/isensee/temp/H-mito-val-v2.nii.gz")
+    )[None]
+    a = DefaultPreprocessor._sample_foreground_locations(
+        seg, np.arange(1, np.max(seg) + 1), min_percent_coverage=0.50
+    )
 
-    _verify_class_locations(seg.shape[1:], '/home/isensee/temp/deleteme.nii.gz', a)
+    _verify_class_locations(seg.shape[1:], "/home/isensee/temp/deleteme.nii.gz", a)

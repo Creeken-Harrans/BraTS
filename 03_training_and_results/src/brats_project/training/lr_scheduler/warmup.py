@@ -4,11 +4,21 @@ from typing import Optional, cast, List
 
 from torch import Tensor
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import _LRScheduler, CosineAnnealingLR, _enable_get_lr_call
+from torch.optim.lr_scheduler import (
+    _LRScheduler,
+    CosineAnnealingLR,
+    _enable_get_lr_call,
+)
 
 
 class Lin_incr_LRScheduler(_LRScheduler):
-    def __init__(self, optimizer, max_lr: float, max_steps: int, current_step: Optional[int] = None):
+    def __init__(
+        self,
+        optimizer,
+        max_lr: float,
+        max_steps: int,
+        current_step: Optional[int] = None,
+    ):
         self.optimizer = optimizer
         self.max_lr = max_lr
         self.max_steps = max_steps
@@ -26,7 +36,14 @@ class Lin_incr_LRScheduler(_LRScheduler):
 
 
 class Lin_incr_offset_LRScheduler(_LRScheduler):
-    def __init__(self, optimizer, max_lr: float, max_steps: int, start_step: int, current_step: Optional[int] = None):
+    def __init__(
+        self,
+        optimizer,
+        max_lr: float,
+        max_steps: int,
+        start_step: int,
+        current_step: Optional[int] = None,
+    ):
         self.optimizer = optimizer
         self.max_lr = max_lr
         self.max_steps = max_steps
@@ -78,7 +95,13 @@ class PolyLRScheduler_offset(_LRScheduler):
 
 class CosineAnnealingLR_offset(CosineAnnealingLR):
     def __init__(
-        self, optimizer: Optimizer, T_max: int, eta_min=0, last_epoch=-1, verbose="deprecated", offset: int = 0
+        self,
+        optimizer: Optimizer,
+        T_max: int,
+        eta_min=0,
+        last_epoch=-1,
+        verbose="deprecated",
+        offset: int = 0,
     ):
         self.offset = offset
         super().__init__(
@@ -93,7 +116,14 @@ class CosineAnnealingLR_offset(CosineAnnealingLR):
         return [
             self.eta_min
             + (base_lr - self.eta_min)
-            * (1 + math.cos(math.pi * (self.last_epoch - self.offset) / (self.T_max - self.offset)))
+            * (
+                1
+                + math.cos(
+                    math.pi
+                    * (self.last_epoch - self.offset)
+                    / (self.T_max - self.offset)
+                )
+            )
             / 2
             for base_lr in self.base_lrs
         ]
@@ -140,4 +170,6 @@ class CosineAnnealingLR_offset(CosineAnnealingLR):
             else:
                 param_group["lr"] = lr
 
-        self._last_lr: List[float] = [group["lr"] for group in self.optimizer.param_groups]
+        self._last_lr: List[float] = [
+            group["lr"] for group in self.optimizer.param_groups
+        ]

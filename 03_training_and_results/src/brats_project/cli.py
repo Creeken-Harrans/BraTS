@@ -85,7 +85,9 @@ def _directory_has_nifti_files(directory: Path) -> bool:
 def _directory_has_only_auxiliary_files(directory: Path) -> bool:
     if not directory.is_dir():
         return True
-    return all(path.name in _PREDICTION_INPUT_AUXILIARY_FILES for path in directory.iterdir())
+    return all(
+        path.name in _PREDICTION_INPUT_AUXILIARY_FILES for path in directory.iterdir()
+    )
 
 
 def _gather_training_cases(dataset_name: str) -> dict[str, list[Path]]:
@@ -127,13 +129,17 @@ def _prepare_sampled_prediction_input(
             f"Requested {sample_count} sampled validation cases, but only {len(available_cases)} complete "
             f"training cases are available in {dataset_name}."
         )
-    if _directory_has_nifti_files(input_dir) or not _directory_has_only_auxiliary_files(input_dir):
+    if _directory_has_nifti_files(input_dir) or not _directory_has_only_auxiliary_files(
+        input_dir
+    ):
         raise RuntimeError(
             f"Cannot auto-populate prediction input because the target directory is not empty: {input_dir}\n"
             "Only auxiliary files such as README.md may already exist there. Remove the existing input payload first."
         )
 
-    selected_case_ids = sorted(random.Random(sample_seed).sample(list(case_files), sample_count))
+    selected_case_ids = sorted(
+        random.Random(sample_seed).sample(list(case_files), sample_count)
+    )
     input_dir.mkdir(parents=True, exist_ok=True)
     for case_id in selected_case_ids:
         for source in case_files[case_id]:
@@ -167,7 +173,9 @@ def _resolve_existing_training_checkpoint(
     configure_environment()
     from brats_project.run.run_training import resolve_training_resume_checkpoint
 
-    checkpoint = resolve_training_resume_checkpoint(dataset_name, configuration, fold, trainer, plans)
+    checkpoint = resolve_training_resume_checkpoint(
+        dataset_name, configuration, fold, trainer, plans
+    )
     return Path(checkpoint) if checkpoint is not None else None
 
 
@@ -179,18 +187,34 @@ def _sync_preprocess_metadata(dataset_name: str, plans_name: str) -> None:
     metadata_dir.mkdir(parents=True, exist_ok=True)
 
     _copy_if_exists(raw_dataset_dir / "dataset.json", metadata_dir / "dataset.json")
-    _copy_if_exists(raw_dataset_dir / "dataset.json", _project_file("01_data_preparation/metadata/raw_dataset.json"))
-    _copy_if_exists(preprocessed_dir / "dataset_fingerprint.json", metadata_dir / "dataset_fingerprint.json")
-    _copy_if_exists(preprocessed_dir / "splits_final.json", metadata_dir / "splits_final.json")
-    _copy_if_exists(preprocessed_dir / f"{plans_name}.json", metadata_dir / f"{plans_name}.json")
-    _copy_if_exists(preprocessed_dir / "nnUNetPlans.json", metadata_dir / "nnUNetPlans.json")
+    _copy_if_exists(
+        raw_dataset_dir / "dataset.json",
+        _project_file("01_data_preparation/metadata/raw_dataset.json"),
+    )
+    _copy_if_exists(
+        preprocessed_dir / "dataset_fingerprint.json",
+        metadata_dir / "dataset_fingerprint.json",
+    )
+    _copy_if_exists(
+        preprocessed_dir / "splits_final.json", metadata_dir / "splits_final.json"
+    )
+    _copy_if_exists(
+        preprocessed_dir / f"{plans_name}.json", metadata_dir / f"{plans_name}.json"
+    )
+    _copy_if_exists(
+        preprocessed_dir / "nnUNetPlans.json", metadata_dir / "nnUNetPlans.json"
+    )
 
 
-def _sync_training_snapshot(dataset_name: str, trainer: str, plans: str, configuration: str, fold: int) -> None:
+def _sync_training_snapshot(
+    dataset_name: str, trainer: str, plans: str, configuration: str, fold: int
+) -> None:
     configure_environment()
     from brats_project.utilities.file_path_utilities import get_output_folder
 
-    source_fold_dir = Path(get_output_folder(dataset_name, trainer, plans, configuration, fold=fold))
+    source_fold_dir = Path(
+        get_output_folder(dataset_name, trainer, plans, configuration, fold=fold)
+    )
     target_fold_dir = _project_file(f"03_training_and_results/results/fold_{fold}")
     if not source_fold_dir.is_dir():
         return
@@ -226,8 +250,14 @@ def _resolve_evaluation_metadata(
     configuration: str,
 ) -> tuple[Path, Path]:
     configure_environment()
-    dataset_json_path = resolve_workspace_path(dataset_json) if dataset_json else pred_dir / "dataset.json"
-    plans_json_path = resolve_workspace_path(plans_json) if plans_json else pred_dir / "plans.json"
+    dataset_json_path = (
+        resolve_workspace_path(dataset_json)
+        if dataset_json
+        else pred_dir / "dataset.json"
+    )
+    plans_json_path = (
+        resolve_workspace_path(plans_json) if plans_json else pred_dir / "plans.json"
+    )
 
     if dataset_json_path.is_file() and plans_json_path.is_file():
         return dataset_json_path, plans_json_path
@@ -235,7 +265,9 @@ def _resolve_evaluation_metadata(
     dataset_name = _get_dataset_defaults()["name"]
     from brats_project.utilities.file_path_utilities import get_output_folder
 
-    model_output_dir = Path(get_output_folder(dataset_name, trainer, plans, configuration))
+    model_output_dir = Path(
+        get_output_folder(dataset_name, trainer, plans, configuration)
+    )
     fallback_dataset_json = model_output_dir / "dataset.json"
     fallback_plans_json = model_output_dir / "plans.json"
 
@@ -244,7 +276,9 @@ def _resolve_evaluation_metadata(
     if not plans_json_path.is_file():
         plans_json_path = fallback_plans_json
 
-    missing = [str(path) for path in (dataset_json_path, plans_json_path) if not path.is_file()]
+    missing = [
+        str(path) for path in (dataset_json_path, plans_json_path) if not path.is_file()
+    ]
     if missing:
         raise FileNotFoundError(
             "Unable to locate evaluation metadata files. Checked prediction folder first and then the "
@@ -255,7 +289,11 @@ def _resolve_evaluation_metadata(
 
 def _load_inference_information(dataset_name: str) -> dict[str, Any] | None:
     configure_environment()
-    inference_info = Path(os.environ["PROJECT_RESULTS"]) / dataset_name / "inference_information.json"
+    inference_info = (
+        Path(os.environ["PROJECT_RESULTS"])
+        / dataset_name
+        / "inference_information.json"
+    )
     if not inference_info.is_file():
         return None
     return json.loads(inference_info.read_text(encoding="utf-8"))
@@ -271,12 +309,14 @@ def _resolve_predict_defaults_from_inference_info(
     plans = args.plans
     folds = [str(fold) for fold in args.folds] if args.folds else []
 
-    user_overrode_model = any([
-        trainer != dataset_defaults["trainer"],
-        configuration != dataset_defaults["default_configuration"],
-        plans != dataset_defaults["plans"],
-        folds != [str(fold) for fold in dataset_defaults["default_folds"]],
-    ])
+    user_overrode_model = any(
+        [
+            trainer != dataset_defaults["trainer"],
+            configuration != dataset_defaults["default_configuration"],
+            plans != dataset_defaults["plans"],
+            folds != [str(fold) for fold in dataset_defaults["default_folds"]],
+        ]
+    )
     if user_overrode_model:
         return trainer, configuration, plans, folds
 
@@ -284,7 +324,9 @@ def _resolve_predict_defaults_from_inference_info(
     if inference_info is None:
         return trainer, configuration, plans, folds
 
-    selected_models = inference_info.get("best_model_or_ensemble", {}).get("selected_model_or_models", [])
+    selected_models = inference_info.get("best_model_or_ensemble", {}).get(
+        "selected_model_or_models", []
+    )
     if len(selected_models) != 1:
         raise RuntimeError(
             "The current inference_information.json points to an ensemble. "
@@ -315,7 +357,9 @@ def _preprocessed_configuration_looks_complete(
     if not output_dir.is_dir():
         return False
 
-    data_b2nd_files = [p for p in output_dir.glob("*.b2nd") if not p.name.endswith("_seg.b2nd")]
+    data_b2nd_files = [
+        p for p in output_dir.glob("*.b2nd") if not p.name.endswith("_seg.b2nd")
+    ]
     seg_b2nd_files = list(output_dir.glob("*_seg.b2nd"))
     npz_files = list(output_dir.glob("*.npz"))
     properties_files = list(output_dir.glob("*.pkl"))
@@ -325,7 +369,10 @@ def _preprocessed_configuration_looks_complete(
         and len(seg_b2nd_files) == expected_case_count
         and len(properties_files) == expected_case_count
     )
-    has_complete_npz = len(npz_files) == expected_case_count and len(properties_files) == expected_case_count
+    has_complete_npz = (
+        len(npz_files) == expected_case_count
+        and len(properties_files) == expected_case_count
+    )
     return has_complete_b2nd or has_complete_npz
 
 
@@ -346,7 +393,9 @@ def cmd_doctor(_: argparse.Namespace) -> int:
     print(f"dataset: {dataset['name']} (id={dataset['id']})")
     print(f"archive_root: {paths['archive_root']}")
     print(f"project_raw_root: {workspace_relative_string(env['PROJECT_RAW'])}")
-    print(f"project_preprocessed_root: {workspace_relative_string(env['PROJECT_PREPROCESSED'])}")
+    print(
+        f"project_preprocessed_root: {workspace_relative_string(env['PROJECT_PREPROCESSED'])}"
+    )
     print(f"project_results_root: {workspace_relative_string(env['PROJECT_RESULTS'])}")
     print(f"torch_expected: {runtime['torch']}")
     print(f"cuda_expected: {runtime['cuda']}")
@@ -408,8 +457,12 @@ def cmd_plan_preprocess(args: argparse.Namespace) -> int:
         plan_experiments,
         preprocess,
     )
-    from brats_project.experiment_planning.verify_dataset_integrity import verify_dataset_integrity
-    from brats_project.utilities.dataset_name_id_conversion import maybe_convert_to_dataset_name
+    from brats_project.experiment_planning.verify_dataset_integrity import (
+        verify_dataset_integrity,
+    )
+    from brats_project.utilities.dataset_name_id_conversion import (
+        maybe_convert_to_dataset_name,
+    )
     from brats_project.utilities.plans_handling.plans_handler import PlansManager
 
     dataset = _get_dataset_defaults()
@@ -419,17 +472,23 @@ def cmd_plan_preprocess(args: argparse.Namespace) -> int:
     raw_dataset_dir = Path(env["PROJECT_RAW"]) / dataset_name
     fingerprint_file = preprocessed_dir / "dataset_fingerprint.json"
     plans_file = preprocessed_dir / f"{args.plans}.json"
-    raw_dataset_json = json.loads((raw_dataset_dir / "dataset.json").read_text(encoding="utf-8"))
+    raw_dataset_json = json.loads(
+        (raw_dataset_dir / "dataset.json").read_text(encoding="utf-8")
+    )
     expected_case_count = int(raw_dataset_json["numTraining"])
     preprocess_log_path = _prepare_preprocess_log(dataset_name, args.plans)
     os.environ["PROJECT_PREPROCESS_LOG"] = str(preprocess_log_path)
-    print(f"[INFO] Preprocess detail log: {workspace_relative_string(preprocess_log_path)}")
+    print(
+        f"[INFO] Preprocess detail log: {workspace_relative_string(preprocess_log_path)}"
+    )
 
     try:
         if args.verify_dataset:
             verify_dataset_integrity(str(raw_dataset_dir), args.num_processes)
 
-        should_extract_fingerprint = args.clean or args.recompute_fingerprint or not fingerprint_file.is_file()
+        should_extract_fingerprint = (
+            args.clean or args.recompute_fingerprint or not fingerprint_file.is_file()
+        )
         if should_extract_fingerprint:
             extract_fingerprints(
                 [dataset_id],
@@ -467,7 +526,9 @@ def cmd_plan_preprocess(args: argparse.Namespace) -> int:
                     configuration_manager,
                     expected_case_count,
                 ):
-                    print(f"[INFO] Reusing existing preprocessed data for {configuration}: {output_dir}")
+                    print(
+                        f"[INFO] Reusing existing preprocessed data for {configuration}: {output_dir}"
+                    )
                     continue
                 if output_dir.is_dir():
                     print(
@@ -487,7 +548,9 @@ def cmd_plan_preprocess(args: argparse.Namespace) -> int:
                 show_progress_bar=not args.disable_progress_bar,
             )
         else:
-            print("[INFO] All requested preprocessing outputs already exist. Skipping preprocess.")
+            print(
+                "[INFO] All requested preprocessing outputs already exist. Skipping preprocess."
+            )
 
         _sync_preprocess_metadata(dataset_name, args.plans)
         return 0
@@ -502,7 +565,9 @@ def cmd_train(args: argparse.Namespace) -> int:
 
     dataset = _get_dataset_defaults()
     preprocessed_dir = Path(os.environ["PROJECT_PREPROCESSED"]) / dataset["name"]
-    dataset_json = json.loads((preprocessed_dir / "dataset.json").read_text(encoding="utf-8"))
+    dataset_json = json.loads(
+        (preprocessed_dir / "dataset.json").read_text(encoding="utf-8")
+    )
     expected_case_count = int(dataset_json["numTraining"])
     plans_manager = PlansManager(str(preprocessed_dir / f"{args.plans}.json"))
     configuration_manager = plans_manager.get_configuration(args.configuration)
@@ -519,15 +584,23 @@ def cmd_train(args: argparse.Namespace) -> int:
             f"--configurations {args.configuration} --force-preprocess"
         )
     continue_training = args.continue_training
-    if not args.restart_training and not args.validation_only and args.pretrained_weights is None:
+    if (
+        not args.restart_training
+        and not args.validation_only
+        and args.pretrained_weights is None
+    ):
         existing_checkpoint = _resolve_existing_training_checkpoint(
             dataset["name"], args.trainer, args.plans, args.configuration, args.fold
         )
         if existing_checkpoint is not None:
             continue_training = True
-            print(f"[INFO] Found existing checkpoint, resuming training from: {existing_checkpoint}")
+            print(
+                f"[INFO] Found existing checkpoint, resuming training from: {existing_checkpoint}"
+            )
         else:
-            print("[INFO] No existing checkpoint found. Starting a new training run from scratch.")
+            print(
+                "[INFO] No existing checkpoint found. Starting a new training run from scratch."
+            )
     run_training(
         dataset_name_or_id=dataset["name"],
         configuration=args.configuration,
@@ -545,7 +618,11 @@ def cmd_train(args: argparse.Namespace) -> int:
     )
     if args.fold != "all":
         _sync_training_snapshot(
-            dataset["name"], args.trainer, args.plans, args.configuration, int(args.fold)
+            dataset["name"],
+            args.trainer,
+            args.plans,
+            args.configuration,
+            int(args.fold),
         )
     return 0
 
@@ -606,7 +683,9 @@ def cmd_predict(args: argparse.Namespace) -> int:
     input_dir.mkdir(parents=True, exist_ok=True)
     if args.sample_training_cases is not None and args.sample_training_cases < 1:
         raise RuntimeError("--sample-training-cases must be at least 1.")
-    default_input_dir = resolve_workspace_path(load_project_config()["paths"]["prediction_input_root"])
+    default_input_dir = resolve_workspace_path(
+        load_project_config()["paths"]["prediction_input_root"]
+    )
     should_auto_sample_training = (
         args.sample_training_cases is None
         and not args.disable_auto_sample_training
@@ -634,8 +713,8 @@ def cmd_predict(args: argparse.Namespace) -> int:
             "the training set by using the default input directory or by passing --sample-training-cases."
         )
 
-    trainer, configuration, plans, folds = _resolve_predict_defaults_from_inference_info(
-        dataset["name"], args, dataset
+    trainer, configuration, plans, folds = (
+        _resolve_predict_defaults_from_inference_info(dataset["name"], args, dataset)
     )
     argv = [
         "-d",
@@ -675,7 +754,10 @@ def cmd_predict(args: argparse.Namespace) -> int:
         argv.append("--not_on_device")
     if args.prev_stage_predictions is not None:
         argv.extend(
-            ["-prev_stage_predictions", str(resolve_workspace_path(args.prev_stage_predictions))]
+            [
+                "-prev_stage_predictions",
+                str(resolve_workspace_path(args.prev_stage_predictions)),
+            ]
         )
 
     _call_entrypoint(predict_entry_point, argv)
@@ -726,8 +808,14 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
         if missing_predictions:
             details.append(f"missing predictions for {len(missing_predictions)} cases")
         if extra_predictions:
-            details.append(f"{len(extra_predictions)} predictions have no matching ground truth")
-        detail_text = "; ".join(details) if details else "prediction filenames do not match the ground-truth set"
+            details.append(
+                f"{len(extra_predictions)} predictions have no matching ground truth"
+            )
+        detail_text = (
+            "; ".join(details)
+            if details
+            else "prediction filenames do not match the ground-truth set"
+        )
         raise RuntimeError(
             "Prediction coverage does not match the ground-truth directory.\n"
             f"predictions: {len(predicted_files)} files, ground truth: {gt_file_count} files\n"
@@ -769,16 +857,24 @@ def cmd_report_evaluation(args: argparse.Namespace) -> int:
             "report-evaluation requires the visualization dependencies used by the report generator "
             f"(missing module: {exc.name}). Run it inside the pytorch environment where matplotlib/nibabel are installed."
         ) from exc
-    summary_file = resolve_workspace_path(args.summary_file) if args.summary_file else _default_evaluation_output_file()
-    sample_selection_file = resolve_workspace_path(args.sample_selection_file) if args.sample_selection_file else _project_file(
-        "04_inference_and_evaluation/input/sample_selection.json"
+    summary_file = (
+        resolve_workspace_path(args.summary_file)
+        if args.summary_file
+        else _default_evaluation_output_file()
+    )
+    sample_selection_file = (
+        resolve_workspace_path(args.sample_selection_file)
+        if args.sample_selection_file
+        else _project_file("04_inference_and_evaluation/input/sample_selection.json")
     )
     module.main(
         summary_file=summary_file,
         predictions_dir=resolve_workspace_path(args.predictions_dir),
         raw_dataset_dir=Path(env["PROJECT_RAW"]) / dataset["name"],
         output_dir=resolve_workspace_path(args.output_dir),
-        sample_selection_file=sample_selection_file if sample_selection_file.is_file() else None,
+        sample_selection_file=(
+            sample_selection_file if sample_selection_file.is_file() else None
+        ),
     )
     print(
         f"[OK] Evaluation report written to: "
@@ -805,7 +901,9 @@ def build_parser() -> argparse.ArgumentParser:
         "visualize-first-case", help="Regenerate the first-case visualization snapshot"
     )
     visualize.add_argument(
-        "--data-root", default=paths["archive_root"], help="Relative to BraTS project root by default"
+        "--data-root",
+        default=paths["archive_root"],
+        help="Relative to BraTS project root by default",
     )
     visualize.add_argument(
         "--output-dir",
@@ -820,11 +918,16 @@ def build_parser() -> argparse.ArgumentParser:
     prepare.add_argument("--src-root", default=paths["archive_root"])
     prepare.add_argument("--project-raw", default=paths["project_raw_root"])
     prepare.add_argument("--plans", default=dataset["plans"])
-    prepare.add_argument("--force", action="store_true", help="Rebuild Dataset220_BraTS2020 even if it already exists.")
+    prepare.add_argument(
+        "--force",
+        action="store_true",
+        help="Rebuild Dataset220_BraTS2020 even if it already exists.",
+    )
     prepare.set_defaults(func=cmd_prepare_dataset)
 
     plan = subparsers.add_parser(
-        "plan-preprocess", help="Run fingerprint extraction, planning, and preprocessing"
+        "plan-preprocess",
+        help="Run fingerprint extraction, planning, and preprocessing",
     )
     plan.add_argument("--dataset-id", type=int, default=dataset["id"])
     plan.add_argument("--plans", default=dataset["plans"])
@@ -839,13 +942,27 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=[runtime["default_num_processes_preprocessing"]],
     )
-    plan.add_argument("--num-processes", type=int, default=runtime["default_num_processes"])
+    plan.add_argument(
+        "--num-processes", type=int, default=runtime["default_num_processes"]
+    )
     plan.add_argument("--gpu-memory-target", type=float, default=None)
     plan.add_argument("--verify-dataset", action="store_true")
     plan.add_argument("--clean", action="store_true")
-    plan.add_argument("--recompute-fingerprint", action="store_true", help="Force regeneration of dataset_fingerprint.json.")
-    plan.add_argument("--recompute-plans", action="store_true", help="Force regeneration of the plans JSON even if it already exists.")
-    plan.add_argument("--force-preprocess", action="store_true", help="Force regeneration of preprocessed outputs for the requested configurations.")
+    plan.add_argument(
+        "--recompute-fingerprint",
+        action="store_true",
+        help="Force regeneration of dataset_fingerprint.json.",
+    )
+    plan.add_argument(
+        "--recompute-plans",
+        action="store_true",
+        help="Force regeneration of the plans JSON even if it already exists.",
+    )
+    plan.add_argument(
+        "--force-preprocess",
+        action="store_true",
+        help="Force regeneration of preprocessed outputs for the requested configurations.",
+    )
     plan.add_argument("--quiet", action="store_true")
     plan.add_argument("--disable-progress-bar", action="store_true")
     plan.set_defaults(func=cmd_plan_preprocess)
@@ -859,7 +976,11 @@ def build_parser() -> argparse.ArgumentParser:
     train.add_argument("--num-gpus", type=int, default=1)
     train.add_argument("--npz", action="store_true")
     train.add_argument("--continue-training", action="store_true")
-    train.add_argument("--restart-training", action="store_true", help="Ignore existing checkpoints and start this fold from scratch.")
+    train.add_argument(
+        "--restart-training",
+        action="store_true",
+        help="Ignore existing checkpoints and start this fold from scratch.",
+    )
     train.add_argument("--validation-only", action="store_true")
     train.add_argument("--val-best", action="store_true")
     train.add_argument("--disable-checkpointing", action="store_true")
@@ -897,7 +1018,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="Plans identifiers to compare.",
     )
     best.add_argument("--folds", nargs="+", type=int, default=dataset["default_folds"])
-    best.add_argument("--num-processes", type=int, default=runtime["default_num_processes"])
+    best.add_argument(
+        "--num-processes", type=int, default=runtime["default_num_processes"]
+    )
     best.add_argument("--disable-ensembling", action="store_true")
     best.add_argument("--no-overwrite", action="store_true")
     best.set_defaults(func=cmd_find_best_config)
@@ -908,11 +1031,17 @@ def build_parser() -> argparse.ArgumentParser:
     predict.add_argument("--configuration", default=dataset["default_configuration"])
     predict.add_argument("--trainer", default=dataset["trainer"])
     predict.add_argument("--plans", default=dataset["plans"])
-    predict.add_argument("--folds", nargs="+", default=[str(fold) for fold in dataset["default_folds"]])
+    predict.add_argument(
+        "--folds", nargs="+", default=[str(fold) for fold in dataset["default_folds"]]
+    )
     predict.add_argument("--device", choices=["cuda", "cpu", "mps"], default="cuda")
     predict.add_argument("--step-size", type=float, default=0.5)
-    predict.add_argument("--npp", type=int, default=runtime["default_num_processes_preprocessing"])
-    predict.add_argument("--nps", type=int, default=runtime["default_num_processes_segmentation_export"])
+    predict.add_argument(
+        "--npp", type=int, default=runtime["default_num_processes_preprocessing"]
+    )
+    predict.add_argument(
+        "--nps", type=int, default=runtime["default_num_processes_segmentation_export"]
+    )
     predict.add_argument("--disable-tta", action="store_true")
     predict.add_argument("--verbose", action="store_true")
     predict.add_argument("--save-probabilities", action="store_true")
@@ -952,9 +1081,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--gt-dir",
         default="nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations",
     )
-    evaluate.add_argument(
-        "--pred-dir", default=paths["prediction_output_root"]
-    )
+    evaluate.add_argument("--pred-dir", default=paths["prediction_output_root"])
     evaluate.add_argument(
         "--dataset-json",
         default=None,
@@ -973,7 +1100,9 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Defaults to BraTS/04_inference_and_evaluation/evaluation/summary.json.",
     )
-    evaluate.add_argument("--num-processes", type=int, default=runtime["default_num_processes"])
+    evaluate.add_argument(
+        "--num-processes", type=int, default=runtime["default_num_processes"]
+    )
     evaluate.add_argument("--chill", action="store_true")
     evaluate.set_defaults(func=cmd_evaluate)
 

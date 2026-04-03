@@ -13,7 +13,9 @@ def get_project_root() -> Path:
     for parent in current.parents:
         if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError("Unable to locate project_config.json from brats_project package")
+    raise RuntimeError(
+        "Unable to locate project_config.json from brats_project package"
+    )
 
 
 @lru_cache(maxsize=1)
@@ -53,7 +55,9 @@ def get_default_environment_paths() -> dict[str, str]:
     paths = config["paths"]
     return {
         "PROJECT_RAW": str(resolve_project_path(paths["project_raw_root"])),
-        "PROJECT_PREPROCESSED": str(resolve_project_path(paths["project_preprocessed_root"])),
+        "PROJECT_PREPROCESSED": str(
+            resolve_project_path(paths["project_preprocessed_root"])
+        ),
         "PROJECT_RESULTS": str(resolve_project_path(paths["project_results_root"])),
     }
 

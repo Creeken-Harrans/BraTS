@@ -7,7 +7,6 @@ import shutil
 from pathlib import Path
 from typing import Iterable
 
-
 DATASET_ID = 220
 DATASET_NAME = "BraTS2020"
 DEFAULT_SRC_ROOT_REL = Path(
@@ -21,7 +20,9 @@ def find_project_root() -> Path:
     for parent in current.parents:
         if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError("Unable to locate BraTS project root from prepare_brats2020_for_project.py")
+    raise RuntimeError(
+        "Unable to locate BraTS project root from prepare_brats2020_for_project.py"
+    )
 
 
 def resolve_workspace_path(relative_or_absolute: Path | str) -> Path:
@@ -94,7 +95,10 @@ def convert_brats_seg_to_project(src: Path, dst: Path) -> None:
 def validate_case_geometry(case_id: str, files: dict[str, Path]) -> None:
     import SimpleITK as sitk
 
-    metadata: dict[str, tuple[tuple[int, ...], tuple[float, ...], tuple[float, ...], tuple[float, ...]]] = {}
+    metadata: dict[
+        str,
+        tuple[tuple[int, ...], tuple[float, ...], tuple[float, ...], tuple[float, ...]],
+    ] = {}
     for role, path in files.items():
         image = sitk.ReadImage(str(path))
         metadata[role] = (
@@ -133,9 +137,7 @@ def collect_cases(src_root: Path) -> list[tuple[str, dict[str, Path]]]:
             continue
 
     if not valid_cases:
-        raise RuntimeError(
-            f"No valid BraTS case folders found under: {src_root}"
-        )
+        raise RuntimeError(f"No valid BraTS case folders found under: {src_root}")
 
     return valid_cases
 
@@ -172,7 +174,11 @@ def _existing_dataset_looks_complete(
     dataset_json_path = out_base / "dataset.json"
     images_tr = out_base / "imagesTr"
     labels_tr = out_base / "labelsTr"
-    if not dataset_json_path.is_file() or not images_tr.is_dir() or not labels_tr.is_dir():
+    if (
+        not dataset_json_path.is_file()
+        or not images_tr.is_dir()
+        or not labels_tr.is_dir()
+    ):
         return False
 
     image_files = list(images_tr.glob("*.nii.gz"))
@@ -185,10 +191,15 @@ def _existing_dataset_looks_complete(
     expected_image_files = expected_case_count * expected_modalities
     if expected_case_count <= 0:
         return False
-    return len(image_files) == expected_image_files and len(label_files) == expected_case_count
+    return (
+        len(image_files) == expected_image_files
+        and len(label_files) == expected_case_count
+    )
 
 
-def main(src_root: Path | None = None, project_raw: Path | None = None, force: bool = False) -> None:
+def main(
+    src_root: Path | None = None, project_raw: Path | None = None, force: bool = False
+) -> None:
     if src_root is None or project_raw is None:
         args = parse_args()
         if src_root is None:
@@ -232,7 +243,9 @@ def main(src_root: Path | None = None, project_raw: Path | None = None, force: b
 
     if out_base.exists() and any(out_base.iterdir()):
         if force:
-            print(f"[INFO] Removing existing dataset directory before rebuild: {out_base}")
+            print(
+                f"[INFO] Removing existing dataset directory before rebuild: {out_base}"
+            )
             shutil.rmtree(out_base)
         else:
             raise RuntimeError(
@@ -254,22 +267,17 @@ def main(src_root: Path | None = None, project_raw: Path | None = None, force: b
     # 注意：region-based training 中 labels 的顺序不能乱。
     # json.dump 不要 sort_keys=True。
     dataset_json = {
-        "channel_names": {
-            "0": "T1",
-            "1": "T1ce",
-            "2": "T2",
-            "3": "Flair"
-        },
+        "channel_names": {"0": "T1", "1": "T1ce", "2": "T2", "3": "Flair"},
         "labels": {
             "background": 0,
             "whole_tumor": [1, 2, 3],
             "tumor_core": [2, 3],
-            "enhancing_tumor": [3]
+            "enhancing_tumor": [3],
         },
         "numTraining": len(cases),
         "file_ending": ".nii.gz",
         "regions_class_order": [1, 2, 3],
-        "description": "BraTS2020 converted for the standalone BraTS project region-based training"
+        "description": "BraTS2020 converted for the standalone BraTS project region-based training",
     }
 
     with open(out_base / "dataset.json", "w", encoding="utf-8") as f:

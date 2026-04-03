@@ -1,6 +1,9 @@
 import torch
 
-from brats_project.training.lr_scheduler.warmup import Lin_incr_LRScheduler, PolyLRScheduler_offset
+from brats_project.training.lr_scheduler.warmup import (
+    Lin_incr_LRScheduler,
+    PolyLRScheduler_offset,
+)
 from brats_project.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -41,10 +44,18 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
         if stage == "warmup_all":
             self.print_to_log_file("train whole net, warmup")
             optimizer = torch.optim.SGD(
-                params, self.initial_lr, weight_decay=self.weight_decay, momentum=0.99, nesterov=True
+                params,
+                self.initial_lr,
+                weight_decay=self.weight_decay,
+                momentum=0.99,
+                nesterov=True,
             )
-            lr_scheduler = Lin_incr_LRScheduler(optimizer, self.initial_lr, self.warmup_duration_whole_net)
-            self.print_to_log_file(f"Initialized warmup_all optimizer and lr_scheduler at epoch {self.current_epoch}")
+            lr_scheduler = Lin_incr_LRScheduler(
+                optimizer, self.initial_lr, self.warmup_duration_whole_net
+            )
+            self.print_to_log_file(
+                f"Initialized warmup_all optimizer and lr_scheduler at epoch {self.current_epoch}"
+            )
         else:
             self.print_to_log_file("train whole net, default schedule")
             if self.training_stage == "warmup_all":
@@ -53,12 +64,21 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
                 optimizer = self.optimizer
             else:
                 optimizer = torch.optim.SGD(
-                    params, self.initial_lr, weight_decay=self.weight_decay, momentum=0.99, nesterov=True
+                    params,
+                    self.initial_lr,
+                    weight_decay=self.weight_decay,
+                    momentum=0.99,
+                    nesterov=True,
                 )
             lr_scheduler = PolyLRScheduler_offset(
-                optimizer, self.initial_lr, self.num_epochs, self.warmup_duration_whole_net
+                optimizer,
+                self.initial_lr,
+                self.num_epochs,
+                self.warmup_duration_whole_net,
             )
-            self.print_to_log_file(f"Initialized train optimizer and lr_scheduler at epoch {self.current_epoch}")
+            self.print_to_log_file(
+                f"Initialized train optimizer and lr_scheduler at epoch {self.current_epoch}"
+            )
         self.training_stage = stage
         empty_cache(self.device)
         return optimizer, lr_scheduler
@@ -79,13 +99,17 @@ class nnUNetTrainer_warmup(nnUNetTrainer):
         if not self.was_initialized:
             self.initialize()
 
-        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
+        checkpoint = torch.load(
+            checkpoint_path, map_location=self.device, weights_only=False
+        )
         # if state dict comes from nn.DataParallel but we use non-parallel model here then the state dict keys do not
         # match. Use heuristic to make it match
         new_state_dict = {}
         for k, value in checkpoint["network_weights"].items():
             key = k
-            if key not in self.network.state_dict().keys() and key.startswith("module."):
+            if key not in self.network.state_dict().keys() and key.startswith(
+                "module."
+            ):
                 key = key[7:]
             new_state_dict[key] = value
 

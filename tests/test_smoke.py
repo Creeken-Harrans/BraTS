@@ -5,7 +5,6 @@ import sys
 import unittest
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE_ROOT = PROJECT_ROOT.parent
 RUN_PY = PROJECT_ROOT / "run.py"
@@ -69,11 +68,20 @@ class SmokeTests(unittest.TestCase):
             or "[OK] Converted dataset written to:" in stdout
         )
         self.assertTrue(
-            (PROJECT_ROOT / "01_data_preparation" / "metadata" / "raw_dataset.json").is_file()
+            (
+                PROJECT_ROOT / "01_data_preparation" / "metadata" / "raw_dataset.json"
+            ).is_file()
         )
 
     def test_help_for_heavier_commands(self) -> None:
-        for command in ("plan-preprocess", "train", "predict", "evaluate", "find-best-config", "report-evaluation"):
+        for command in (
+            "plan-preprocess",
+            "train",
+            "predict",
+            "evaluate",
+            "find-best-config",
+            "report-evaluation",
+        ):
             with self.subTest(command=command):
                 stdout = self.assert_command_ok(command, "--help")
                 self.assertIn("usage:", stdout)

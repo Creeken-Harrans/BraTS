@@ -4,7 +4,14 @@ from torch.optim.lr_scheduler import _LRScheduler
 
 
 class PolyLRScheduler(_LRScheduler):
-    def __init__(self, optimizer, initial_lr: float, max_steps: int, exponent: float = 0.9, current_step: Optional[int] = None):
+    def __init__(
+        self,
+        optimizer,
+        initial_lr: float,
+        max_steps: int,
+        exponent: float = 0.9,
+        current_step: Optional[int] = None,
+    ):
         self.optimizer = optimizer
         self.initial_lr = initial_lr
         self.max_steps = max_steps
@@ -19,10 +26,9 @@ class PolyLRScheduler(_LRScheduler):
 
         new_lr = self.initial_lr * (1 - current_step / self.max_steps) ** self.exponent
         for param_group in self.optimizer.param_groups:
-            param_group['lr'] = new_lr
-        
-        
-        self._last_lr = [group['lr'] for group in self.optimizer.param_groups]
+            param_group["lr"] = new_lr
+
+        self._last_lr = [group["lr"] for group in self.optimizer.param_groups]
 
     def get_last_lr(self):
         return self._last_lr

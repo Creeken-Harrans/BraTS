@@ -42,9 +42,7 @@ matplotlib.use("Agg")
 DEFAULT_DATA_ROOT_REL = Path(
     "../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
 )
-DEFAULT_OUTPUT_DIR_REL = Path(
-    "00_first_case_visualization/output"
-)
+DEFAULT_OUTPUT_DIR_REL = Path("00_first_case_visualization/output")
 
 MODALITY_ORDER = ("t1", "t1ce", "t2", "flair")
 PLANE_ORDER = ("axial", "coronal", "sagittal")
@@ -94,7 +92,9 @@ def find_project_root() -> Path:
     for parent in current.parents:
         if (parent / "project_config.json").is_file():
             return parent
-    raise RuntimeError("Unable to locate BraTS project root from visualize_first_case.py")
+    raise RuntimeError(
+        "Unable to locate BraTS project root from visualize_first_case.py"
+    )
 
 
 PROJECT_ROOT = find_project_root()
