@@ -1,0 +1,56 @@
+[project]
+name = "brats-project"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Standalone BraTS2020 segmentation project derived into a local self-contained codebase."
+readme = "README.md"
+dependencies = [
+    "torch>=2.7,<2.8",
+    "acvl-utils>=0.2.3,<0.3",
+    "dynamic-network-architectures>=0.4.1,<0.5",
+    "tqdm",
+    "scipy",
+    "batchgenerators>=0.25.1",
+    "numpy>=1.24",
+    "scikit-learn",
+    "scikit-image>=0.19.3",
+    "SimpleITK>=2.2.1",
+    "pandas",
+    "graphviz",
+    "tifffile",
+    "requests",
+    "nibabel",
+    "matplotlib",
+    "seaborn",
+    "imagecodecs",
+    "yacs",
+    "batchgeneratorsv2>=0.3.0",
+    "einops",
+    "blosc2>=3.0.0b1"
+]
+
+[project.scripts]
+brats = "brats_project.cli:main"
+brats_plan_and_preprocess = "brats_project.experiment_planning.plan_and_preprocess_entrypoints:plan_and_preprocess_entry"
+brats_extract_fingerprint = "brats_project.experiment_planning.plan_and_preprocess_entrypoints:extract_fingerprint_entry"
+brats_plan_experiment = "brats_project.experiment_planning.plan_and_preprocess_entrypoints:plan_experiment_entry"
+brats_preprocess = "brats_project.experiment_planning.plan_and_preprocess_entrypoints:preprocess_entry"
+brats_train = "brats_project.run.run_training:run_training_entry"
+brats_predict = "brats_project.inference.predict_from_raw_data:predict_entry_point"
+brats_predict_from_model = "brats_project.inference.predict_from_raw_data:predict_entry_point_modelfolder"
+brats_find_best_configuration = "brats_project.evaluation.find_best_configuration:find_best_configuration_entry_point"
+brats_apply_postprocessing = "brats_project.postprocessing.remove_connected_components:entry_point_apply_postprocessing"
+brats_determine_postprocessing = "brats_project.postprocessing.remove_connected_components:entry_point_determine_postprocessing_folder"
+brats_ensemble = "brats_project.ensembling.ensemble:entry_point_ensemble_folders"
+brats_evaluate_folder = "brats_project.evaluation.evaluate_predictions:evaluate_folder_entry_point"
+brats_evaluate_simple = "brats_project.evaluation.evaluate_predictions:evaluate_simple_entry_point"
+
+[build-system]
+requires = ["setuptools>=67.8.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "03_training_and_results/src"}
+
+[tool.setuptools.packages.find]
+where = ["03_training_and_results/src"]

@@ -1,0 +1,29 @@
+# Editor state
+.vscode/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Large ML artifacts inside BraTS
+*.nii
+*.nii.gz
+*.npz
+*.npy
+*.pkl
+*.pth
+*.pt
+*.ckpt
+
+# Generated documents and figures
+*.pdf
+*.png
+
+# Generated project outputs
+00_first_case_visualization/output/
+02_preprocess/logs/
+03_training_and_results/results/
+04_inference_and_evaluation/input/sample_selection.json
+04_inference_and_evaluation/predictions/
+04_inference_and_evaluation/evaluation/
+04_inference_and_evaluation/report/
