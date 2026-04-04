@@ -40,7 +40,7 @@ matplotlib.use("Agg")
 
 
 DEFAULT_DATA_ROOT_REL = Path(
-    "../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
+    "../BraTS-Dataset/archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
 )
 DEFAULT_OUTPUT_DIR_REL = Path("00_first_case_visualization/output")
 

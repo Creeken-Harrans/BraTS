@@ -14,22 +14,22 @@
 python run.py train-all --npz
 python run.py find-best-config
 python run.py predict
-python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 python run.py report-evaluation
 ```
 
 说明：
 
 - `find-best-config` 会基于 shared folds 比较候选模型；
-- `predict` 默认从 `04_inference_and_evaluation/input` 读取；
-- `evaluate` 当前请显式传 `--gt-dir ../nnUNet_test/.../gt_segmentations`，因为 CLI 内置默认 `--gt-dir` 与当前仓库路径解析规则不一致；
-- `report-evaluation` 读取 `evaluation/summary.json` 和 `predictions/`，生成图表与病例分析。
+- `predict` 默认从 `../BraTS-Dataset/inference/input` 读取；
+- `evaluate` 默认读取 `../BraTS-Dataset/nnUNet_preprocessed/.../gt_segmentations`；
+- `report-evaluation` 读取 `evaluation/summary.json`、`../BraTS-Dataset/inference/predictions` 和 `04_inference_and_evaluation/metadata/`，生成图表与病例分析。
 
 ## 目录说明
 
 ### `input`
 
-- 目录：`04_inference_and_evaluation/input`
+- 目录：`../BraTS-Dataset/inference/input`
 - 作用：推理输入目录。
 - 内容：每个 case 需要四个模态文件：
   - `{case_id}_0000.nii.gz`
@@ -39,13 +39,20 @@ python run.py report-evaluation
 
 ### `predictions`
 
-- 目录：`04_inference_and_evaluation/predictions`
-- 作用：推理输出目录。
+- 目录：`../BraTS-Dataset/inference/predictions`
+- 作用：推理输出目录，只放预测 NIfTI。
 - 典型内容：
   - `*.nii.gz`
+
+### `metadata`
+
+- 目录：`04_inference_and_evaluation/metadata`
+- 作用：推理阶段的工作区元数据目录。
+- 典型内容：
   - `dataset.json`
   - `plans.json`
   - `predict_from_raw_data_args.json`
+  - `sample_selection.json`
 
 ### `evaluation`
 
@@ -71,28 +78,28 @@ python run.py report-evaluation
 
 它会：
 
-- 找出当前真实存在 validation 结果的模型；
-- 只在所有候选模型共同拥有的 folds 上比较；
-- 如允许，尝试 ensemble；
-- 决定后处理；
-- 写出：
-  - `../nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
-  - `../nnUNet_test/nnUNet_results/Dataset220_BraTS2020/inference_instructions.txt`
+  - 找出当前真实存在 validation 结果的模型；
+  - 只在所有候选模型共同拥有的 folds 上比较；
+  - 如允许，尝试 ensemble；
+  - 决定后处理；
+  - 写出：
+  - `03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/inference_information.json`
+  - `03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/inference_instructions.txt`
 
 ## `predict` 的真实默认行为
 
 ### 默认输入输出
 
-- 输入：`04_inference_and_evaluation/input`
-- 输出：`04_inference_and_evaluation/predictions`
+- 输入：`../BraTS-Dataset/inference/input`
+- 输出：`../BraTS-Dataset/inference/predictions`
 
 ### 自动抽样
 
 如果默认输入目录为空，且没有显式禁用自动抽样，CLI 会：
 
 - 从 `PROJECT_RAW/Dataset220_BraTS2020/imagesTr` 随机抽样 `8` 个训练病例；
-- 复制到 `04_inference_and_evaluation/input`；
-- 把抽样记录写到 `04_inference_and_evaluation/input/sample_selection.json`。
+- 复制到 `../BraTS-Dataset/inference/input`；
+- 把抽样记录写到 `04_inference_and_evaluation/metadata/sample_selection.json`。
 
 可选写法：
 
@@ -110,7 +117,7 @@ python run.py predict --disable-auto-sample-training
 ### 标准命令
 
 ```bash
-python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 ```
 
 ### 子集评估
@@ -119,7 +126,6 @@ python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_Br
 
 ```bash
 python run.py evaluate \
-  --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations \
   --chill
 ```
 
@@ -136,8 +142,8 @@ python run.py evaluate \
 默认读取：
 
 - `04_inference_and_evaluation/evaluation/summary.json`
-- `04_inference_and_evaluation/predictions`
-- 如果存在，还会读取 `04_inference_and_evaluation/input/sample_selection.json`
+- `../BraTS-Dataset/inference/predictions`
+- 如果存在，还会读取 `04_inference_and_evaluation/metadata/sample_selection.json`
 
 默认写入：
 
@@ -151,7 +157,7 @@ python run.py evaluate \
 ## 哪些内容可以重新生成
 
 - 删除 `predictions/` 后重新执行 `python run.py predict`
-- 删除 `evaluation/summary.json` 后重新执行 `python run.py evaluate --gt-dir ../nnUNet_test/.../gt_segmentations`
+- 删除 `evaluation/summary.json` 后重新执行 `python run.py evaluate`
 - 删除 `report/` 后重新执行 `python run.py report-evaluation`
 
 ## 相关文档

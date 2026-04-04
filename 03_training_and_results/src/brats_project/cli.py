@@ -242,6 +242,85 @@ def _resolve_existing_training_checkpoint(
     return Path(checkpoint) if checkpoint is not None else None
 
 
+def _read_training_state_file(
+    dataset_name: str,
+    trainer: str,
+    plans: str,
+    configuration: str,
+    fold: str | int,
+) -> dict[str, Any] | None:
+    configure_environment()
+    from brats_project.utilities.file_path_utilities import get_output_folder
+
+    if str(fold) == "all":
+        return None
+
+    training_state_file = (
+        Path(get_output_folder(dataset_name, trainer, plans, configuration, fold=fold))
+        / "training_state.json"
+    )
+    if not training_state_file.is_file():
+        return None
+    try:
+        return json.loads(training_state_file.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+
+
+def _training_fold_is_complete(
+    dataset_name: str,
+    trainer: str,
+    plans: str,
+    configuration: str,
+    fold: str | int,
+) -> bool:
+    training_state = _read_training_state_file(
+        dataset_name, trainer, plans, configuration, fold
+    )
+    if training_state is None:
+        return False
+
+    if training_state.get("status") == "completed":
+        return True
+
+    try:
+        remaining_epochs = int(training_state.get("remaining_epochs", 1))
+        next_epoch = int(training_state.get("next_epoch", 0))
+        num_epochs = int(training_state.get("num_epochs", 1))
+    except (TypeError, ValueError):
+        return False
+    return remaining_epochs <= 0 or next_epoch >= num_epochs
+
+
+def _describe_training_action(
+    dataset_name: str,
+    trainer: str,
+    plans: str,
+    configuration: str,
+    fold: str | int,
+    *,
+    restart_training: bool,
+    validation_only: bool,
+    pretrained_weights: str | None,
+) -> tuple[str, str]:
+    if validation_only:
+        return "validation-only", "explicit --validation-only"
+    if restart_training:
+        return "restart", "explicit --restart-training"
+    if pretrained_weights is not None:
+        return "pretrained", "explicit --pretrained-weights"
+
+    checkpoint = _resolve_existing_training_checkpoint(
+        dataset_name, trainer, plans, configuration, fold
+    )
+    if checkpoint is None:
+        return "start-from-scratch", "no checkpoint found"
+
+    if _training_fold_is_complete(dataset_name, trainer, plans, configuration, fold):
+        return "skip-completed", f"completed fold ({Path(checkpoint).name})"
+    return "resume", f"checkpoint available ({Path(checkpoint).name})"
+
+
 def _sync_preprocess_metadata(dataset_name: str, plans_name: str) -> None:
     env = configure_environment()
     raw_dataset_dir = Path(env["PROJECT_RAW"]) / dataset_name
@@ -659,7 +738,6 @@ def cmd_plan_preprocess(args: argparse.Namespace) -> int:
 
 def cmd_train(args: argparse.Namespace) -> int:
     configure_environment()
-    from brats_project.run.run_training import run_training
     from brats_project.utilities.plans_handling.plans_handler import PlansManager
 
     dataset = _get_dataset_defaults()
@@ -702,6 +780,19 @@ def cmd_train(args: argparse.Namespace) -> int:
             print(
                 "[INFO] No existing checkpoint found. Starting a new training run from scratch."
             )
+
+        if existing_checkpoint is not None and _training_fold_is_complete(
+            dataset["name"], args.trainer, args.plans, args.configuration, args.fold
+        ):
+            print(
+                "[INFO] Fold is already marked completed with no remaining epochs. "
+                "Skipping trainer startup and final validation.\n"
+                "Use --validation-only to rerun validation, or --restart-training to force a new run."
+            )
+            return 0
+
+    from brats_project.run.run_training import run_training
+
     run_training(
         dataset_name_or_id=dataset["name"],
         configuration=args.configuration,
@@ -731,6 +822,24 @@ def cmd_train(args: argparse.Namespace) -> int:
 
 def cmd_train_all(args: argparse.Namespace) -> int:
     dataset = _get_dataset_defaults()
+    planned_actions: list[str] = []
+    for fold in dataset["default_folds"]:
+        action, reason = _describe_training_action(
+            dataset_name=dataset["name"],
+            trainer=args.trainer,
+            plans=args.plans,
+            configuration=args.configuration,
+            fold=fold,
+            restart_training=args.restart_training,
+            validation_only=args.validation_only,
+            pretrained_weights=args.pretrained_weights,
+        )
+        planned_actions.append(f"fold {fold}: {action} ({reason})")
+
+    print("[INFO] train-all plan:")
+    for line in planned_actions:
+        print(f"  - {line}")
+
     for fold in dataset["default_folds"]:
         fold_args = argparse.Namespace(**vars(args))
         fold_args.fold = fold
@@ -1139,7 +1248,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=paths["prediction_input_root"],
         help=(
             "Prediction input directory. Relative paths are resolved from the BraTS project root. "
-            "Default: 04_inference_and_evaluation/input"
+            f"Default: {paths['prediction_input_root']}"
         ),
     )
     predict.add_argument(
@@ -1147,7 +1256,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=paths["prediction_output_root"],
         help=(
             "Prediction output directory. Relative paths are resolved from the BraTS project root. "
-            "Default: 04_inference_and_evaluation/predictions"
+            f"Default: {paths['prediction_output_root']}"
         ),
     )
     predict.add_argument("--configuration", default=dataset["default_configuration"])
@@ -1211,7 +1320,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=paths["prediction_output_root"],
         help=(
             "Prediction directory. Relative paths are resolved from the BraTS project root. "
-            "Default: 04_inference_and_evaluation/predictions"
+            f"Default: {paths['prediction_output_root']}"
         ),
     )
     evaluate.add_argument(
@@ -1252,7 +1361,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=paths["prediction_output_root"],
         help=(
             "Prediction directory consumed by the report generator. Relative paths are resolved "
-            "from the BraTS project root. Default: 04_inference_and_evaluation/predictions"
+            f"from the BraTS project root. Default: {paths['prediction_output_root']}"
         ),
     )
     report.add_argument(

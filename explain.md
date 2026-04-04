@@ -1100,10 +1100,10 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 - 如果你没有显式传 `--trainer/--configuration/--plans/--folds`
 - CLI 会优先读取 `PROJECT_RESULTS/Dataset220_BraTS2020/inference_information.json`
 - 然后自动切换到 `find-best-config` 当前选出来的最佳单模型
-- 如果默认输入目录 `04_inference_and_evaluation/input` 为空
+- 如果默认输入目录 `../BraTS-Dataset/inference/input` 为空
 - CLI 会进一步从 `PROJECT_RAW/Dataset220_BraTS2020/imagesTr` 随机抽样少量训练病例，把它们复制成临时验证输入
 - 默认抽样数量是 `8`，随机种子默认是 `42`
-- 抽样清单会落到 `04_inference_and_evaluation/input/sample_selection.json`
+- 抽样清单会落到 `04_inference_and_evaluation/metadata/sample_selection.json`
 
 这意味着项目默认推理不再是“死用初始默认 trainer”，而是“优先跟随当前最佳模型结论”。
 
@@ -1184,7 +1184,7 @@ BraTS 这套项目默认主要走 `nnUNetDatasetBlosc2`。
 在当前项目的 CLI 封装里，建议按下面这个可执行写法运行评估：
 
 ```bash
-python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 ```
 
 它现在默认是严格模式：

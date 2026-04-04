@@ -30,9 +30,9 @@ python run.py train --fold 0 --validation-only --npz
 
 至少要有：
 
-- `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/dataset.json`
-- `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
-- `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
+- `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/dataset.json`
+- `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
+- `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
 - 当前 configuration 对应的 preprocess 输出目录
 
 如果这些不完整，CLI 会在进入 trainer 前直接失败，而不是等训练循环里再报模糊错误。

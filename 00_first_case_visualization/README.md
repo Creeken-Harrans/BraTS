@@ -61,7 +61,7 @@ python run.py visualize-first-case
 
 ```bash
 python run.py visualize-first-case \
-  --data-root ../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
+  --data-root ../BraTS-Dataset/archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
   --output-dir 00_first_case_visualization/output
 ```
 

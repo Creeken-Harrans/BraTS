@@ -516,10 +516,10 @@ python run.py predict
 
 当前项目为了更方便做链路调试，`python run.py predict` 还有一层额外默认逻辑：
 
-- 如果 `04_inference_and_evaluation/input` 为空
+- 如果 `../BraTS-Dataset/inference/input` 为空
 - CLI 会自动从 `PROJECT_RAW/Dataset220_BraTS2020/imagesTr` 随机抽样 `8` 个训练病例
 - 把它们复制到输入目录中，作为临时验证集
-- 抽样记录会写到 `04_inference_and_evaluation/input/sample_selection.json`
+- 抽样记录会写到 `04_inference_and_evaluation/metadata/sample_selection.json`
 
 ---
 
@@ -566,7 +566,7 @@ brats_apply_postprocessing ...
 ### 对应命令
 
 ```bash
-python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 ```
 
 ### 对应代码

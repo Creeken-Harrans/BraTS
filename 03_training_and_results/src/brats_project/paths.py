@@ -20,17 +20,14 @@ _DEFAULT_PATHS = get_default_environment_paths()
 
 PROJECT_RAW = (
     os.environ.get("PROJECT_RAW")
-    or os.environ.get("nnUNet_raw")
     or _DEFAULT_PATHS["PROJECT_RAW"]
 )
 PROJECT_PREPROCESSED = (
     os.environ.get("PROJECT_PREPROCESSED")
-    or os.environ.get("nnUNet_preprocessed")
     or _DEFAULT_PATHS["PROJECT_PREPROCESSED"]
 )
 PROJECT_RESULTS = (
     os.environ.get("PROJECT_RESULTS")
-    or os.environ.get("nnUNet_results")
     or _DEFAULT_PATHS["PROJECT_RESULTS"]
 )
 

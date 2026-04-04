@@ -34,7 +34,7 @@
 python run.py train-all --npz
 python run.py find-best-config
 python run.py predict
-python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 python run.py report-evaluation
 ```
 
@@ -81,11 +81,11 @@ python run.py report-evaluation
 
 ## 自动抽样行为
 
-默认输入目录 `04_inference_and_evaluation/input` 为空时，CLI 会：
+默认输入目录 `../BraTS-Dataset/inference/input` 为空时，CLI 会：
 
 - 从训练集抽样 `8` 个病例；
-- 复制到 `input`；
-- 写出 `input/sample_selection.json`。
+- 复制到 `../BraTS-Dataset/inference/input`；
+- 写出 `04_inference_and_evaluation/metadata/sample_selection.json`。
 
 如果你不希望这样，使用：
 
@@ -98,13 +98,12 @@ python run.py predict --disable-auto-sample-training
 ### 当前推荐写法
 
 ```bash
-python run.py evaluate \
-  --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 ```
 
-### 为什么要显式传 `--gt-dir`
+### 为什么现在可以直接用默认 `--gt-dir`
 
-因为当前 CLI 的内置默认 `--gt-dir` 没有包含仓库外层所需的 `../`，与当前项目真实目录布局不一致。文档这里按真实可执行写法给出命令，代码问题已单独记录在 review findings 中。
+因为 CLI 默认值已经切到 `../BraTS-Dataset/nnUNet_preprocessed/.../gt_segmentations`，和当前项目真实目录布局一致。
 
 ### 子集评估
 
@@ -112,7 +111,6 @@ python run.py evaluate \
 
 ```bash
 python run.py evaluate \
-  --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations \
   --chill
 ```
 
@@ -121,7 +119,7 @@ python run.py evaluate \
 默认依赖：
 
 - `04_inference_and_evaluation/evaluation/summary.json`
-- `04_inference_and_evaluation/predictions`
+- `../BraTS-Dataset/inference/predictions`
 - `PROJECT_RAW/Dataset220_BraTS2020`
 
 其中最后一项意味着当前 CLI 报告链路默认面向本项目数据集本身的病例。如果你评估的是完全外部的一批病例，报告 overlay 所需的原始模态目录需要单独处理。

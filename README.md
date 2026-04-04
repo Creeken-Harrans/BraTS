@@ -38,7 +38,7 @@ python run.py train --fold 0
 python run.py train-all --npz
 python run.py find-best-config
 python run.py predict
-python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations
+python run.py evaluate
 python run.py report-evaluation
 ```
 
@@ -46,7 +46,7 @@ python run.py report-evaluation
 
 - `train --fold 0` 适合先验证训练链路。
 - `train-all --npz` 是完整五折训练的标准命令。
-- `evaluate` 目前请显式传 `--gt-dir ../nnUNet_test/.../gt_segmentations`。当前 CLI 的内置默认值与本仓库的真实目录布局不一致，直接省略 `--gt-dir` 会指到错误位置。这一项已在代码审查中记录为待修问题，因此 README 这里按真实实现给出可执行命令。
+- `evaluate` 现在可以直接使用默认 `--gt-dir`，它会指向 `BraTS-Dataset/nnUNet_preprocessed/.../gt_segmentations`。
 
 ## 仓库结构
 
@@ -75,14 +75,18 @@ python run.py report-evaluation
 
 这些路径来自 [project_config.json](/home/Creeken/Desktop/machine-learning-test/BraTS/project_config.json)：
 
-- `../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
+- `../BraTS-Dataset/archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData`
   原始 BraTS 数据根目录。
-- `../nnUNet_test/nnUNet_raw`
+- `../BraTS-Dataset/nnUNet_raw`
   转换后的 raw 数据目录。
-- `../nnUNet_test/nnUNet_preprocessed`
+- `../BraTS-Dataset/nnUNet_preprocessed`
   fingerprint、plans、preprocess 和 `gt_segmentations`。
-- `../nnUNet_test/nnUNet_results`
-  checkpoint、validation 结果、cross-validation 汇总和 `inference_information.json`。
+- `../BraTS-Dataset/inference`
+  推理输入和推理输出目录，所有 `.nii` / `.nii.gz` 都应该落在这里。
+- `03_training_and_results/artifacts/nnUNet_results`
+  checkpoint、validation 概率、cross-validation 汇总和 `inference_information.json`。
+- `../BraTS-Dataset/workspace_nifti`
+  从工作目录自动外移的 NIfTI 镜像目录。训练验证产生的 `.nii.gz` 会物理落在这里，工作目录保留兼容 symlink。
 
 ## 路径规则
 
@@ -90,20 +94,22 @@ python run.py report-evaluation
 
 - CLI 里的相对路径不是相对于你当前 shell 的 `cwd` 解释，而是统一相对于 `BraTS` 项目根目录解释。
 - 因此，即使你在上一级目录执行 `python BraTS/run.py ...`，CLI 参数里的相对路径仍然要按 `BraTS` 根目录来写。
-- 例如 `predict` 的默认输入目录就是 `04_inference_and_evaluation/input`，不是 `BraTS/04_inference_and_evaluation/input`。
+- 例如 `predict` 的默认输入目录现在是 `../BraTS-Dataset/inference/input`，不是 `BraTS/04_inference_and_evaluation/input`。
 - 对于仓库外目录，要显式写 `../...`，例如：
-  - `../archive/...`
-  - `../nnUNet_test/nnUNet_raw`
-  - `../nnUNet_test/nnUNet_preprocessed/...`
+  - `../BraTS-Dataset/archive/...`
+  - `../BraTS-Dataset/nnUNet_raw`
+  - `../BraTS-Dataset/nnUNet_preprocessed/...`
+  - `../BraTS-Dataset/inference/...`
 
 ### 典型对照
 
 | 目的 | 写法 |
 | --- | --- |
-| 仓库内推理输入目录 | `04_inference_and_evaluation/input` |
-| 仓库内预测输出目录 | `04_inference_and_evaluation/predictions` |
-| 仓库外 ground truth 目录 | `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations` |
-| 原始 BraTS 数据目录 | `../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData` |
+| 推理输入目录 | `../BraTS-Dataset/inference/input` |
+| 推理输出目录 | `../BraTS-Dataset/inference/predictions` |
+| ground truth 目录 | `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations` |
+| 原始 BraTS 数据目录 | `../BraTS-Dataset/archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData` |
+| 训练结果目录 | `03_training_and_results/artifacts/nnUNet_results` |
 
 ## 命令清单
 
@@ -121,7 +127,7 @@ python run.py report-evaluation
 - `python run.py visualize-first-case`
   读取原始 BraTS 数据，生成首例病例可视化到 `00_first_case_visualization/output`。
 - `python run.py prepare-dataset`
-  将原始 BraTS 病例转换成 `../nnUNet_test/nnUNet_raw/Dataset220_BraTS2020`。
+  将原始 BraTS 病例转换成 `../BraTS-Dataset/nnUNet_raw/Dataset220_BraTS2020`。
 - `python run.py prepare-dataset --force`
   强制重建上述 raw 数据目录。
 
@@ -168,27 +174,27 @@ python run.py report-evaluation
 - `python run.py find-best-config`
   汇总 shared folds 上的 validation 结果，确定最佳单模型或 ensemble，并写出 `inference_information.json`。
 - `python run.py predict`
-  默认从 `04_inference_and_evaluation/input` 读取，输出到 `04_inference_and_evaluation/predictions`。
+  默认从 `../BraTS-Dataset/inference/input` 读取，输出到 `../BraTS-Dataset/inference/predictions`。
 - `python run.py predict --sample-training-cases 12 --sample-seed 123`
   从训练集随机抽样病例填充输入目录后执行推理。
 - `python run.py predict --disable-auto-sample-training`
   禁止在默认输入目录为空时自动抽样。
-- `python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`
+- `python run.py evaluate`
   评估预测目录与 GT 目录。
-- `python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations --chill`
+- `python run.py evaluate --chill`
   允许只评估一个预测子集。自动抽样出的临时验证集通常需要这一写法。
 - `python run.py report-evaluation`
-  从 `04_inference_and_evaluation/evaluation/summary.json` 和 `04_inference_and_evaluation/predictions` 生成 Markdown 报告和可视化。
+  从 `04_inference_and_evaluation/evaluation/summary.json` 和 `../BraTS-Dataset/inference/predictions` 生成 Markdown 报告和可视化。
 
 ## 输入、输出和结果语义
 
 ### 训练相关
 
 - 输入：
-  - `../nnUNet_test/nnUNet_raw/Dataset220_BraTS2020`
-  - `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020`
+  - `../BraTS-Dataset/nnUNet_raw/Dataset220_BraTS2020`
+  - `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020`
 - 输出：
-  - `../nnUNet_test/nnUNet_results/Dataset220_BraTS2020/...`
+  - `03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/...`
 - 仓库内同步快照：
   - `02_preprocess/metadata/*`
   - `02_preprocess/logs/*`
@@ -196,8 +202,8 @@ python run.py report-evaluation
 
 ### 推理相关
 
-- 默认输入目录：`04_inference_and_evaluation/input`
-- 默认预测目录：`04_inference_and_evaluation/predictions`
+- 默认输入目录：`../BraTS-Dataset/inference/input`
+- 默认预测目录：`../BraTS-Dataset/inference/predictions`
 - 默认评估输出：`04_inference_and_evaluation/evaluation/summary.json`
 - 默认报告输出：`04_inference_and_evaluation/report`
 
@@ -206,7 +212,7 @@ python run.py report-evaluation
 - `input`
   推理输入目录。里面应该放待推理病例的四模态 NIfTI，或自动抽样生成的临时输入。
 - `predictions`
-  推理输出目录。包含 `.nii.gz` 预测分割，以及 `dataset.json`、`plans.json`、`predict_from_raw_data_args.json` 等推理元数据。
+  推理输出目录。只放 `.nii.gz` 预测分割。推理元数据会转存到 `04_inference_and_evaluation/metadata`。
 - `evaluation`
   评估结果目录。默认核心文件是 `summary.json`。
 - `report`
@@ -216,16 +222,16 @@ python run.py report-evaluation
 
 ### 重新生成 `input`
 
-- 手动删除 `04_inference_and_evaluation/input` 里的病例文件后重新放入新病例。
-- 如果你依赖自动抽样，也可以删除其中的 `.nii.gz` 和 `sample_selection.json`，再重新执行 `python run.py predict`。
+- 手动删除 `../BraTS-Dataset/inference/input` 里的病例文件后重新放入新病例。
+- 如果你依赖自动抽样，也可以删除其中的 `.nii.gz`，并删除 `04_inference_and_evaluation/metadata/sample_selection.json`，再重新执行 `python run.py predict`。
 
 ### 重新生成 `predictions`
 
-- 删除 `04_inference_and_evaluation/predictions` 下的预测输出后重新执行 `python run.py predict`。
+- 删除 `../BraTS-Dataset/inference/predictions` 下的预测输出后重新执行 `python run.py predict`。
 
 ### 重新生成 `evaluation`
 
-- 删除 `04_inference_and_evaluation/evaluation/summary.json` 后重新执行 `python run.py evaluate --gt-dir ../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations`。
+- 删除 `04_inference_and_evaluation/evaluation/summary.json` 后重新执行 `python run.py evaluate`。
 
 ### 重新生成 `report`
 
@@ -239,21 +245,22 @@ python run.py report-evaluation
 - `02_preprocess/logs`
 - `02_preprocess/metadata`
 - `03_training_and_results/results`
-- `04_inference_and_evaluation/predictions`
+- `04_inference_and_evaluation/metadata`
 - `04_inference_and_evaluation/evaluation`
 - `04_inference_and_evaluation/report`
-- `04_inference_and_evaluation/input/sample_selection.json`
 
 ### 需要谨慎处理的目录
 
-- `04_inference_and_evaluation/input`
+- `../BraTS-Dataset/inference/input`
   里面可能是你手工放入的真实推理输入，不要在不了解内容时整目录删除。
-- `../nnUNet_test/nnUNet_raw`
+- `../BraTS-Dataset/nnUNet_raw`
   这是训练数据集转换结果，删掉后需要重新 `prepare-dataset`。
-- `../nnUNet_test/nnUNet_preprocessed`
+- `../BraTS-Dataset/nnUNet_preprocessed`
   这是 preprocess 产物和 `gt_segmentations`，删掉后需要重新 `plan-preprocess`。
-- `../nnUNet_test/nnUNet_results`
-  这是 checkpoint 和验证结果，删掉会丢失训练恢复点和 `find-best-config` 依赖的 validation 产物。
+- `03_training_and_results/artifacts/nnUNet_results`
+  这是 checkpoint、validation 概率和 `find-best-config` 依赖的主结果目录。
+- `../BraTS-Dataset/workspace_nifti`
+  这是从工作目录外移出去的历史/运行期 NIfTI 真正存放位置，删掉会破坏工作目录里的兼容 symlink。
 
 ## 常见错误
 
@@ -276,15 +283,17 @@ python: can't open file '/.../BraTS/BraTS/run.py': [Errno 2] No such file or dir
 
 ### 错误 2：显式路径忘了写 `../`
 
-例如原始数据和 `nnUNet_test` 都在仓库外层，所以显式路径应该写成：
+例如原始数据和 `BraTS-Dataset` 都在仓库外层，所以显式路径应该写成：
 
-- `../archive/...`
-- `../nnUNet_test/...`
+- `../BraTS-Dataset/archive/...`
+- `../BraTS-Dataset/nnUNet_raw/...`
+- `../BraTS-Dataset/nnUNet_preprocessed/...`
+- `../BraTS-Dataset/inference/...`
 
 不要写成：
 
 - `archive/...`
-- `nnUNet_test/...`
+- `BraTS-Dataset/...`
 
 除非该路径本来就位于 `BraTS` 仓库内部。
 

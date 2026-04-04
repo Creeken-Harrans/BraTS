@@ -56,14 +56,14 @@ python run.py train --fold 0 --validation-only --npz
 
 ### 训练主要读取
 
-- `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/dataset.json`
-- `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
-- `../nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
+- `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/dataset.json`
+- `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/ProjectPlans.json`
+- `../BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json`
 - 对应 configuration 的 preprocess 输出目录
 
 ### 训练主要写入
 
-- `../nnUNet_test/nnUNet_results/Dataset220_BraTS2020/<trainer>__<plans>__<configuration>/fold_x`
+- `03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/<trainer>__<plans>__<configuration>/fold_x`
 
 其中最关键的训练产物包括：
 
@@ -72,7 +72,13 @@ python run.py train --fold 0 --validation-only --npz
 - `checkpoint_final.pth`
 - `training_log_*.txt`
 - `progress.png`
+- `validation/*.npz`
 - `validation/summary.json`
+
+注意：
+
+- `validation/*.nii.gz` 会被自动外移到 `../BraTS-Dataset/workspace_nifti/...`
+- 工作目录中的 `validation/*.nii.gz` 会保留为兼容 symlink，方便原有读取逻辑继续工作
 
 ### 仓库内同步快照
 
@@ -80,7 +86,7 @@ python run.py train --fold 0 --validation-only --npz
 
 - `03_training_and_results/results/fold_x`
 
-这里是快照，不是训练的唯一真实结果目录。真正的训练主产物仍然在 `../nnUNet_test/nnUNet_results/...`。
+这里是快照，不是训练的唯一真实结果目录。真正的训练主产物现在在 `03_training_and_results/artifacts/nnUNet_results/...`。
 
 ## 恢复训练的真实行为
 
@@ -133,8 +139,10 @@ python run.py train --fold 0 --validation-only --npz
 
 ### 不要随便删
 
-- `../nnUNet_test/nnUNet_results/Dataset220_BraTS2020/...`
-  真正的 checkpoint、validation 和 cross-validation 资产。
+- `03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/...`
+  真正的 checkpoint、validation 概率和 cross-validation 资产。
+- `../BraTS-Dataset/workspace_nifti/...`
+  训练验证阶段被自动外移的历史 NIfTI 真正存放位置。
 
 ## 相关代码入口
 

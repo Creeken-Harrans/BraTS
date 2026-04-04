@@ -35,7 +35,7 @@
 
 ### 2. `results/`
 
-这是**仓库内同步快照**目录。注意它不是训练真实结果的唯一落点，而是为了阅读和交付方便，把部分结果同步到仓库内；真正的 checkpoint、validation 等主产物仍在仓库外的 `../nnUNet_test/nnUNet_results/...`。([GitHub](https://github.com/Creeken-Harrans/BraTS/tree/main/03_training_and_results))
+这是**仓库内同步快照**目录。当前项目已经把训练 checkpoint、validation 和日志统一落到仓库内的 `03_training_and_results/artifacts/nnUNet_results/...`，不再依赖仓库外的 `nnUNet_test` 工作目录。([GitHub](https://github.com/Creeken-Harrans/BraTS/tree/main/03_training_and_results))
 
 ### 3. `src/brats_project/`
 

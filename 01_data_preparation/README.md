@@ -64,8 +64,8 @@ python run.py prepare-dataset
 
 ```bash
 python run.py prepare-dataset \
-  --src-root ../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
-  --project-raw ../nnUNet_test/nnUNet_raw
+  --src-root ../BraTS-Dataset/archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData \
+  --project-raw ../BraTS-Dataset/nnUNet_raw
 ```
 
 当前实现还有一个重要约定：

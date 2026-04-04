@@ -7,6 +7,10 @@ import shutil
 from pathlib import Path
 from typing import Iterable
 
+# Source of truth for dataset conversion in the standalone BraTS project.
+# This script is maintained from the migrated nnUNet_test converter, with
+# project-local path handling and safety checks kept here as the active entrypoint.
+
 DATASET_ID = 220
 DATASET_NAME = "BraTS2020"
 DEFAULT_SRC_ROOT_REL = Path(
@@ -157,7 +161,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Target raw dataset root. Relative paths are resolved from the BraTS project root. "
-        "Defaults to PROJECT_RAW or nnUNet_test/nnUNet_raw.",
+        "Defaults to PROJECT_RAW or ../BraTS-Dataset/nnUNet_raw.",
     )
     parser.add_argument(
         "--force",

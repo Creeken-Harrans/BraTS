@@ -5,7 +5,11 @@
 - 如果你当前在上一级目录 `machine-learning-test`，把同一条命令改写成 `python BraTS/run.py ...`。
 - 本文中的相对路径默认也都相对于 `BraTS` 项目根目录。
 
-这里是当前项目默认的正式推理输入目录。
+这里描述的是当前项目默认的正式推理输入目录结构。
+
+物理默认位置现在是：
+
+- `../BraTS-Dataset/inference/input`
 
 它不是一个随便放 NIfTI 的临时文件夹，而是需要严格遵守训练期输入契约的目录。
 
@@ -83,7 +87,7 @@ python run.py predict
 如果这个目录当前是空的，项目现在会自动从训练集 `imagesTr/` 里随机挑选一小批病例复制到这里，把它们当成临时验证集来跑推理。
 默认抽样数量是 `8`，抽样记录会写到：
 
-- `sample_selection.json`
+- `04_inference_and_evaluation/metadata/sample_selection.json`
 
 如果你想手动控制抽样数量和随机种子，可以使用：
 
@@ -99,7 +103,7 @@ python run.py predict --disable-auto-sample-training
 
 项目会从这里读取输入，并把结果写到：
 
-- `04_inference_and_evaluation/predictions`
+- `../BraTS-Dataset/inference/predictions`
 
 ---
 
