@@ -15,7 +15,7 @@
 - trainer: `SegTrainer`
 - plans: `ProjectPlans`
 - configuration: `3d_fullres`
-- epochs: `100`
+- epochs: `150`
 - folds: `0 1 2 3 4`
 
 ## 训练命令
@@ -102,6 +102,7 @@ python run.py train --fold 0 --validation-only --npz
 
 - 如果当前 fold 已经有可恢复 checkpoint，`python run.py train --fold 0` 会自动走续训路径。
 - 如果没有可恢复 checkpoint，命令会从头开始。
+- 如果 checkpoint 是旧的总轮数，例如已经完成 `100` 轮，而当前 `SegTrainer` 已经改成 `150` 轮，命令会继续从已有 checkpoint 接着训练到 `150`。
 - 如果你明确要忽略已有结果并从头开始，使用 `--restart-training`。
 
 ## `fold` 的含义
@@ -111,7 +112,7 @@ python run.py train --fold 0 --validation-only --npz
 因此：
 
 - `fold_0` 是第 0 组交叉验证划分；
-- `train-all` 就是遍历默认五折；
+- `train-all` 就是按 `fold_0 -> fold_1 -> fold_2 -> fold_3 -> fold_4` 的顺序遍历默认五折；
 - 先跑 `fold 0` 的意义是先验证工程链路，不是只做一次随手实验。
 
 ## 训练前后最该检查什么

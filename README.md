@@ -160,13 +160,15 @@ python run.py report-evaluation
 - trainer: `SegTrainer`
 - plans: `ProjectPlans`
 - configuration: `3d_fullres`
-- epochs: `100`
+- epochs: `150`
 - folds: `0 1 2 3 4`
 
 训练恢复规则与真实实现一致：
 
 - 如果检测到当前 fold 已存在 checkpoint，CLI 会自动进入续训路径。
 - 自动恢复优先级是 `checkpoint_final.pth -> checkpoint_latest.pth -> checkpoint_best.pth`。
+- 如果当前 checkpoint 对应的是较早的总轮数，而现在 trainer 的目标总轮数更高，例如从 `100` 提到 `150`，CLI 会继续从已有 checkpoint 续训到新的目标轮数。
+- `train-all` 会按 `fold_0 -> fold_1 -> fold_2 -> fold_3 -> fold_4` 的顺序逐个检查并执行续训或新训练。
 - 如果你要强制从头开始，显式传 `--restart-training`。
 
 ### 推理、评估与报告

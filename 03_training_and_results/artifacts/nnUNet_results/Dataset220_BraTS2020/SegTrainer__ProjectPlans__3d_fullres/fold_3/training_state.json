@@ -1,6 +1,6 @@
 {
-    "status": "running",
-    "timestamp": "2026-04-04T18:52:13.914679",
+    "status": "completed",
+    "timestamp": "2026-04-04T19:23:17.689341",
     "trainer_name": "SegTrainer",
     "configuration": "3d_fullres",
     "fold": 3,
@@ -8,12 +8,12 @@
     "log_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/training_log_2026_4_4_18_36_24.txt",
     "training_state_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/training_state.json",
     "resume_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/checkpoint_latest.pth",
-    "latest_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/checkpoint_latest.pth",
+    "latest_checkpoint_path": null,
     "best_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/checkpoint_best.pth",
-    "final_checkpoint_path": null,
+    "final_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/checkpoint_final.pth",
     "num_epochs": 100,
-    "logged_epochs": 86,
-    "current_completed_epoch": 85,
-    "next_epoch": 86,
-    "remaining_epochs": 14
+    "logged_epochs": 100,
+    "current_completed_epoch": 99,
+    "next_epoch": 100,
+    "remaining_epochs": 0
 }

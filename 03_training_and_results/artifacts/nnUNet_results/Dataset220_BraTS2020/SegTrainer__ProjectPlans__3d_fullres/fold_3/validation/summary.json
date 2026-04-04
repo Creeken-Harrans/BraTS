@@ -1,0 +1,2674 @@
+{
+    "foreground_mean": {
+        "Dice": 0.8356969680696222,
+        "FN": 5146.981735159817,
+        "FP": 3806.269406392694,
+        "IoU": 0.7588742890682111,
+        "TN": 8872742.273972603,
+        "TP": 46304.47488584475,
+        "n_pred": 50110.74429223745,
+        "n_ref": 51451.45662100457
+    },
+    "mean": {
+        "(1, 2, 3)": {
+            "Dice": 0.9139175343561422,
+            "FN": 7043.1506849315065,
+            "FP": 5663.698630136986,
+            "IoU": 0.8471315889947029,
+            "TN": 8827975.328767123,
+            "TP": 87317.82191780822,
+            "n_pred": 92981.52054794521,
+            "n_ref": 94360.97260273973
+        },
+        "(2, 3)": {
+            "Dice": 0.8556730044229014,
+            "FN": 6429.397260273972,
+            "FP": 3743.72602739726,
+            "IoU": 0.7781743507724124,
+            "TN": 8881189.164383562,
+            "TP": 36637.71232876712,
+            "n_pred": 40381.438356164384,
+            "n_ref": 43067.109589041094
+        },
+        "(3,)": {
+            "Dice": 0.737500365429823,
+            "FN": 1968.3972602739725,
+            "FP": 2011.3835616438357,
+            "IoU": 0.6513169274375177,
+            "TN": 8909062.328767123,
+            "TP": 14957.890410958904,
+            "n_pred": 16969.27397260274,
+            "n_ref": 16926.287671232876
+        }
+    },
+    "metric_per_case": [
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.7925160382573156,
+                    "FN": 6150,
+                    "FP": 6237,
+                    "IoU": 0.6563366995893908,
+                    "TN": 8891956,
+                    "TP": 23657,
+                    "n_pred": 29894,
+                    "n_ref": 29807
+                },
+                "(2, 3)": {
+                    "Dice": 0.919565516293139,
+                    "FN": 387,
+                    "FP": 198,
+                    "IoU": 0.8511071519470603,
+                    "TN": 8924071,
+                    "TP": 3344,
+                    "n_pred": 3542,
+                    "n_ref": 3731
+                },
+                "(3,)": {
+                    "Dice": 0.8592592592592593,
+                    "FN": 446,
+                    "FP": 390,
+                    "IoU": 0.7532467532467533,
+                    "TN": 8924612,
+                    "TP": 2552,
+                    "n_pred": 2942,
+                    "n_ref": 2998
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_003.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_003.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9198314353082827,
+                    "FN": 3102,
+                    "FP": 3290,
+                    "IoU": 0.8515628628489155,
+                    "TN": 8884938,
+                    "TP": 36670,
+                    "n_pred": 39960,
+                    "n_ref": 39772
+                },
+                "(2, 3)": {
+                    "Dice": 0.9342864707439767,
+                    "FN": 735,
+                    "FP": 506,
+                    "IoU": 0.8766769353075624,
+                    "TN": 8917937,
+                    "TP": 8822,
+                    "n_pred": 9328,
+                    "n_ref": 9557
+                },
+                "(3,)": {
+                    "Dice": 0.8951822916666666,
+                    "FN": 659,
+                    "FP": 629,
+                    "IoU": 0.8102533883323512,
+                    "TN": 8921212,
+                    "TP": 5500,
+                    "n_pred": 6129,
+                    "n_ref": 6159
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_007.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_007.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9179089691940994,
+                    "FN": 3953,
+                    "FP": 9720,
+                    "IoU": 0.8482733365883972,
+                    "TN": 8837884,
+                    "TP": 76443,
+                    "n_pred": 86163,
+                    "n_ref": 80396
+                },
+                "(2, 3)": {
+                    "Dice": 0.9179083398065109,
+                    "FN": 1571,
+                    "FP": 3079,
+                    "IoU": 0.8482722615590433,
+                    "TN": 8897353,
+                    "TP": 25997,
+                    "n_pred": 29076,
+                    "n_ref": 27568
+                },
+                "(3,)": {
+                    "Dice": 0.8449869758414628,
+                    "FN": 1711,
+                    "FP": 4359,
+                    "IoU": 0.7315822057132749,
+                    "TN": 8905386,
+                    "TP": 16544,
+                    "n_pred": 20903,
+                    "n_ref": 18255
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_014.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_014.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9248718587365468,
+                    "FN": 2885,
+                    "FP": 8577,
+                    "IoU": 0.8602433730826444,
+                    "TN": 8845986,
+                    "TP": 70552,
+                    "n_pred": 79129,
+                    "n_ref": 73437
+                },
+                "(2, 3)": {
+                    "Dice": 0.9696500753745381,
+                    "FN": 567,
+                    "FP": 1708,
+                    "IoU": 0.9410881218116374,
+                    "TN": 8889383,
+                    "TP": 36342,
+                    "n_pred": 38050,
+                    "n_ref": 36909
+                },
+                "(3,)": {
+                    "Dice": 0.906324748289481,
+                    "FN": 1140,
+                    "FP": 2228,
+                    "IoU": 0.8286964040486242,
+                    "TN": 8908339,
+                    "TP": 16293,
+                    "n_pred": 18521,
+                    "n_ref": 17433
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_025.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_025.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9552767287936005,
+                    "FN": 5028,
+                    "FP": 5986,
+                    "IoU": 0.9143825500225432,
+                    "TN": 8799358,
+                    "TP": 117628,
+                    "n_pred": 123614,
+                    "n_ref": 122656
+                },
+                "(2, 3)": {
+                    "Dice": 0.9598216163910976,
+                    "FN": 1541,
+                    "FP": 369,
+                    "IoU": 0.9227471282963922,
+                    "TN": 8903276,
+                    "TP": 22814,
+                    "n_pred": 23183,
+                    "n_ref": 24355
+                },
+                "(3,)": {
+                    "Dice": 0.9139794658717972,
+                    "FN": 831,
+                    "FP": 2026,
+                    "IoU": 0.8415858053784309,
+                    "TN": 8909965,
+                    "TP": 15178,
+                    "n_pred": 17204,
+                    "n_ref": 16009
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_033.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_033.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9119358723925387,
+                    "FN": 900,
+                    "FP": 7801,
+                    "IoU": 0.8381269534156869,
+                    "TN": 8874248,
+                    "TP": 45051,
+                    "n_pred": 52852,
+                    "n_ref": 45951
+                },
+                "(2, 3)": {
+                    "Dice": 0.9484393341961894,
+                    "FN": 1131,
+                    "FP": 582,
+                    "IoU": 0.9019349667964277,
+                    "TN": 8910532,
+                    "TP": 15755,
+                    "n_pred": 16337,
+                    "n_ref": 16886
+                },
+                "(3,)": {
+                    "Dice": 0.8667798632462943,
+                    "FN": 1453,
+                    "FP": 1450,
+                    "IoU": 0.7648821576091358,
+                    "TN": 8915653,
+                    "TP": 9444,
+                    "n_pred": 10894,
+                    "n_ref": 10897
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_052.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_052.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9440480378728622,
+                    "FN": 3938,
+                    "FP": 12443,
+                    "IoU": 0.8940255539382177,
+                    "TN": 8773425,
+                    "TP": 138194,
+                    "n_pred": 150637,
+                    "n_ref": 142132
+                },
+                "(2, 3)": {
+                    "Dice": 0.9594006627287135,
+                    "FN": 207,
+                    "FP": 4020,
+                    "IoU": 0.9219693193775267,
+                    "TN": 8873829,
+                    "TP": 49944,
+                    "n_pred": 53964,
+                    "n_ref": 50151
+                },
+                "(3,)": {
+                    "Dice": 0.899341798081123,
+                    "FN": 288,
+                    "FP": 6395,
+                    "IoU": 0.8170945317204007,
+                    "TN": 8891462,
+                    "TP": 29855,
+                    "n_pred": 36250,
+                    "n_ref": 30143
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_062.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_062.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9465251661429087,
+                    "FN": 4127,
+                    "FP": 2101,
+                    "IoU": 0.898479143234388,
+                    "TN": 8866653,
+                    "TP": 55119,
+                    "n_pred": 57220,
+                    "n_ref": 59246
+                },
+                "(2, 3)": {
+                    "Dice": 0.9306317351745499,
+                    "FN": 1039,
+                    "FP": 1111,
+                    "IoU": 0.870263094376056,
+                    "TN": 8911428,
+                    "TP": 14422,
+                    "n_pred": 15533,
+                    "n_ref": 15461
+                },
+                "(3,)": {
+                    "Dice": 0.8348375970106352,
+                    "FN": 1404,
+                    "FP": 1469,
+                    "IoU": 0.7164989145450957,
+                    "TN": 8917866,
+                    "TP": 7261,
+                    "n_pred": 8730,
+                    "n_ref": 8665
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_066.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_066.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9260087929308318,
+                    "FN": 4647,
+                    "FP": 3852,
+                    "IoU": 0.8622126390194871,
+                    "TN": 8866318,
+                    "TP": 53183,
+                    "n_pred": 57035,
+                    "n_ref": 57830
+                },
+                "(2, 3)": {
+                    "Dice": 0.8870512695787528,
+                    "FN": 3373,
+                    "FP": 4754,
+                    "IoU": 0.797027972027972,
+                    "TN": 8887960,
+                    "TP": 31913,
+                    "n_pred": 36667,
+                    "n_ref": 35286
+                },
+                "(3,)": {
+                    "Dice": 0.7635218861984662,
+                    "FN": 1344,
+                    "FP": 5717,
+                    "IoU": 0.6174972914409534,
+                    "TN": 8909540,
+                    "TP": 11399,
+                    "n_pred": 17116,
+                    "n_ref": 12743
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_070.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_070.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8241714148142204,
+                    "FN": 2150,
+                    "FP": 41,
+                    "IoU": 0.700928200928201,
+                    "TN": 8920674,
+                    "TP": 5135,
+                    "n_pred": 5176,
+                    "n_ref": 7285
+                },
+                "(2, 3)": {
+                    "Dice": 0.8730512249443207,
+                    "FN": 669,
+                    "FP": 186,
+                    "IoU": 0.7747035573122529,
+                    "TN": 8924205,
+                    "TP": 2940,
+                    "n_pred": 3126,
+                    "n_ref": 3609
+                },
+                "(3,)": {
+                    "Dice": 0.680672268907563,
+                    "FN": 12,
+                    "FP": 1356,
+                    "IoU": 0.5159235668789809,
+                    "TN": 8925174,
+                    "TP": 1458,
+                    "n_pred": 2814,
+                    "n_ref": 1470
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_079.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_079.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8936056134461617,
+                    "FN": 5131,
+                    "FP": 3997,
+                    "IoU": 0.8076736689071027,
+                    "TN": 8880539,
+                    "TP": 38333,
+                    "n_pred": 42330,
+                    "n_ref": 43464
+                },
+                "(2, 3)": {
+                    "Dice": 0.8479951212075011,
+                    "FN": 2217,
+                    "FP": 774,
+                    "IoU": 0.7361037586024352,
+                    "TN": 8916666,
+                    "TP": 8343,
+                    "n_pred": 9117,
+                    "n_ref": 10560
+                },
+                "(3,)": {
+                    "Dice": 0.8454470755210278,
+                    "FN": 1029,
+                    "FP": 1040,
+                    "IoU": 0.7322722567287785,
+                    "TN": 8920272,
+                    "TP": 5659,
+                    "n_pred": 6699,
+                    "n_ref": 6688
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_080.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_080.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9188589669024657,
+                    "FN": 2254,
+                    "FP": 3745,
+                    "IoU": 0.8498974128008807,
+                    "TN": 8888034,
+                    "TP": 33967,
+                    "n_pred": 37712,
+                    "n_ref": 36221
+                },
+                "(2, 3)": {
+                    "Dice": 0.8477846593616007,
+                    "FN": 695,
+                    "FP": 1861,
+                    "IoU": 0.7357866446144304,
+                    "TN": 8918326,
+                    "TP": 7118,
+                    "n_pred": 8979,
+                    "n_ref": 7813
+                },
+                "(3,)": {
+                    "Dice": 0.6740843764487714,
+                    "FN": 56,
+                    "FP": 3459,
+                    "IoU": 0.5083916083916084,
+                    "TN": 8920850,
+                    "TP": 3635,
+                    "n_pred": 7094,
+                    "n_ref": 3691
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_085.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_085.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.706442907741609,
+                    "FN": 10052,
+                    "FP": 3872,
+                    "IoU": 0.5461242584262338,
+                    "TN": 8897322,
+                    "TP": 16754,
+                    "n_pred": 20626,
+                    "n_ref": 26806
+                },
+                "(2, 3)": {
+                    "Dice": 0.6639154276669117,
+                    "FN": 1644,
+                    "FP": 4301,
+                    "IoU": 0.4969112295844969,
+                    "TN": 8916183,
+                    "TP": 5872,
+                    "n_pred": 10173,
+                    "n_ref": 7516
+                },
+                "(3,)": {
+                    "Dice": 0.20980615735461802,
+                    "FN": 314,
+                    "FP": 379,
+                    "IoU": 0.11719745222929936,
+                    "TN": 8927215,
+                    "TP": 92,
+                    "n_pred": 471,
+                    "n_ref": 406
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_087.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_087.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9748845183103957,
+                    "FN": 1410,
+                    "FP": 3864,
+                    "IoU": 0.9509997026906496,
+                    "TN": 8820368,
+                    "TP": 102358,
+                    "n_pred": 106222,
+                    "n_ref": 103768
+                },
+                "(2, 3)": {
+                    "Dice": 0.9137506752295781,
+                    "FN": 2930,
+                    "FP": 2818,
+                    "IoU": 0.8411979224223671,
+                    "TN": 8891804,
+                    "TP": 30448,
+                    "n_pred": 33266,
+                    "n_ref": 33378
+                },
+                "(3,)": {
+                    "Dice": 0.8640519160627161,
+                    "FN": 308,
+                    "FP": 5432,
+                    "IoU": 0.7606438430424086,
+                    "TN": 8904019,
+                    "TP": 18241,
+                    "n_pred": 23673,
+                    "n_ref": 18549
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_095.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_095.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9585241077860396,
+                    "FN": 1025,
+                    "FP": 5769,
+                    "IoU": 0.9203516998827667,
+                    "TN": 8842700,
+                    "TP": 78506,
+                    "n_pred": 84275,
+                    "n_ref": 79531
+                },
+                "(2, 3)": {
+                    "Dice": 0.9748228987172123,
+                    "FN": 865,
+                    "FP": 2291,
+                    "IoU": 0.9508824353347651,
+                    "TN": 8863746,
+                    "TP": 61098,
+                    "n_pred": 63389,
+                    "n_ref": 61963
+                },
+                "(3,)": {
+                    "Dice": 0.9310442898880471,
+                    "FN": 1183,
+                    "FP": 4151,
+                    "IoU": 0.8709849071207431,
+                    "TN": 8886656,
+                    "TP": 36010,
+                    "n_pred": 40161,
+                    "n_ref": 37193
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_097.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_097.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.7265012088616963,
+                    "FN": 151,
+                    "FP": 5392,
+                    "IoU": 0.5704765594730724,
+                    "TN": 8915095,
+                    "TP": 7362,
+                    "n_pred": 12754,
+                    "n_ref": 7513
+                },
+                "(2, 3)": {
+                    "Dice": 0.9217258495609011,
+                    "FN": 31,
+                    "FP": 174,
+                    "IoU": 0.8548158640226629,
+                    "TN": 8926588,
+                    "TP": 1207,
+                    "n_pred": 1381,
+                    "n_ref": 1238
+                },
+                "(3,)": {
+                    "Dice": 0.943811394891945,
+                    "FN": 37,
+                    "FP": 106,
+                    "IoU": 0.8936011904761905,
+                    "TN": 8926656,
+                    "TP": 1201,
+                    "n_pred": 1307,
+                    "n_ref": 1238
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_099.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_099.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9379166122075546,
+                    "FN": 4388,
+                    "FP": 2737,
+                    "IoU": 0.883091311838543,
+                    "TN": 8867055,
+                    "TP": 53820,
+                    "n_pred": 56557,
+                    "n_ref": 58208
+                },
+                "(2, 3)": {
+                    "Dice": 0.9678812736531336,
+                    "FN": 2380,
+                    "FP": 862,
+                    "IoU": 0.9377615665194855,
+                    "TN": 8875910,
+                    "TP": 48848,
+                    "n_pred": 49710,
+                    "n_ref": 51228
+                },
+                "(3,)": {
+                    "Dice": 0.9237757866222129,
+                    "FN": 4022,
+                    "FP": 1465,
+                    "IoU": 0.8583488228004956,
+                    "TN": 8889264,
+                    "TP": 33249,
+                    "n_pred": 34714,
+                    "n_ref": 37271
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_103.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_103.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.7633855096823896,
+                    "FN": 4862,
+                    "FP": 1895,
+                    "IoU": 0.6173189103471711,
+                    "TN": 8910343,
+                    "TP": 10900,
+                    "n_pred": 12795,
+                    "n_ref": 15762
+                },
+                "(2, 3)": {
+                    "Dice": 0.9121693121693122,
+                    "FN": 286,
+                    "FP": 212,
+                    "IoU": 0.8385214007782101,
+                    "TN": 8924916,
+                    "TP": 2586,
+                    "n_pred": 2798,
+                    "n_ref": 2872
+                },
+                "(3,)": {
+                    "Dice": 0.8940422322775264,
+                    "FN": 415,
+                    "FP": 147,
+                    "IoU": 0.8083873167405387,
+                    "TN": 8925067,
+                    "TP": 2371,
+                    "n_pred": 2518,
+                    "n_ref": 2786
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_110.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_110.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9715506287265054,
+                    "FN": 1384,
+                    "FP": 8512,
+                    "IoU": 0.9446752128629012,
+                    "TN": 8749129,
+                    "TP": 168975,
+                    "n_pred": 177487,
+                    "n_ref": 170359
+                },
+                "(2, 3)": {
+                    "Dice": 0.9857844896404743,
+                    "FN": 1162,
+                    "FP": 779,
+                    "IoU": 0.9719674759174478,
+                    "TN": 8858759,
+                    "TP": 67300,
+                    "n_pred": 68079,
+                    "n_ref": 68462
+                },
+                "(3,)": {
+                    "Dice": 0.9647321056578618,
+                    "FN": 1861,
+                    "FP": 1525,
+                    "IoU": 0.9318671147151739,
+                    "TN": 8878303,
+                    "TP": 46311,
+                    "n_pred": 47836,
+                    "n_ref": 48172
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_112.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_112.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9679850319629957,
+                    "FN": 3634,
+                    "FP": 1294,
+                    "IoU": 0.9379563881754545,
+                    "TN": 8848572,
+                    "TP": 74500,
+                    "n_pred": 75794,
+                    "n_ref": 78134
+                },
+                "(2, 3)": {
+                    "Dice": 0.9699713644454764,
+                    "FN": 167,
+                    "FP": 609,
+                    "IoU": 0.9416935908032159,
+                    "TN": 8914691,
+                    "TP": 12533,
+                    "n_pred": 13142,
+                    "n_ref": 12700
+                },
+                "(3,)": {
+                    "Dice": 0.9381792800877455,
+                    "FN": 410,
+                    "FP": 830,
+                    "IoU": 0.8835571415156352,
+                    "TN": 8917351,
+                    "TP": 9409,
+                    "n_pred": 10239,
+                    "n_ref": 9819
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_117.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_117.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9616834357284896,
+                    "FN": 384,
+                    "FP": 907,
+                    "IoU": 0.9261948319231649,
+                    "TN": 8910508,
+                    "TP": 16201,
+                    "n_pred": 17108,
+                    "n_ref": 16585
+                },
+                "(2, 3)": {
+                    "Dice": 0.9736358062538321,
+                    "FN": 116,
+                    "FP": 185,
+                    "IoU": 0.948626045400239,
+                    "TN": 8922141,
+                    "TP": 5558,
+                    "n_pred": 5743,
+                    "n_ref": 5674
+                },
+                "(3,)": {
+                    "Dice": 0.9518701870187019,
+                    "FN": 150,
+                    "FP": 200,
+                    "IoU": 0.9081605877722383,
+                    "TN": 8924189,
+                    "TP": 3461,
+                    "n_pred": 3661,
+                    "n_ref": 3611
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_122.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_122.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9280156606204778,
+                    "FN": 549,
+                    "FP": 5261,
+                    "IoU": 0.8656988973902591,
+                    "TN": 8884739,
+                    "TP": 37451,
+                    "n_pred": 42712,
+                    "n_ref": 38000
+                },
+                "(2, 3)": {
+                    "Dice": 0.9253079833155495,
+                    "FN": 634,
+                    "FP": 2446,
+                    "IoU": 0.8609982850437765,
+                    "TN": 8905842,
+                    "TP": 19078,
+                    "n_pred": 21524,
+                    "n_ref": 19712
+                },
+                "(3,)": {
+                    "Dice": 0.9217718551422049,
+                    "FN": 1211,
+                    "FP": 1325,
+                    "IoU": 0.854895004863535,
+                    "TN": 8910523,
+                    "TP": 14941,
+                    "n_pred": 16266,
+                    "n_ref": 16152
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_126.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_126.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9738068052066682,
+                    "FN": 925,
+                    "FP": 1369,
+                    "IoU": 0.9489507532768098,
+                    "TN": 8883063,
+                    "TP": 42643,
+                    "n_pred": 44012,
+                    "n_ref": 43568
+                },
+                "(2, 3)": {
+                    "Dice": 0.9777636594663278,
+                    "FN": 204,
+                    "FP": 76,
+                    "IoU": 0.9564947172156619,
+                    "TN": 8921564,
+                    "TP": 6156,
+                    "n_pred": 6232,
+                    "n_ref": 6360
+                },
+                "(3,)": {
+                    "Dice": 0.9639235245220282,
+                    "FN": 406,
+                    "FP": 28,
+                    "IoU": 0.9303594351732991,
+                    "TN": 8921768,
+                    "TP": 5798,
+                    "n_pred": 5826,
+                    "n_ref": 6204
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_127.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_127.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9211061957314634,
+                    "FN": 17351,
+                    "FP": 9471,
+                    "IoU": 0.8537505657064651,
+                    "TN": 8744601,
+                    "TP": 156577,
+                    "n_pred": 166048,
+                    "n_ref": 173928
+                },
+                "(2, 3)": {
+                    "Dice": 0.9317343904856293,
+                    "FN": 2161,
+                    "FP": 1283,
+                    "IoU": 0.8721935651463985,
+                    "TN": 8901053,
+                    "TP": 23503,
+                    "n_pred": 24786,
+                    "n_ref": 25664
+                },
+                "(3,)": {
+                    "Dice": 0.9139598092946576,
+                    "FN": 738,
+                    "FP": 3124,
+                    "IoU": 0.8415524739476491,
+                    "TN": 8903626,
+                    "TP": 20512,
+                    "n_pred": 23636,
+                    "n_ref": 21250
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_132.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_132.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9545875405533482,
+                    "FN": 6365,
+                    "FP": 6093,
+                    "IoU": 0.9131204931866047,
+                    "TN": 8784606,
+                    "TP": 130936,
+                    "n_pred": 137029,
+                    "n_ref": 137301
+                },
+                "(2, 3)": {
+                    "Dice": 0.9517643960674157,
+                    "FN": 3125,
+                    "FP": 1271,
+                    "IoU": 0.9079680107189214,
+                    "TN": 8880234,
+                    "TP": 43370,
+                    "n_pred": 44641,
+                    "n_ref": 46495
+                },
+                "(3,)": {
+                    "Dice": 0.9063394232885759,
+                    "FN": 1559,
+                    "FP": 3547,
+                    "IoU": 0.8287209419341853,
+                    "TN": 8898189,
+                    "TP": 24705,
+                    "n_pred": 28252,
+                    "n_ref": 26264
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_140.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_140.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9575922126405751,
+                    "FN": 975,
+                    "FP": 7272,
+                    "IoU": 0.9186349375480969,
+                    "TN": 8826642,
+                    "TP": 93111,
+                    "n_pred": 100383,
+                    "n_ref": 94086
+                },
+                "(2, 3)": {
+                    "Dice": 0.9792816574674026,
+                    "FN": 1001,
+                    "FP": 1589,
+                    "IoU": 0.9594043887147335,
+                    "TN": 8864200,
+                    "TP": 61210,
+                    "n_pred": 62799,
+                    "n_ref": 62211
+                },
+                "(3,)": {
+                    "Dice": 0.93215441153375,
+                    "FN": 2686,
+                    "FP": 1634,
+                    "IoU": 0.8729299644086242,
+                    "TN": 8894003,
+                    "TP": 29677,
+                    "n_pred": 31311,
+                    "n_ref": 32363
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_154.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_154.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.7620347940982163,
+                    "FN": 47511,
+                    "FP": 1116,
+                    "IoU": 0.6155542905934254,
+                    "TN": 8801514,
+                    "TP": 77859,
+                    "n_pred": 78975,
+                    "n_ref": 125370
+                },
+                "(2, 3)": {
+                    "Dice": 0.9618490572705908,
+                    "FN": 2131,
+                    "FP": 2187,
+                    "IoU": 0.9265021276595745,
+                    "TN": 8869250,
+                    "TP": 54432,
+                    "n_pred": 56619,
+                    "n_ref": 56563
+                },
+                "(3,)": {
+                    "Dice": 0.9375781125729997,
+                    "FN": 2115,
+                    "FP": 3379,
+                    "IoU": 0.8824913376395602,
+                    "TN": 8881246,
+                    "TP": 41260,
+                    "n_pred": 44639,
+                    "n_ref": 43375
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_164.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_164.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9164001319877552,
+                    "FN": 23128,
+                    "FP": 2461,
+                    "IoU": 0.845699744933339,
+                    "TN": 8762161,
+                    "TP": 140250,
+                    "n_pred": 142711,
+                    "n_ref": 163378
+                },
+                "(2, 3)": {
+                    "Dice": 0.9359683316713504,
+                    "FN": 8631,
+                    "FP": 4083,
+                    "IoU": 0.8796433034192889,
+                    "TN": 8822364,
+                    "TP": 92922,
+                    "n_pred": 97005,
+                    "n_ref": 101553
+                },
+                "(3,)": {
+                    "Dice": 0.8831321260898726,
+                    "FN": 11335,
+                    "FP": 5393,
+                    "IoU": 0.7907221137967272,
+                    "TN": 8848068,
+                    "TP": 63204,
+                    "n_pred": 68597,
+                    "n_ref": 74539
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_168.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_168.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9495167158539061,
+                    "FN": 8647,
+                    "FP": 1052,
+                    "IoU": 0.9038856021642834,
+                    "TN": 8827089,
+                    "TP": 91212,
+                    "n_pred": 92264,
+                    "n_ref": 99859
+                },
+                "(2, 3)": {
+                    "Dice": 0.9518613991966909,
+                    "FN": 1385,
+                    "FP": 1024,
+                    "IoU": 0.908144589338824,
+                    "TN": 8901774,
+                    "TP": 23817,
+                    "n_pred": 24841,
+                    "n_ref": 25202
+                },
+                "(3,)": {
+                    "Dice": 0.9013075532062874,
+                    "FN": 265,
+                    "FP": 2573,
+                    "IoU": 0.8203456352471988,
+                    "TN": 8912203,
+                    "TP": 12959,
+                    "n_pred": 15532,
+                    "n_ref": 13224
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_170.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_170.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9052593186957473,
+                    "FN": 22392,
+                    "FP": 3584,
+                    "IoU": 0.8269166699982675,
+                    "TN": 8777922,
+                    "TP": 124102,
+                    "n_pred": 127686,
+                    "n_ref": 146494
+                },
+                "(2, 3)": {
+                    "Dice": 0.8363689983007766,
+                    "FN": 10611,
+                    "FP": 12693,
+                    "IoU": 0.7187579198899362,
+                    "TN": 8845139,
+                    "TP": 59557,
+                    "n_pred": 72250,
+                    "n_ref": 70168
+                },
+                "(3,)": {
+                    "Dice": 0.7537744051853609,
+                    "FN": 2640,
+                    "FP": 6705,
+                    "IoU": 0.6048458708613472,
+                    "TN": 8904351,
+                    "TP": 14304,
+                    "n_pred": 21009,
+                    "n_ref": 16944
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_171.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_171.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.7722871452420701,
+                    "FN": 1387,
+                    "FP": 5433,
+                    "IoU": 0.6290454174598857,
+                    "TN": 8909615,
+                    "TP": 11565,
+                    "n_pred": 16998,
+                    "n_ref": 12952
+                },
+                "(2, 3)": {
+                    "Dice": 0.49606466709210806,
+                    "FN": 75,
+                    "FP": 2294,
+                    "IoU": 0.3298444130127298,
+                    "TN": 8924465,
+                    "TP": 1166,
+                    "n_pred": 3460,
+                    "n_ref": 1241
+                },
+                "(3,)": {
+                    "Dice": 0.5246385364414281,
+                    "FN": 148,
+                    "FP": 1463,
+                    "IoU": 0.3556,
+                    "TN": 8925500,
+                    "TP": 889,
+                    "n_pred": 2352,
+                    "n_ref": 1037
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_177.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_177.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9397969364399319,
+                    "FN": 2830,
+                    "FP": 12557,
+                    "IoU": 0.8864310703688942,
+                    "TN": 8792514,
+                    "TP": 120099,
+                    "n_pred": 132656,
+                    "n_ref": 122929
+                },
+                "(2, 3)": {
+                    "Dice": 0.9623785706860106,
+                    "FN": 845,
+                    "FP": 2412,
+                    "IoU": 0.9274852499165089,
+                    "TN": 8883085,
+                    "TP": 41658,
+                    "n_pred": 44070,
+                    "n_ref": 42503
+                },
+                "(3,)": {
+                    "Dice": 0.9372659998945352,
+                    "FN": 277,
+                    "FP": 3292,
+                    "IoU": 0.8819384717168376,
+                    "TN": 8897770,
+                    "TP": 26661,
+                    "n_pred": 29953,
+                    "n_ref": 26938
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_184.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_184.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9460641239666704,
+                    "FN": 795,
+                    "FP": 13970,
+                    "IoU": 0.8976486572668414,
+                    "TN": 8783742,
+                    "TP": 129493,
+                    "n_pred": 143463,
+                    "n_ref": 130288
+                },
+                "(2, 3)": {
+                    "Dice": 0.9196479816338243,
+                    "FN": 913,
+                    "FP": 8327,
+                    "IoU": 0.8512484505046928,
+                    "TN": 8865883,
+                    "TP": 52877,
+                    "n_pred": 61204,
+                    "n_ref": 53790
+                },
+                "(3,)": {
+                    "Dice": 0.8476651534273928,
+                    "FN": 7415,
+                    "FP": 672,
+                    "IoU": 0.7356066302677609,
+                    "TN": 8897413,
+                    "TP": 22500,
+                    "n_pred": 23172,
+                    "n_ref": 29915
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_193.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_193.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9539753673869125,
+                    "FN": 6599,
+                    "FP": 2377,
+                    "IoU": 0.9120008627366398,
+                    "TN": 8825999,
+                    "TP": 93025,
+                    "n_pred": 95402,
+                    "n_ref": 99624
+                },
+                "(2, 3)": {
+                    "Dice": 0.9722285856410726,
+                    "FN": 3720,
+                    "FP": 523,
+                    "IoU": 0.9459579942175181,
+                    "TN": 8849487,
+                    "TP": 74270,
+                    "n_pred": 74793,
+                    "n_ref": 77990
+                },
+                "(3,)": {
+                    "Dice": 0.9277126479038166,
+                    "FN": 4657,
+                    "FP": 652,
+                    "IoU": 0.8651716781796018,
+                    "TN": 8888624,
+                    "TP": 34067,
+                    "n_pred": 34719,
+                    "n_ref": 38724
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_194.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_194.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9361016249105947,
+                    "FN": 4273,
+                    "FP": 2070,
+                    "IoU": 0.8798787993561216,
+                    "TN": 8875195,
+                    "TP": 46462,
+                    "n_pred": 48532,
+                    "n_ref": 50735
+                },
+                "(2, 3)": {
+                    "Dice": 0.9129745267122609,
+                    "FN": 4692,
+                    "FP": 576,
+                    "IoU": 0.8398832862223032,
+                    "TN": 8895099,
+                    "TP": 27633,
+                    "n_pred": 28209,
+                    "n_ref": 32325
+                },
+                "(3,)": {
+                    "Dice": 0.7959549554596896,
+                    "FN": 6977,
+                    "FP": 307,
+                    "IoU": 0.6610674235726584,
+                    "TN": 8906509,
+                    "TP": 14207,
+                    "n_pred": 14514,
+                    "n_ref": 21184
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_195.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_195.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9336730378890392,
+                    "FN": 639,
+                    "FP": 5635,
+                    "IoU": 0.8755973271469077,
+                    "TN": 8877567,
+                    "TP": 44159,
+                    "n_pred": 49794,
+                    "n_ref": 44798
+                },
+                "(2, 3)": {
+                    "Dice": 0.9009525760524429,
+                    "FN": 266,
+                    "FP": 701,
+                    "IoU": 0.819757688723206,
+                    "TN": 8922635,
+                    "TP": 4398,
+                    "n_pred": 5099,
+                    "n_ref": 4664
+                },
+                "(3,)": {
+                    "Dice": 0.900459418070444,
+                    "FN": 423,
+                    "FP": 487,
+                    "IoU": 0.8189415041782729,
+                    "TN": 8922974,
+                    "TP": 4116,
+                    "n_pred": 4603,
+                    "n_ref": 4539
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_200.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_200.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9540978351843388,
+                    "FN": 14568,
+                    "FP": 898,
+                    "IoU": 0.9122247446083995,
+                    "TN": 8751800,
+                    "TP": 160734,
+                    "n_pred": 161632,
+                    "n_ref": 175302
+                },
+                "(2, 3)": {
+                    "Dice": 0.9514495889225444,
+                    "FN": 3760,
+                    "FP": 167,
+                    "IoU": 0.9073951799273687,
+                    "TN": 8885594,
+                    "TP": 38479,
+                    "n_pred": 38646,
+                    "n_ref": 42239
+                },
+                "(3,)": {
+                    "Dice": 0.8846673213847287,
+                    "FN": 7422,
+                    "FP": 94,
+                    "IoU": 0.7931869462330087,
+                    "TN": 8891658,
+                    "TP": 28826,
+                    "n_pred": 28920,
+                    "n_ref": 36248
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_201.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_201.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9463452976303518,
+                    "FN": 5327,
+                    "FP": 15015,
+                    "IoU": 0.8981550554484692,
+                    "TN": 8728265,
+                    "TP": 179393,
+                    "n_pred": 194408,
+                    "n_ref": 184720
+                },
+                "(2, 3)": {
+                    "Dice": 0.9013644927398329,
+                    "FN": 5313,
+                    "FP": 15419,
+                    "IoU": 0.8204399792135805,
+                    "TN": 8812540,
+                    "TP": 94728,
+                    "n_pred": 110147,
+                    "n_ref": 100041
+                },
+                "(3,)": {
+                    "Dice": 0.7245942644406957,
+                    "FN": 2938,
+                    "FP": 16000,
+                    "IoU": 0.5681284349273676,
+                    "TN": 8884149,
+                    "TP": 24913,
+                    "n_pred": 40913,
+                    "n_ref": 27851
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_212.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_212.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9260822548575016,
+                    "FN": 4072,
+                    "FP": 4404,
+                    "IoU": 0.8623400246865458,
+                    "TN": 8866428,
+                    "TP": 53096,
+                    "n_pred": 57500,
+                    "n_ref": 57168
+                },
+                "(2, 3)": {
+                    "Dice": 0.9072789015207441,
+                    "FN": 838,
+                    "FP": 2930,
+                    "IoU": 0.8302932036211322,
+                    "TN": 8905797,
+                    "TP": 18435,
+                    "n_pred": 21365,
+                    "n_ref": 19273
+                },
+                "(3,)": {
+                    "Dice": 0.9091130012150668,
+                    "FN": 150,
+                    "FP": 2842,
+                    "IoU": 0.8333704611271998,
+                    "TN": 8910044,
+                    "TP": 14964,
+                    "n_pred": 17806,
+                    "n_ref": 15114
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_213.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_213.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9134323391156038,
+                    "FN": 798,
+                    "FP": 11688,
+                    "IoU": 0.8406584992343032,
+                    "TN": 8849640,
+                    "TP": 65874,
+                    "n_pred": 77562,
+                    "n_ref": 66672
+                },
+                "(2, 3)": {
+                    "Dice": 0.930971376283206,
+                    "FN": 3445,
+                    "FP": 1383,
+                    "IoU": 0.8708572957068343,
+                    "TN": 8890615,
+                    "TP": 32557,
+                    "n_pred": 33940,
+                    "n_ref": 36002
+                },
+                "(3,)": {
+                    "Dice": 0.8945022288261516,
+                    "FN": 3670,
+                    "FP": 1584,
+                    "IoU": 0.8091397849462365,
+                    "TN": 8900472,
+                    "TP": 22274,
+                    "n_pred": 23858,
+                    "n_ref": 25944
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_215.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_215.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8166043288981544,
+                    "FN": 2007,
+                    "FP": 6966,
+                    "IoU": 0.6900518134715026,
+                    "TN": 8899050,
+                    "TP": 19977,
+                    "n_pred": 26943,
+                    "n_ref": 21984
+                },
+                "(2, 3)": {
+                    "Dice": 0.9317021725374394,
+                    "FN": 836,
+                    "FP": 783,
+                    "IoU": 0.8721371031432633,
+                    "TN": 8915338,
+                    "TP": 11043,
+                    "n_pred": 11826,
+                    "n_ref": 11879
+                },
+                "(3,)": {
+                    "Dice": 0.9350532304399256,
+                    "FN": 513,
+                    "FP": 640,
+                    "IoU": 0.878028139215064,
+                    "TN": 8918547,
+                    "TP": 8300,
+                    "n_pred": 8940,
+                    "n_ref": 8813
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_217.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_217.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9633286184414187,
+                    "FN": 3861,
+                    "FP": 11539,
+                    "IoU": 0.9292516756786556,
+                    "TN": 8710327,
+                    "TP": 202273,
+                    "n_pred": 213812,
+                    "n_ref": 206134
+                },
+                "(2, 3)": {
+                    "Dice": 0.9461750702840083,
+                    "FN": 11514,
+                    "FP": 854,
+                    "IoU": 0.8978484410489366,
+                    "TN": 8806925,
+                    "TP": 108707,
+                    "n_pred": 109561,
+                    "n_ref": 120221
+                },
+                "(3,)": {
+                    "Dice": 0.8683370978970195,
+                    "FN": 24560,
+                    "FP": 1729,
+                    "IoU": 0.7673107391639155,
+                    "TN": 8815021,
+                    "TP": 86690,
+                    "n_pred": 88419,
+                    "n_ref": 111250
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_225.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_225.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9454747883156075,
+                    "FN": 613,
+                    "FP": 1248,
+                    "IoU": 0.8965881306957102,
+                    "TN": 8910004,
+                    "TP": 16135,
+                    "n_pred": 17383,
+                    "n_ref": 16748
+                },
+                "(2, 3)": {
+                    "Dice": 0.8597473212857828,
+                    "FN": 14,
+                    "FP": 863,
+                    "IoU": 0.7539971949509117,
+                    "TN": 8924435,
+                    "TP": 2688,
+                    "n_pred": 3551,
+                    "n_ref": 2702
+                },
+                "(3,)": {
+                    "Dice": 0.9169598874032372,
+                    "FN": 36,
+                    "FP": 436,
+                    "IoU": 0.8466536712150747,
+                    "TN": 8924922,
+                    "TP": 2606,
+                    "n_pred": 3042,
+                    "n_ref": 2642
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_233.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_233.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.933078036082457,
+                    "FN": 18133,
+                    "FP": 1894,
+                    "IoU": 0.8745513426833622,
+                    "TN": 8768357,
+                    "TP": 139616,
+                    "n_pred": 141510,
+                    "n_ref": 157749
+                },
+                "(2, 3)": {
+                    "Dice": 0.9356621605455198,
+                    "FN": 12059,
+                    "FP": 1386,
+                    "IoU": 0.8791025986871684,
+                    "TN": 8816790,
+                    "TP": 97765,
+                    "n_pred": 99151,
+                    "n_ref": 109824
+                },
+                "(3,)": {
+                    "Dice": 0.8230488273740869,
+                    "FN": 3431,
+                    "FP": 251,
+                    "IoU": 0.6993058391180074,
+                    "TN": 8915755,
+                    "TP": 8563,
+                    "n_pred": 8814,
+                    "n_ref": 11994
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_234.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_234.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9555337131369425,
+                    "FN": 12200,
+                    "FP": 1779,
+                    "IoU": 0.91485357177663,
+                    "TN": 8763824,
+                    "TP": 150197,
+                    "n_pred": 151976,
+                    "n_ref": 162397
+                },
+                "(2, 3)": {
+                    "Dice": 0.8928590456232574,
+                    "FN": 1347,
+                    "FP": 4686,
+                    "IoU": 0.8064547175259055,
+                    "TN": 8896829,
+                    "TP": 25138,
+                    "n_pred": 29824,
+                    "n_ref": 26485
+                },
+                "(3,)": {
+                    "Dice": 0.8918413275128114,
+                    "FN": 552,
+                    "FP": 3437,
+                    "IoU": 0.8047956936628333,
+                    "TN": 8907565,
+                    "TP": 16446,
+                    "n_pred": 19883,
+                    "n_ref": 16998
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_237.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_237.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8803680981595092,
+                    "FN": 141,
+                    "FP": 14757,
+                    "IoU": 0.7863013698630137,
+                    "TN": 8858285,
+                    "TP": 54817,
+                    "n_pred": 69574,
+                    "n_ref": 54958
+                },
+                "(2, 3)": {
+                    "Dice": 0.8934744976040543,
+                    "FN": 634,
+                    "FP": 7858,
+                    "IoU": 0.807459471715225,
+                    "TN": 8883895,
+                    "TP": 35613,
+                    "n_pred": 43471,
+                    "n_ref": 36247
+                },
+                "(3,)": {
+                    "Dice": 0.8604282949765701,
+                    "FN": 578,
+                    "FP": 8149,
+                    "IoU": 0.7550453307884469,
+                    "TN": 8892373,
+                    "TP": 26900,
+                    "n_pred": 35049,
+                    "n_ref": 27478
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_242.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_242.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9406330024938491,
+                    "FN": 13618,
+                    "FP": 4117,
+                    "IoU": 0.8879198660220557,
+                    "TN": 8769765,
+                    "TP": 140500,
+                    "n_pred": 144617,
+                    "n_ref": 154118
+                },
+                "(2, 3)": {
+                    "Dice": 0.8549519170725615,
+                    "FN": 3394,
+                    "FP": 2413,
+                    "IoU": 0.7466515422538283,
+                    "TN": 8905079,
+                    "TP": 17114,
+                    "n_pred": 19527,
+                    "n_ref": 20508
+                },
+                "(3,)": {
+                    "Dice": 0.8069887094469058,
+                    "FN": 3230,
+                    "FP": 2172,
+                    "IoU": 0.676430068882899,
+                    "TN": 8911305,
+                    "TP": 11293,
+                    "n_pred": 13465,
+                    "n_ref": 14523
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_243.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_243.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9319252155091988,
+                    "FN": 8349,
+                    "FP": 772,
+                    "IoU": 0.8725280561262281,
+                    "TN": 8856447,
+                    "TP": 62432,
+                    "n_pred": 63204,
+                    "n_ref": 70781
+                },
+                "(2, 3)": {
+                    "Dice": 0.8640586516982645,
+                    "FN": 11635,
+                    "FP": 232,
+                    "IoU": 0.7606542828906234,
+                    "TN": 8878419,
+                    "TP": 37714,
+                    "n_pred": 37946,
+                    "n_ref": 49349
+                },
+                "(3,)": {
+                    "Dice": 0.8569051580698835,
+                    "FN": 6332,
+                    "FP": 376,
+                    "IoU": 0.7496360989810772,
+                    "TN": 8901207,
+                    "TP": 20085,
+                    "n_pred": 20461,
+                    "n_ref": 26417
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_246.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_246.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9056266135866459,
+                    "FN": 23170,
+                    "FP": 773,
+                    "IoU": 0.827529821932807,
+                    "TN": 8789176,
+                    "TP": 114881,
+                    "n_pred": 115654,
+                    "n_ref": 138051
+                },
+                "(2, 3)": {
+                    "Dice": 0.9558783060694084,
+                    "FN": 6199,
+                    "FP": 1016,
+                    "IoU": 0.9154855335597986,
+                    "TN": 8842630,
+                    "TP": 78155,
+                    "n_pred": 79171,
+                    "n_ref": 84354
+                },
+                "(3,)": {
+                    "Dice": 0.930111737178875,
+                    "FN": 3430,
+                    "FP": 3888,
+                    "IoU": 0.8693540900489164,
+                    "TN": 8871986,
+                    "TP": 48696,
+                    "n_pred": 52584,
+                    "n_ref": 52126
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_247.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_247.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9635143828692215,
+                    "FN": 3393,
+                    "FP": 2562,
+                    "IoU": 0.9295974463557368,
+                    "TN": 8843415,
+                    "TP": 78630,
+                    "n_pred": 81192,
+                    "n_ref": 82023
+                },
+                "(2, 3)": {
+                    "Dice": 0.9312490514493853,
+                    "FN": 181,
+                    "FP": 1631,
+                    "IoU": 0.871343368361261,
+                    "TN": 8913916,
+                    "TP": 12272,
+                    "n_pred": 13903,
+                    "n_ref": 12453
+                },
+                "(3,)": {
+                    "Dice": 0.9279509453244762,
+                    "FN": 34,
+                    "FP": 1658,
+                    "IoU": 0.86558627264061,
+                    "TN": 8915412,
+                    "TP": 10896,
+                    "n_pred": 12554,
+                    "n_ref": 10930
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_257.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_257.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8559232022011593,
+                    "FN": 7617,
+                    "FP": 6626,
+                    "IoU": 0.7481343943412909,
+                    "TN": 8871450,
+                    "TP": 42307,
+                    "n_pred": 48933,
+                    "n_ref": 49924
+                },
+                "(2, 3)": {
+                    "Dice": 0.7963958506852427,
+                    "FN": 12842,
+                    "FP": 603,
+                    "IoU": 0.6616758933064922,
+                    "TN": 8888260,
+                    "TP": 26295,
+                    "n_pred": 26898,
+                    "n_ref": 39137
+                },
+                "(3,)": {
+                    "Dice": 0.826452527161077,
+                    "FN": 4736,
+                    "FP": 775,
+                    "IoU": 0.7042344227982611,
+                    "TN": 8909367,
+                    "TP": 13122,
+                    "n_pred": 13897,
+                    "n_ref": 17858
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_260.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_260.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8671708301278794,
+                    "FN": 570,
+                    "FP": 8581,
+                    "IoU": 0.7654912613397571,
+                    "TN": 8888978,
+                    "TP": 29871,
+                    "n_pred": 38452,
+                    "n_ref": 30441
+                },
+                "(2, 3)": {
+                    "Dice": 0.3108182750729898,
+                    "FN": 548,
+                    "FP": 16920,
+                    "IoU": 0.1840052319334797,
+                    "TN": 8906593,
+                    "TP": 3939,
+                    "n_pred": 20859,
+                    "n_ref": 4487
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 2637,
+                    "IoU": 0.0,
+                    "TN": 8925363,
+                    "TP": 0,
+                    "n_pred": 2637,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_263.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_263.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9264228044409609,
+                    "FN": 874,
+                    "FP": 8795,
+                    "IoU": 0.8629307778455083,
+                    "TN": 8857459,
+                    "TP": 60872,
+                    "n_pred": 69667,
+                    "n_ref": 61746
+                },
+                "(2, 3)": {
+                    "Dice": 0.9366353282886188,
+                    "FN": 517,
+                    "FP": 5286,
+                    "IoU": 0.8808223116733755,
+                    "TN": 8879308,
+                    "TP": 42889,
+                    "n_pred": 48175,
+                    "n_ref": 43406
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 159,
+                    "IoU": 0.0,
+                    "TN": 8927841,
+                    "TP": 0,
+                    "n_pred": 159,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_265.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_265.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8935265498845657,
+                    "FN": 1187,
+                    "FP": 6976,
+                    "IoU": 0.8075445007662384,
+                    "TN": 8885585,
+                    "TP": 34252,
+                    "n_pred": 41228,
+                    "n_ref": 35439
+                },
+                "(2, 3)": {
+                    "Dice": 0.7846627170790003,
+                    "FN": 4743,
+                    "FP": 3726,
+                    "IoU": 0.6456337085233692,
+                    "TN": 8904101,
+                    "TP": 15430,
+                    "n_pred": 19156,
+                    "n_ref": 20173
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 544,
+                    "IoU": 0.0,
+                    "TN": 8927456,
+                    "TP": 0,
+                    "n_pred": 544,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_269.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_269.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9028123447348959,
+                    "FN": 33729,
+                    "FP": 8718,
+                    "IoU": 0.8228422370617696,
+                    "TN": 8688400,
+                    "TP": 197153,
+                    "n_pred": 205871,
+                    "n_ref": 230882
+                },
+                "(2, 3)": {
+                    "Dice": 0.8851601818911827,
+                    "FN": 17265,
+                    "FP": 7333,
+                    "IoU": 0.793979697812322,
+                    "TN": 8808604,
+                    "TP": 94798,
+                    "n_pred": 102131,
+                    "n_ref": 112063
+                },
+                "(3,)": {
+                    "Dice": 0.4594492644285175,
+                    "FN": 58,
+                    "FP": 2808,
+                    "IoU": 0.2982370225269344,
+                    "TN": 8923916,
+                    "TP": 1218,
+                    "n_pred": 4026,
+                    "n_ref": 1276
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_273.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_273.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.7421184861009806,
+                    "FN": 11759,
+                    "FP": 969,
+                    "IoU": 0.5899748727530443,
+                    "TN": 8896958,
+                    "TP": 18314,
+                    "n_pred": 19283,
+                    "n_ref": 30073
+                },
+                "(2, 3)": {
+                    "Dice": 0.7119796091758709,
+                    "FN": 1228,
+                    "FP": 128,
+                    "IoU": 0.5527704485488126,
+                    "TN": 8924968,
+                    "TP": 1676,
+                    "n_pred": 1804,
+                    "n_ref": 2904
+                },
+                "(3,)": {
+                    "Dice": 0.9168070057258336,
+                    "FN": 102,
+                    "FP": 145,
+                    "IoU": 0.8463930348258707,
+                    "TN": 8926392,
+                    "TP": 1361,
+                    "n_pred": 1506,
+                    "n_ref": 1463
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_277.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_277.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.878541733290694,
+                    "FN": 18580,
+                    "FP": 6107,
+                    "IoU": 0.783392266453747,
+                    "TN": 8814029,
+                    "TP": 89284,
+                    "n_pred": 95391,
+                    "n_ref": 107864
+                },
+                "(2, 3)": {
+                    "Dice": 0.015433847794926497,
+                    "FN": 58961,
+                    "FP": 111,
+                    "IoU": 0.0077769379356680945,
+                    "TN": 8868465,
+                    "TP": 463,
+                    "n_pred": 574,
+                    "n_ref": 59424
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 155,
+                    "IoU": 0.0,
+                    "TN": 8927845,
+                    "TP": 0,
+                    "n_pred": 155,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_278.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_278.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8847118863600228,
+                    "FN": 28998,
+                    "FP": 731,
+                    "IoU": 0.7932585988678563,
+                    "TN": 8784202,
+                    "TP": 114069,
+                    "n_pred": 114800,
+                    "n_ref": 143067
+                },
+                "(2, 3)": {
+                    "Dice": 0.35729703801415036,
+                    "FN": 15843,
+                    "FP": 5595,
+                    "IoU": 0.21750556630287987,
+                    "TN": 8900603,
+                    "TP": 5959,
+                    "n_pred": 11554,
+                    "n_ref": 21802
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 971,
+                    "IoU": 0.0,
+                    "TN": 8927029,
+                    "TP": 0,
+                    "n_pred": 971,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_281.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_281.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9719948385015524,
+                    "FN": 801,
+                    "FP": 1977,
+                    "IoU": 0.9455155235648303,
+                    "TN": 8877013,
+                    "TP": 48209,
+                    "n_pred": 50186,
+                    "n_ref": 49010
+                },
+                "(2, 3)": {
+                    "Dice": 0.9369998444440604,
+                    "FN": 2405,
+                    "FP": 1240,
+                    "IoU": 0.8814672693570941,
+                    "TN": 8897249,
+                    "TP": 27106,
+                    "n_pred": 28346,
+                    "n_ref": 29511
+                },
+                "(3,)": {
+                    "Dice": 0.9262042052536549,
+                    "FN": 3411,
+                    "FP": 390,
+                    "IoU": 0.8625515296159687,
+                    "TN": 8900346,
+                    "TP": 23853,
+                    "n_pred": 24243,
+                    "n_ref": 27264
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_287.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_287.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9465955672723096,
+                    "FN": 1960,
+                    "FP": 19432,
+                    "IoU": 0.8986060224003337,
+                    "TN": 8717021,
+                    "TP": 189587,
+                    "n_pred": 209019,
+                    "n_ref": 191547
+                },
+                "(2, 3)": {
+                    "Dice": 0.6493400041757205,
+                    "FN": 278,
+                    "FP": 45069,
+                    "IoU": 0.48075756014335935,
+                    "TN": 8840667,
+                    "TP": 41986,
+                    "n_pred": 87055,
+                    "n_ref": 42264
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 3777,
+                    "IoU": 0.0,
+                    "TN": 8924223,
+                    "TP": 0,
+                    "n_pred": 3777,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_289.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_289.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9633950385265927,
+                    "FN": 13214,
+                    "FP": 2368,
+                    "IoU": 0.9293752917767676,
+                    "TN": 8707369,
+                    "TP": 205049,
+                    "n_pred": 207417,
+                    "n_ref": 218263
+                },
+                "(2, 3)": {
+                    "Dice": 0.7392627526855715,
+                    "FN": 2262,
+                    "FP": 36549,
+                    "IoU": 0.5863733734053778,
+                    "TN": 8834169,
+                    "TP": 55020,
+                    "n_pred": 91569,
+                    "n_ref": 57282
+                },
+                "(3,)": {
+                    "Dice": 0.15748031496062992,
+                    "FN": 106,
+                    "FP": 108,
+                    "IoU": 0.08547008547008547,
+                    "TN": 8927766,
+                    "TP": 20,
+                    "n_pred": 128,
+                    "n_ref": 126
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_291.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_291.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9114374632012785,
+                    "FN": 21824,
+                    "FP": 4499,
+                    "IoU": 0.8372853486963294,
+                    "TN": 8766226,
+                    "TP": 135451,
+                    "n_pred": 139950,
+                    "n_ref": 157275
+                },
+                "(2, 3)": {
+                    "Dice": 0.7845630250187812,
+                    "FN": 36631,
+                    "FP": 1223,
+                    "IoU": 0.6454987310476583,
+                    "TN": 8821219,
+                    "TP": 68927,
+                    "n_pred": 70150,
+                    "n_ref": 105558
+                },
+                "(3,)": {
+                    "Dice": 0.6127193982220196,
+                    "FN": 632,
+                    "FP": 1067,
+                    "IoU": 0.4416694051922445,
+                    "TN": 8924957,
+                    "TP": 1344,
+                    "n_pred": 2411,
+                    "n_ref": 1976
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_309.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_309.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9480101533309,
+                    "FN": 914,
+                    "FP": 17745,
+                    "IoU": 0.9011590333619384,
+                    "TN": 8739222,
+                    "TP": 170119,
+                    "n_pred": 187864,
+                    "n_ref": 171033
+                },
+                "(2, 3)": {
+                    "Dice": 0.9002388831664073,
+                    "FN": 1458,
+                    "FP": 16750,
+                    "IoU": 0.818576752157191,
+                    "TN": 8827638,
+                    "TP": 82154,
+                    "n_pred": 98904,
+                    "n_ref": 83612
+                },
+                "(3,)": {
+                    "Dice": 0.6740050804403048,
+                    "FN": 161,
+                    "FP": 609,
+                    "IoU": 0.508301404853129,
+                    "TN": 8926434,
+                    "TP": 796,
+                    "n_pred": 1405,
+                    "n_ref": 957
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_313.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_313.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.944520451007218,
+                    "FN": 704,
+                    "FP": 1648,
+                    "IoU": 0.8948732847628839,
+                    "TN": 8905627,
+                    "TP": 20021,
+                    "n_pred": 21669,
+                    "n_ref": 20725
+                },
+                "(2, 3)": {
+                    "Dice": 0.7984864484336501,
+                    "FN": 1962,
+                    "FP": 328,
+                    "IoU": 0.66456715980665,
+                    "TN": 8921173,
+                    "TP": 4537,
+                    "n_pred": 4865,
+                    "n_ref": 6499
+                },
+                "(3,)": {
+                    "Dice": 0.8903091169949132,
+                    "FN": 381,
+                    "FP": 460,
+                    "IoU": 0.8023037141513869,
+                    "TN": 8923746,
+                    "TP": 3413,
+                    "n_pred": 3873,
+                    "n_ref": 3794
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_317.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_317.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9542864501175031,
+                    "FN": 4685,
+                    "FP": 15195,
+                    "IoU": 0.912569651817874,
+                    "TN": 8700619,
+                    "TP": 207501,
+                    "n_pred": 222696,
+                    "n_ref": 212186
+                },
+                "(2, 3)": {
+                    "Dice": 0.8780894478390386,
+                    "FN": 30323,
+                    "FP": 5650,
+                    "IoU": 0.7826733121884911,
+                    "TN": 8762475,
+                    "TP": 129552,
+                    "n_pred": 135202,
+                    "n_ref": 159875
+                },
+                "(3,)": {
+                    "Dice": 0.41735849056603774,
+                    "FN": 1302,
+                    "FP": 242,
+                    "IoU": 0.2637100619933238,
+                    "TN": 8925903,
+                    "TP": 553,
+                    "n_pred": 795,
+                    "n_ref": 1855
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_318.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_318.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9540625928820686,
+                    "FN": 859,
+                    "FP": 7487,
+                    "IoU": 0.9121603132169996,
+                    "TN": 8832986,
+                    "TP": 86668,
+                    "n_pred": 94155,
+                    "n_ref": 87527
+                },
+                "(2, 3)": {
+                    "Dice": 0.9229990466628983,
+                    "FN": 7418,
+                    "FP": 1709,
+                    "IoU": 0.8570085697723605,
+                    "TN": 8864171,
+                    "TP": 54702,
+                    "n_pred": 56411,
+                    "n_ref": 62120
+                },
+                "(3,)": {
+                    "Dice": 0.37057220708446864,
+                    "FN": 51,
+                    "FP": 180,
+                    "IoU": 0.22742474916387959,
+                    "TN": 8927701,
+                    "TP": 68,
+                    "n_pred": 248,
+                    "n_ref": 119
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_322.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_322.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9373348923823135,
+                    "FN": 3361,
+                    "FP": 5321,
+                    "IoU": 0.8820604776265384,
+                    "TN": 8854386,
+                    "TP": 64932,
+                    "n_pred": 70253,
+                    "n_ref": 68293
+                },
+                "(2, 3)": {
+                    "Dice": 0.4487974818934694,
+                    "FN": 35605,
+                    "FP": 469,
+                    "IoU": 0.2893223010244287,
+                    "TN": 8877240,
+                    "TP": 14686,
+                    "n_pred": 15155,
+                    "n_ref": 50291
+                },
+                "(3,)": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 13,
+                    "IoU": 0.0,
+                    "TN": 8927987,
+                    "TP": 0,
+                    "n_pred": 13,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_324.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_324.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8988585382474871,
+                    "FN": 22471,
+                    "FP": 682,
+                    "IoU": 0.8162970603403816,
+                    "TN": 8801965,
+                    "TP": 102882,
+                    "n_pred": 103564,
+                    "n_ref": 125353
+                },
+                "(2, 3)": {
+                    "Dice": 0.581150825089979,
+                    "FN": 74006,
+                    "FP": 8,
+                    "IoU": 0.4095930951412321,
+                    "TN": 8802639,
+                    "TP": 51347,
+                    "n_pred": 51355,
+                    "n_ref": 125353
+                },
+                "(3,)": {
+                    "Dice": 0.31096659769435414,
+                    "FN": 142,
+                    "FP": 4520,
+                    "IoU": 0.184109205460273,
+                    "TN": 8922286,
+                    "TP": 1052,
+                    "n_pred": 5572,
+                    "n_ref": 1194
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_326.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_326.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.969562741598134,
+                    "FN": 6764,
+                    "FP": 4354,
+                    "IoU": 0.9409236066462271,
+                    "TN": 8739803,
+                    "TP": 177079,
+                    "n_pred": 181433,
+                    "n_ref": 183843
+                },
+                "(2, 3)": {
+                    "Dice": 0.8713540155528572,
+                    "FN": 29861,
+                    "FP": 6054,
+                    "IoU": 0.7720348342706257,
+                    "TN": 8770454,
+                    "TP": 121631,
+                    "n_pred": 127685,
+                    "n_ref": 151492
+                },
+                "(3,)": {
+                    "Dice": 0.6818009837306092,
+                    "FN": 7858,
+                    "FP": 552,
+                    "IoU": 0.5172215843857635,
+                    "TN": 8910580,
+                    "TP": 9010,
+                    "n_pred": 9562,
+                    "n_ref": 16868
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_327.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_327.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.8706244480005596,
+                    "FN": 77,
+                    "FP": 14718,
+                    "IoU": 0.7708901139742319,
+                    "TN": 8863424,
+                    "TP": 49781,
+                    "n_pred": 64499,
+                    "n_ref": 49858
+                },
+                "(2, 3)": {
+                    "Dice": 0.5656451713981325,
+                    "FN": 6265,
+                    "FP": 666,
+                    "IoU": 0.3943551205872073,
+                    "TN": 8916556,
+                    "TP": 4513,
+                    "n_pred": 5179,
+                    "n_ref": 10778
+                },
+                "(3,)": {
+                    "Dice": 0.8447329006490265,
+                    "FN": 401,
+                    "FP": 221,
+                    "IoU": 0.7312013828867762,
+                    "TN": 8925686,
+                    "TP": 1692,
+                    "n_pred": 1913,
+                    "n_ref": 2093
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_331.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_331.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9768061600893905,
+                    "FN": 550,
+                    "FP": 4411,
+                    "IoU": 0.9546638398201541,
+                    "TN": 8818573,
+                    "TP": 104466,
+                    "n_pred": 108877,
+                    "n_ref": 105016
+                },
+                "(2, 3)": {
+                    "Dice": 0.9818665217359371,
+                    "FN": 1120,
+                    "FP": 1349,
+                    "IoU": 0.9643789765267698,
+                    "TN": 8858687,
+                    "TP": 66844,
+                    "n_pred": 68193,
+                    "n_ref": 67964
+                },
+                "(3,)": {
+                    "Dice": 0.9485383247012893,
+                    "FN": 2050,
+                    "FP": 1219,
+                    "IoU": 0.9021140256318122,
+                    "TN": 8894604,
+                    "TP": 30127,
+                    "n_pred": 31346,
+                    "n_ref": 32177
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_336.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_336.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9767478996815145,
+                    "FN": 1514,
+                    "FP": 3728,
+                    "IoU": 0.9545525480744221,
+                    "TN": 8812658,
+                    "TP": 110100,
+                    "n_pred": 113828,
+                    "n_ref": 111614
+                },
+                "(2, 3)": {
+                    "Dice": 0.9763076640885329,
+                    "FN": 605,
+                    "FP": 945,
+                    "IoU": 0.9537119990443768,
+                    "TN": 8894514,
+                    "TP": 31936,
+                    "n_pred": 32881,
+                    "n_ref": 32541
+                },
+                "(3,)": {
+                    "Dice": 0.9637416950251175,
+                    "FN": 1093,
+                    "FP": 697,
+                    "IoU": 0.930020720121975,
+                    "TN": 8902421,
+                    "TP": 23789,
+                    "n_pred": 24486,
+                    "n_ref": 24882
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_347.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_347.nii.gz"
+        },
+        {
+            "metrics": {
+                "(1, 2, 3)": {
+                    "Dice": 0.9698199447147094,
+                    "FN": 4967,
+                    "FP": 2217,
+                    "IoU": 0.94140819339211,
+                    "TN": 8805389,
+                    "TP": 115427,
+                    "n_pred": 117644,
+                    "n_ref": 120394
+                },
+                "(2, 3)": {
+                    "Dice": 0.9784328848516011,
+                    "FN": 1924,
+                    "FP": 1096,
+                    "IoU": 0.9577764107152844,
+                    "TN": 8856476,
+                    "TP": 68504,
+                    "n_pred": 69600,
+                    "n_ref": 70428
+                },
+                "(3,)": {
+                    "Dice": 0.9525176440118274,
+                    "FN": 2408,
+                    "FP": 1992,
+                    "IoU": 0.9093400366760761,
+                    "TN": 8879467,
+                    "TP": 44133,
+                    "n_pred": 46125,
+                    "n_ref": 46541
+                }
+            },
+            "prediction_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_3/validation/BraTS20_Training_363.nii.gz",
+            "reference_file": "/home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations/BraTS20_Training_363.nii.gz"
+        }
+    ]
+}

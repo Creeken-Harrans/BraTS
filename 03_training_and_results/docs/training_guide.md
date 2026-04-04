@@ -26,6 +26,14 @@ python run.py train-all --npz
 python run.py train --fold 0 --validation-only --npz
 ```
 
+当前默认训练目标：
+
+- trainer: `SegTrainer`
+- configuration: `3d_fullres`
+- plans: `ProjectPlans`
+- epochs: `150`
+- folds: `0 1 2 3 4`
+
 ## trainer 启动前必须满足的前提
 
 至少要有：
@@ -44,6 +52,7 @@ python run.py train --fold 0 --validation-only --npz
 - `train` 会先检查已有 checkpoint；
 - 检查优先级：`checkpoint_final.pth -> checkpoint_latest.pth -> checkpoint_best.pth`；
 - 找到后自动进入恢复路径；
+- 如果 checkpoint 对应的是更早的总轮数，例如 `100`，而当前 trainer 的目标总轮数已经提高到 `150`，则会在已有 checkpoint 基础上继续训练到新的目标轮数；
 - 没找到时从头开始；
 - 只有显式传 `--restart-training` 才会忽略已有 checkpoint。
 
@@ -68,6 +77,12 @@ python run.py train --fold 0 --validation-only --npz
 - 正式推理方案选择
 
 如果你只做单 fold 调试，`--npz` 不是必需；如果你要走完整流程，建议保留。
+
+另外，`train-all` 的执行顺序是固定的：
+
+- `fold_0 -> fold_1 -> fold_2 -> fold_3 -> fold_4`
+
+如果你重启 `train-all`，它会从 `fold_0` 先开始检查是续训还是跳过，而不是直接跳到当前最后一个 fold。
 
 ## 结果目录怎么读
 
