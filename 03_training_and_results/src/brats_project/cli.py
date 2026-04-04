@@ -267,6 +267,31 @@ def _read_training_state_file(
         return None
 
 
+def _resolve_target_num_epochs(
+    dataset_name: str,
+    trainer: str,
+    plans: str,
+    configuration: str,
+    fold: str | int,
+) -> int | None:
+    configure_environment()
+    if str(fold) == "all":
+        return None
+
+    from brats_project.run.run_training import get_trainer_from_args
+
+    nnunet_trainer = get_trainer_from_args(
+        dataset_name_or_id=dataset_name,
+        configuration=configuration,
+        fold=int(fold),
+        trainer_name=trainer,
+        plans_identifier=plans,
+        continue_training=False,
+        device=_build_device("cpu"),
+    )
+    return int(nnunet_trainer.num_epochs)
+
+
 def _training_fold_is_complete(
     dataset_name: str,
     trainer: str,
@@ -280,16 +305,30 @@ def _training_fold_is_complete(
     if training_state is None:
         return False
 
+    target_num_epochs = _resolve_target_num_epochs(
+        dataset_name, trainer, plans, configuration, fold
+    )
+
+    try:
+        next_epoch = int(training_state.get("next_epoch", 0))
+    except (TypeError, ValueError):
+        next_epoch = 0
+
+    if target_num_epochs is not None and next_epoch < target_num_epochs:
+        return False
+
     if training_state.get("status") == "completed":
         return True
 
     try:
         remaining_epochs = int(training_state.get("remaining_epochs", 1))
-        next_epoch = int(training_state.get("next_epoch", 0))
         num_epochs = int(training_state.get("num_epochs", 1))
     except (TypeError, ValueError):
         return False
-    return remaining_epochs <= 0 or next_epoch >= num_epochs
+    effective_num_epochs = (
+        target_num_epochs if target_num_epochs is not None else num_epochs
+    )
+    return remaining_epochs <= 0 or next_epoch >= effective_num_epochs
 
 
 def _describe_training_action(
@@ -316,8 +355,30 @@ def _describe_training_action(
     if checkpoint is None:
         return "start-from-scratch", "no checkpoint found"
 
+    target_num_epochs = _resolve_target_num_epochs(
+        dataset_name, trainer, plans, configuration, fold
+    )
+    training_state = _read_training_state_file(
+        dataset_name, trainer, plans, configuration, fold
+    )
+    previous_num_epochs = None
+    if training_state is not None:
+        try:
+            previous_num_epochs = int(training_state.get("num_epochs", 0))
+        except (TypeError, ValueError):
+            previous_num_epochs = None
+
     if _training_fold_is_complete(dataset_name, trainer, plans, configuration, fold):
         return "skip-completed", f"completed fold ({Path(checkpoint).name})"
+    if (
+        target_num_epochs is not None
+        and previous_num_epochs is not None
+        and target_num_epochs > previous_num_epochs
+    ):
+        return (
+            "resume",
+            f"checkpoint available ({Path(checkpoint).name}), extending epochs {previous_num_epochs} -> {target_num_epochs}",
+        )
     return "resume", f"checkpoint available ({Path(checkpoint).name})"
 
 

@@ -16,8 +16,8 @@ __pycache__/
 *.ckpt
 
 # Generated documents and figures
-*.pdf
-*.png
+# *.pdf
+# *.png
 
 # Generated project outputs
 00_first_case_visualization/output/

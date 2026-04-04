@@ -1,5 +1,7 @@
 import matplotlib
 from batchgenerators.utilities.file_and_folder_operations import join
+import importlib
+import sys
 
 matplotlib.use("agg")
 import seaborn as sns
@@ -118,7 +120,12 @@ class MetaLogger(object):
             total_epochs: Configured total number of epochs for x-axis scaling.
             current_epoch: Current epoch index for plot titling.
         """
-        self.local_logger.plot_progress_png(output_folder, total_epochs, current_epoch)
+        # Reload the logger module so long-running training jobs pick up layout
+        # adjustments without requiring a fresh process start.
+        module = importlib.reload(sys.modules[__name__])
+        module.LocalLogger.plot_progress_png(
+            self.local_logger, output_folder, total_epochs, current_epoch
+        )
 
     def get_num_logged_epochs(self) -> int:
         """Return the number of epochs available in the local logger."""
@@ -214,9 +221,7 @@ class LocalLogger:
             return
 
         sns.set(font_scale=2.5)
-        fig, ax_all = plt.subplots(3, 1, figsize=(30, 54))
-        # regular progress.png as we are used to from previous nnU-Net versions
-        ax = ax_all[0]
+        fig, ax = plt.subplots(1, 1, figsize=(30, 18))
         ax2 = ax.twinx()
         x_values = list(range(epoch + 1))
         ax.plot(
@@ -259,53 +264,24 @@ class LocalLogger:
             ax2.set_xlim(0, max(total_epochs - 1, 0))
         if total_epochs is not None and current_epoch is not None:
             ax.set_title(
-                f"Training Progress ({current_epoch + 1}/{total_epochs} epochs)"
+                f"Training Progress ({current_epoch + 1}/{total_epochs} epochs)",
+                pad=30,
+                fontsize=42,
             )
-        ax.legend(loc=(0, 1))
-        ax2.legend(loc=(0.2, 1))
-
-        # epoch times to see whether the training speed is consistent (inconsistent means there are other jobs
-        # clogging up the system)
-        ax = ax_all[1]
-        ax.plot(
-            x_values,
-            [
-                i - j
-                for i, j in zip(
-                    self.my_fantastic_logging["epoch_end_timestamps"][: epoch + 1],
-                    self.my_fantastic_logging["epoch_start_timestamps"],
-                )
-            ][: epoch + 1],
-            color="b",
-            ls="-",
-            label="epoch duration",
-            linewidth=4,
+        ax.legend(
+            loc="lower left",
+            bbox_to_anchor=(0.01, 0.995),
+            frameon=True,
+            borderaxespad=0.6,
         )
-        ylim = [0] + [ax.get_ylim()[1]]
-        ax.set(ylim=ylim)
-        ax.set_xlabel("epoch")
-        ax.set_ylabel("time [s]")
-        if total_epochs is not None and total_epochs > 0:
-            ax.set_xlim(0, max(total_epochs - 1, 0))
-        ax.legend(loc=(0, 1))
-
-        # learning rate
-        ax = ax_all[2]
-        ax.plot(
-            x_values,
-            self.my_fantastic_logging["lrs"][: epoch + 1],
-            color="b",
-            ls="-",
-            label="learning rate",
-            linewidth=4,
+        ax2.legend(
+            loc="lower right",
+            bbox_to_anchor=(0.99, 0.995),
+            frameon=True,
+            borderaxespad=0.6,
         )
-        ax.set_xlabel("epoch")
-        ax.set_ylabel("learning rate")
-        if total_epochs is not None and total_epochs > 0:
-            ax.set_xlim(0, max(total_epochs - 1, 0))
-        ax.legend(loc=(0, 1))
 
-        plt.tight_layout()
+        plt.tight_layout(rect=(0, 0, 1, 1))
 
         fig.savefig(join(output_folder, "progress.png"))
         plt.close()
