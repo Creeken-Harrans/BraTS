@@ -1,5 +1,5 @@
 import multiprocessing
-import shutil
+import shutil  # for copying files
 
 import SimpleITK as sitk
 import numpy as np

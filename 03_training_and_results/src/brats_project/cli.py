@@ -22,10 +22,12 @@ from brats_project.project_layout import (
 )
 
 
+# 把相对于 BraTS 项目根目录的路径字符串转换成对应的 Path 路径对象。
 def _project_file(relative_path: str) -> Path:
     return get_project_root() / relative_path
 
 
+# 返回两种合法的 CLI 调用示例，分别对应在项目根目录运行和在父工作区运行。
 def _invocation_examples() -> tuple[str, str]:
     return (
         "BraTS project root (`.../machine-learning-test/BraTS`): python run.py ...",
@@ -33,6 +35,8 @@ def _invocation_examples() -> tuple[str, str]:
     )
 
 
+# 生成 argparse 帮助信息末尾的说明文本，告诉用户命令可以从哪里运行以及所有相对路径都按项目根目录解析。
+# argparse = argument parser, 是 python 标准库里的命令行参数解析器
 def _invocation_epilog() -> str:
     project_root_example, parent_workspace_example = _invocation_examples()
     return (
@@ -43,6 +47,7 @@ def _invocation_epilog() -> str:
     )
 
 
+# 返回一段提示文本，告诉用户如果还没预测结果，应该先怎么运行 predict 命令
 def _predict_command_hint() -> str:
     return (
         "Run predict first with one of these forms:\n"
@@ -51,12 +56,14 @@ def _predict_command_hint() -> str:
     )
 
 
+# 创建默认评估输出目录并返回默认评估结果文件 summary.json 的路径。
 def _default_evaluation_output_file() -> Path:
     output_dir = _project_file("04_inference_and_evaluation/evaluation")
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir / "summary.json"
 
 
+# 把项目中的某个 Python 文件按路径动态加载成模块对象并返回。
 def _load_external_module(relative_path: str, module_name: str) -> Any:
     module_path = _project_file(relative_path)
     spec = importlib.util.spec_from_file_location(module_name, module_path)
@@ -67,6 +74,7 @@ def _load_external_module(relative_path: str, module_name: str) -> Any:
     return module
 
 
+# 从项目总配置里取出 "dataset" 这一部分作为默认数据集配置。
 def _get_dataset_defaults() -> dict[str, Any]:
     config = load_project_config()
     return config["dataset"]
@@ -84,7 +92,9 @@ def _call_entrypoint(entrypoint: Any, argv: list[str]) -> None:
 def _copy_if_exists(source: Path, target: Path) -> None:
     if source.is_file():
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
+        shutil.copy2(
+            source, target
+        )  # copy2 to preserve metadata such as modification time
 
 
 def _prepare_preprocess_log(dataset_name: str, plans_name: str) -> Path:
@@ -168,7 +178,9 @@ def _prepare_sampled_prediction_input(
     input_dir.mkdir(parents=True, exist_ok=True)
     for case_id in selected_case_ids:
         for source in case_files[case_id]:
-            shutil.copy2(source, input_dir / source.name)
+            shutil.copy2(
+                source, input_dir / source.name
+            )  # copy2 to preserve metadata such as modification time
 
     sample_metadata = {
         "source": "PROJECT_RAW/imagesTr",

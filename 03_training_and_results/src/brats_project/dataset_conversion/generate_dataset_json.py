@@ -1,3 +1,19 @@
+"""
+有哪些通道 channel_names, 这会影响到nnU-Net的预处理和归一化方案！
+标签怎么定义 labels
+一共有多少训练样本 num_training_cases
+文件后缀是什么 file_ending
+是否有region-based training (regions_class_order)
+
+以及:
+数据集名称 dataset_name
+数据集引用 reference
+数据集版本 release
+数据集描述 description
+数据集许可证 license
+数据集转换者 converted_by
+"""
+
 from typing import Optional, Tuple, Union, List
 
 from batchgenerators.utilities.file_and_folder_operations import save_json, join
