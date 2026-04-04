@@ -1,0 +1,180 @@
+
+#######################################################################
+Please cite the following paper when using nnU-Net:
+Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211.
+#######################################################################
+ 
+2026-04-04 15:32:00.870845: Resuming training from checkpoint: /home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/checkpoint_final.pth 
+2026-04-04 15:32:01.193105: Using torch.compile... 
+2026-04-04 15:32:01.438560: Loaded checkpoint state {'checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/checkpoint_final.pth', 'resuming_at_epoch': 100, 'display_epoch': '101/100', 'logged_epochs': 100, 'state_next_epoch': 100, 'text_log_next_epoch': 100} 
+2026-04-04 15:32:01.439524: do_dummy_2d_data_aug: False 
+2026-04-04 15:32:01.440381: Using splits from existing split file: /home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json 
+2026-04-04 15:32:01.440651: The split file contains 5 splits. 
+2026-04-04 15:32:01.440684: Desired fold for training: 1 
+2026-04-04 15:32:01.440708: This split has 294 training and 74 validation cases. 
+
+This is the configuration used by this training:
+Configuration name: 3d_fullres
+ {'data_identifier': 'ProjectPlans_3d_fullres', 'preprocessor_name': 'DefaultPreprocessor', 'batch_size': 2, 'patch_size': [128, 128, 128], 'median_image_size_in_voxels': [139.0, 170.0, 138.0], 'spacing': [1.0, 1.0, 1.0], 'normalization_schemes': ['ZScoreNormalization', 'ZScoreNormalization', 'ZScoreNormalization', 'ZScoreNormalization'], 'use_mask_for_norm': [True, True, True, True], 'resampling_fn_data': 'resample_data_or_seg_to_shape', 'resampling_fn_seg': 'resample_data_or_seg_to_shape', 'resampling_fn_data_kwargs': {'is_seg': False, 'order': 3, 'order_z': 0, 'force_separate_z': None}, 'resampling_fn_seg_kwargs': {'is_seg': True, 'order': 1, 'order_z': 0, 'force_separate_z': None}, 'resampling_fn_probabilities': 'resample_data_or_seg_to_shape', 'resampling_fn_probabilities_kwargs': {'is_seg': False, 'order': 1, 'order_z': 0, 'force_separate_z': None}, 'architecture': {'network_class_name': 'dynamic_network_architectures.architectures.unet.PlainConvUNet', 'arch_kwargs': {'n_stages': 6, 'features_per_stage': [32, 64, 128, 256, 320, 320], 'conv_op': 'torch.nn.modules.conv.Conv3d', 'kernel_sizes': [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]], 'strides': [[1, 1, 1], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]], 'n_conv_per_stage': [2, 2, 2, 2, 2, 2], 'n_conv_per_stage_decoder': [2, 2, 2, 2, 2], 'conv_bias': True, 'norm_op': 'torch.nn.modules.instancenorm.InstanceNorm3d', 'norm_op_kwargs': {'eps': 1e-05, 'affine': True}, 'dropout_op': None, 'dropout_op_kwargs': None, 'nonlin': 'torch.nn.LeakyReLU', 'nonlin_kwargs': {'inplace': True}}, '_kw_requires_import': ['conv_op', 'norm_op', 'dropout_op', 'nonlin']}, 'batch_dice': False} 
+ 
+These are the global plan.json settings:
+ {'dataset_name': 'Dataset220_BraTS2020', 'plans_name': 'ProjectPlans', 'original_median_spacing_after_transp': [1.0, 1.0, 1.0], 'original_median_shape_after_transp': [139, 170, 138], 'image_reader_writer': 'SimpleITKIO', 'transpose_forward': [0, 1, 2], 'transpose_backward': [0, 1, 2], 'experiment_planner_used': 'ExperimentPlanner', 'label_manager': 'LabelManager', 'foreground_intensity_properties_per_channel': {'0': {'max': 21113.0, 'mean': 644.5308227539062, 'median': 356.0, 'min': 0.0, 'percentile_00_5': 37.0, 'percentile_99_5': 8507.0, 'std': 1026.2943115234375}, '1': {'max': 18011.0, 'mean': 793.4114990234375, 'median': 415.0, 'min': 0.0, 'percentile_00_5': 36.0, 'percentile_99_5': 8115.0, 'std': 1158.5498046875}, '2': {'max': 31404.0, 'mean': 1070.948974609375, 'median': 665.0, 'min': 0.0, 'percentile_00_5': 96.0, 'percentile_99_5': 16391.0, 'std': 1993.7572021484375}, '3': {'max': 29422.0, 'mean': 724.111572265625, 'median': 428.0, 'min': 0.0, 'percentile_00_5': 73.0, 'percentile_99_5': 16638.0, 'std': 1905.12744140625}}} 
+ 
+2026-04-04 15:32:03.957492: Unable to plot network architecture: PROJECT_COMPILE is enabled! 
+2026-04-04 15:32:03.972915: Training session state: {'output_folder': '/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1', 'log_file': '/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/training_log_2026_4_4_15_32_00.txt', 'training_state_file': '/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/training_state.json', 'starting_epoch': 100, 'logged_epochs': 100, 'num_epochs': 100, 'remaining_epochs': 0, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/checkpoint_final.pth'} 
+2026-04-04 15:32:05.370650: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/checkpoint_final.pth', 'next_epoch': 100, 'logged_epochs': 100} 
+2026-04-04 15:32:05.386423: Training done. 
+2026-04-04 15:32:05.410032: Using splits from existing split file: /home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json 
+2026-04-04 15:32:05.411411: The split file contains 5 splits. 
+2026-04-04 15:32:05.413371: Desired fold for training: 1 
+2026-04-04 15:32:05.413463: This split has 294 training and 74 validation cases. 
+2026-04-04 15:32:05.413935: predicting BraTS20_Training_004 
+2026-04-04 15:32:05.438145: BraTS20_Training_004, shape torch.Size([4, 140, 182, 135]), rank 0 
+2026-04-04 15:32:10.476860: predicting BraTS20_Training_005 
+2026-04-04 15:32:10.508847: BraTS20_Training_005, shape torch.Size([4, 140, 175, 133]), rank 0 
+2026-04-04 15:32:15.328226: predicting BraTS20_Training_009 
+2026-04-04 15:32:15.342560: BraTS20_Training_009, shape torch.Size([4, 144, 170, 130]), rank 0 
+2026-04-04 15:32:20.159904: predicting BraTS20_Training_015 
+2026-04-04 15:32:20.179978: BraTS20_Training_015, shape torch.Size([4, 141, 176, 144]), rank 0 
+2026-04-04 15:32:25.008474: predicting BraTS20_Training_017 
+2026-04-04 15:32:25.052423: BraTS20_Training_017, shape torch.Size([4, 141, 177, 140]), rank 0 
+2026-04-04 15:32:29.884848: predicting BraTS20_Training_022 
+2026-04-04 15:32:29.912106: BraTS20_Training_022, shape torch.Size([4, 143, 187, 132]), rank 0 
+2026-04-04 15:32:34.747325: predicting BraTS20_Training_031 
+2026-04-04 15:32:34.763245: BraTS20_Training_031, shape torch.Size([4, 145, 177, 140]), rank 0 
+2026-04-04 15:32:39.602422: predicting BraTS20_Training_034 
+2026-04-04 15:32:39.618841: BraTS20_Training_034, shape torch.Size([4, 144, 162, 128]), rank 0 
+2026-04-04 15:32:42.045772: predicting BraTS20_Training_043 
+2026-04-04 15:32:42.067909: BraTS20_Training_043, shape torch.Size([4, 144, 168, 146]), rank 0 
+2026-04-04 15:32:46.907387: predicting BraTS20_Training_046 
+2026-04-04 15:32:46.938290: BraTS20_Training_046, shape torch.Size([4, 143, 174, 133]), rank 0 
+2026-04-04 15:32:51.776750: predicting BraTS20_Training_047 
+2026-04-04 15:32:51.801067: BraTS20_Training_047, shape torch.Size([4, 146, 178, 139]), rank 0 
+2026-04-04 15:32:56.643245: predicting BraTS20_Training_048 
+2026-04-04 15:32:56.658725: BraTS20_Training_048, shape torch.Size([4, 143, 176, 131]), rank 0 
+2026-04-04 15:33:01.500539: predicting BraTS20_Training_054 
+2026-04-04 15:33:01.515541: BraTS20_Training_054, shape torch.Size([4, 140, 169, 127]), rank 0 
+2026-04-04 15:33:03.954586: predicting BraTS20_Training_055 
+2026-04-04 15:33:03.988615: BraTS20_Training_055, shape torch.Size([4, 149, 176, 143]), rank 0 
+2026-04-04 15:33:08.825440: predicting BraTS20_Training_058 
+2026-04-04 15:33:08.880464: BraTS20_Training_058, shape torch.Size([4, 143, 174, 137]), rank 0 
+2026-04-04 15:33:13.723755: predicting BraTS20_Training_068 
+2026-04-04 15:33:13.744884: BraTS20_Training_068, shape torch.Size([4, 141, 178, 135]), rank 0 
+2026-04-04 15:33:18.583630: predicting BraTS20_Training_072 
+2026-04-04 15:33:18.615193: BraTS20_Training_072, shape torch.Size([4, 136, 168, 134]), rank 0 
+2026-04-04 15:33:23.454827: predicting BraTS20_Training_076 
+2026-04-04 15:33:23.470021: BraTS20_Training_076, shape torch.Size([4, 136, 150, 130]), rank 0 
+2026-04-04 15:33:28.329840: predicting BraTS20_Training_091 
+2026-04-04 15:33:28.346777: BraTS20_Training_091, shape torch.Size([4, 134, 169, 140]), rank 0 
+2026-04-04 15:33:33.189277: predicting BraTS20_Training_102 
+2026-04-04 15:33:33.221138: BraTS20_Training_102, shape torch.Size([4, 140, 169, 142]), rank 0 
+2026-04-04 15:33:38.058956: predicting BraTS20_Training_115 
+2026-04-04 15:33:38.095622: BraTS20_Training_115, shape torch.Size([4, 138, 177, 142]), rank 0 
+2026-04-04 15:33:42.932264: predicting BraTS20_Training_121 
+2026-04-04 15:33:42.972972: BraTS20_Training_121, shape torch.Size([4, 143, 173, 136]), rank 0 
+2026-04-04 15:33:47.810103: predicting BraTS20_Training_129 
+2026-04-04 15:33:47.825578: BraTS20_Training_129, shape torch.Size([4, 142, 163, 142]), rank 0 
+2026-04-04 15:33:52.668497: predicting BraTS20_Training_133 
+2026-04-04 15:33:52.700290: BraTS20_Training_133, shape torch.Size([4, 130, 156, 129]), rank 0 
+2026-04-04 15:33:57.533961: predicting BraTS20_Training_135 
+2026-04-04 15:33:57.561710: BraTS20_Training_135, shape torch.Size([4, 146, 175, 146]), rank 0 
+2026-04-04 15:34:02.395895: predicting BraTS20_Training_136 
+2026-04-04 15:34:02.424456: BraTS20_Training_136, shape torch.Size([4, 129, 179, 142]), rank 0 
+2026-04-04 15:34:07.259828: predicting BraTS20_Training_142 
+2026-04-04 15:34:07.288386: BraTS20_Training_142, shape torch.Size([4, 128, 180, 141]), rank 0 
+2026-04-04 15:34:09.707179: predicting BraTS20_Training_158 
+2026-04-04 15:34:09.723839: BraTS20_Training_158, shape torch.Size([4, 136, 161, 145]), rank 0 
+2026-04-04 15:34:14.563114: predicting BraTS20_Training_159 
+2026-04-04 15:34:14.580086: BraTS20_Training_159, shape torch.Size([4, 141, 167, 134]), rank 0 
+2026-04-04 15:34:19.425882: predicting BraTS20_Training_162 
+2026-04-04 15:34:19.449032: BraTS20_Training_162, shape torch.Size([4, 132, 153, 148]), rank 0 
+2026-04-04 15:34:24.284376: predicting BraTS20_Training_165 
+2026-04-04 15:34:24.301715: BraTS20_Training_165, shape torch.Size([4, 138, 170, 145]), rank 0 
+2026-04-04 15:34:29.138656: predicting BraTS20_Training_169 
+2026-04-04 15:34:29.158221: BraTS20_Training_169, shape torch.Size([4, 137, 171, 141]), rank 0 
+2026-04-04 15:34:33.997195: predicting BraTS20_Training_176 
+2026-04-04 15:34:34.028631: BraTS20_Training_176, shape torch.Size([4, 140, 167, 131]), rank 0 
+2026-04-04 15:34:38.850678: predicting BraTS20_Training_178 
+2026-04-04 15:34:38.865509: BraTS20_Training_178, shape torch.Size([4, 140, 173, 139]), rank 0 
+2026-04-04 15:34:43.699445: predicting BraTS20_Training_183 
+2026-04-04 15:34:43.712727: BraTS20_Training_183, shape torch.Size([4, 131, 157, 142]), rank 0 
+2026-04-04 15:34:48.539345: predicting BraTS20_Training_192 
+2026-04-04 15:34:48.552140: BraTS20_Training_192, shape torch.Size([4, 139, 153, 138]), rank 0 
+2026-04-04 15:34:53.380467: predicting BraTS20_Training_197 
+2026-04-04 15:34:53.411594: BraTS20_Training_197, shape torch.Size([4, 139, 172, 134]), rank 0 
+2026-04-04 15:34:58.227267: predicting BraTS20_Training_198 
+2026-04-04 15:34:58.262150: BraTS20_Training_198, shape torch.Size([4, 137, 167, 134]), rank 0 
+2026-04-04 15:35:03.079627: predicting BraTS20_Training_204 
+2026-04-04 15:35:03.100270: BraTS20_Training_204, shape torch.Size([4, 137, 180, 141]), rank 0 
+2026-04-04 15:35:07.917821: predicting BraTS20_Training_208 
+2026-04-04 15:35:07.952434: BraTS20_Training_208, shape torch.Size([4, 138, 164, 142]), rank 0 
+2026-04-04 15:35:12.763646: predicting BraTS20_Training_231 
+2026-04-04 15:35:12.795576: BraTS20_Training_231, shape torch.Size([4, 141, 158, 137]), rank 0 
+2026-04-04 15:35:17.605472: predicting BraTS20_Training_235 
+2026-04-04 15:35:17.634427: BraTS20_Training_235, shape torch.Size([4, 130, 169, 152]), rank 0 
+2026-04-04 15:35:22.447800: predicting BraTS20_Training_240 
+2026-04-04 15:35:22.478019: BraTS20_Training_240, shape torch.Size([4, 143, 175, 134]), rank 0 
+2026-04-04 15:35:27.290963: predicting BraTS20_Training_245 
+2026-04-04 15:35:27.306182: BraTS20_Training_245, shape torch.Size([4, 135, 170, 130]), rank 0 
+2026-04-04 15:35:32.126909: predicting BraTS20_Training_254 
+2026-04-04 15:35:32.158038: BraTS20_Training_254, shape torch.Size([4, 132, 166, 142]), rank 0 
+2026-04-04 15:35:36.972053: predicting BraTS20_Training_255 
+2026-04-04 15:35:37.007499: BraTS20_Training_255, shape torch.Size([4, 135, 164, 144]), rank 0 
+2026-04-04 15:35:41.821177: predicting BraTS20_Training_261 
+2026-04-04 15:35:41.837127: BraTS20_Training_261, shape torch.Size([4, 133, 167, 144]), rank 0 
+2026-04-04 15:35:46.655533: predicting BraTS20_Training_267 
+2026-04-04 15:35:46.670241: BraTS20_Training_267, shape torch.Size([4, 133, 161, 149]), rank 0 
+2026-04-04 15:35:51.493295: predicting BraTS20_Training_271 
+2026-04-04 15:35:51.510156: BraTS20_Training_271, shape torch.Size([4, 135, 163, 137]), rank 0 
+2026-04-04 15:35:56.331302: predicting BraTS20_Training_276 
+2026-04-04 15:35:56.349587: BraTS20_Training_276, shape torch.Size([4, 137, 176, 142]), rank 0 
+2026-04-04 15:36:01.167742: predicting BraTS20_Training_283 
+2026-04-04 15:36:01.202010: BraTS20_Training_283, shape torch.Size([4, 139, 163, 146]), rank 0 
+2026-04-04 15:36:06.015897: predicting BraTS20_Training_290 
+2026-04-04 15:36:06.031206: BraTS20_Training_290, shape torch.Size([4, 137, 163, 145]), rank 0 
+2026-04-04 15:36:10.856149: predicting BraTS20_Training_293 
+2026-04-04 15:36:10.889678: BraTS20_Training_293, shape torch.Size([4, 135, 171, 140]), rank 0 
+2026-04-04 15:36:15.709913: predicting BraTS20_Training_294 
+2026-04-04 15:36:15.741160: BraTS20_Training_294, shape torch.Size([4, 143, 174, 137]), rank 0 
+2026-04-04 15:36:20.561877: predicting BraTS20_Training_296 
+2026-04-04 15:36:20.577464: BraTS20_Training_296, shape torch.Size([4, 130, 166, 138]), rank 0 
+2026-04-04 15:36:25.404175: predicting BraTS20_Training_297 
+2026-04-04 15:36:25.420038: BraTS20_Training_297, shape torch.Size([4, 141, 165, 136]), rank 0 
+2026-04-04 15:36:30.252896: predicting BraTS20_Training_305 
+2026-04-04 15:36:30.273939: BraTS20_Training_305, shape torch.Size([4, 138, 174, 136]), rank 0 
+2026-04-04 15:36:35.090986: predicting BraTS20_Training_306 
+2026-04-04 15:36:35.106184: BraTS20_Training_306, shape torch.Size([4, 138, 166, 140]), rank 0 
+2026-04-04 15:36:39.937398: predicting BraTS20_Training_307 
+2026-04-04 15:36:39.951703: BraTS20_Training_307, shape torch.Size([4, 134, 170, 133]), rank 0 
+2026-04-04 15:36:44.779985: predicting BraTS20_Training_319 
+2026-04-04 15:36:44.809450: BraTS20_Training_319, shape torch.Size([4, 131, 159, 138]), rank 0 
+2026-04-04 15:36:49.637384: predicting BraTS20_Training_334 
+2026-04-04 15:36:49.671950: BraTS20_Training_334, shape torch.Size([4, 140, 178, 134]), rank 0 
+2026-04-04 15:36:54.503356: predicting BraTS20_Training_335 
+2026-04-04 15:36:54.538924: BraTS20_Training_335, shape torch.Size([4, 143, 160, 134]), rank 0 
+2026-04-04 15:36:59.372047: predicting BraTS20_Training_337 
+2026-04-04 15:36:59.388704: BraTS20_Training_337, shape torch.Size([4, 139, 175, 145]), rank 0 
+2026-04-04 15:37:04.222183: predicting BraTS20_Training_338 
+2026-04-04 15:37:04.248269: BraTS20_Training_338, shape torch.Size([4, 134, 161, 127]), rank 0 
+2026-04-04 15:37:06.669368: predicting BraTS20_Training_339 
+2026-04-04 15:37:06.704825: BraTS20_Training_339, shape torch.Size([4, 141, 170, 136]), rank 0 
+2026-04-04 15:37:11.540302: predicting BraTS20_Training_340 
+2026-04-04 15:37:11.586644: BraTS20_Training_340, shape torch.Size([4, 133, 193, 146]), rank 0 
+2026-04-04 15:37:18.827879: predicting BraTS20_Training_342 
+2026-04-04 15:37:18.843749: BraTS20_Training_342, shape torch.Size([4, 142, 164, 149]), rank 0 
+2026-04-04 15:37:23.680477: predicting BraTS20_Training_344 
+2026-04-04 15:37:23.707817: BraTS20_Training_344, shape torch.Size([4, 130, 167, 128]), rank 0 
+2026-04-04 15:37:26.124755: predicting BraTS20_Training_346 
+2026-04-04 15:37:26.157948: BraTS20_Training_346, shape torch.Size([4, 144, 179, 143]), rank 0 
+2026-04-04 15:37:30.982231: predicting BraTS20_Training_351 
+2026-04-04 15:37:31.023454: BraTS20_Training_351, shape torch.Size([4, 142, 183, 132]), rank 0 
+2026-04-04 15:37:35.855314: predicting BraTS20_Training_357 
+2026-04-04 15:37:35.895481: BraTS20_Training_357, shape torch.Size([4, 102, 166, 128]), rank 0 
+2026-04-04 15:37:37.108333: predicting BraTS20_Training_358 
+2026-04-04 15:37:37.128254: BraTS20_Training_358, shape torch.Size([4, 136, 162, 127]), rank 0 
+2026-04-04 15:37:39.554072: predicting BraTS20_Training_364 
+2026-04-04 15:37:39.570819: BraTS20_Training_364, shape torch.Size([4, 140, 188, 142]), rank 0 
+2026-04-04 15:37:44.405050: predicting BraTS20_Training_367 
+2026-04-04 15:37:44.440643: BraTS20_Training_367, shape torch.Size([4, 139, 177, 148]), rank 0 
+2026-04-04 15:37:54.033234: Validation complete 
+2026-04-04 15:37:54.033346: Mean Validation Dice:  0.857407058672357 

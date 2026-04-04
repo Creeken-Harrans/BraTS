@@ -1,0 +1,19 @@
+{
+    "status": "completed",
+    "timestamp": "2026-04-04T15:37:58.526984",
+    "trainer_name": "SegTrainer",
+    "configuration": "3d_fullres",
+    "fold": 2,
+    "output_folder": "/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_2",
+    "log_file": "/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_2/training_log_2026_4_4_15_37_54.txt",
+    "training_state_file": "/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_2/training_state.json",
+    "resume_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_2/checkpoint_final.pth",
+    "latest_checkpoint_path": null,
+    "best_checkpoint_path": null,
+    "final_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/nnUNet_test/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_2/checkpoint_final.pth",
+    "num_epochs": 100,
+    "logged_epochs": 100,
+    "current_completed_epoch": 99,
+    "next_epoch": 100,
+    "remaining_epochs": 0
+}

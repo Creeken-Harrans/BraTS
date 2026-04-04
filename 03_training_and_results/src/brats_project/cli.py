@@ -14,9 +14,12 @@ from typing import Any, Sequence
 
 from brats_project.project_layout import (
     configure_environment,
+    get_dataset_root,
     get_project_root,
     get_workspace_root,
+    is_nifti_path,
     load_project_config,
+    relocate_workspace_nifti_files,
     resolve_workspace_path,
     workspace_relative_string,
 )
@@ -61,6 +64,29 @@ def _default_evaluation_output_file() -> Path:
     output_dir = _project_file("04_inference_and_evaluation/evaluation")
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir / "summary.json"
+
+
+def _prediction_metadata_root() -> Path:
+    config = load_project_config()
+    metadata_root = _project_file(config["paths"]["prediction_metadata_root"])
+    metadata_root.mkdir(parents=True, exist_ok=True)
+    return metadata_root
+
+
+def _default_sample_selection_file() -> Path:
+    config = load_project_config()
+    sample_selection_file = _project_file(config["paths"]["sample_selection_file"])
+    sample_selection_file.parent.mkdir(parents=True, exist_ok=True)
+    return sample_selection_file
+
+
+def _relocate_workspace_nifti_outputs(*paths: Path) -> None:
+    moved = relocate_workspace_nifti_files(paths)
+    if moved:
+        print(
+            f"[INFO] Relocated {len(moved)} workspace NIfTI file(s) into "
+            f"{workspace_relative_string(get_dataset_root())}."
+        )
 
 
 # 把项目中的某个 Python 文件按路径动态加载成模块对象并返回。
@@ -189,7 +215,7 @@ def _prepare_sampled_prediction_input(
         "sample_count": sample_count,
         "selected_case_ids": selected_case_ids,
     }
-    (input_dir / "sample_selection.json").write_text(
+    _default_sample_selection_file().write_text(
         json.dumps(sample_metadata, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
@@ -299,6 +325,18 @@ def _resolve_evaluation_metadata(
     if dataset_json_path.is_file() and plans_json_path.is_file():
         return dataset_json_path, plans_json_path
 
+    default_prediction_dir = resolve_workspace_path(
+        load_project_config()["paths"]["prediction_output_root"]
+    )
+    metadata_root = _prediction_metadata_root()
+    if pred_dir == default_prediction_dir:
+        if not dataset_json_path.is_file():
+            dataset_json_path = metadata_root / "dataset.json"
+        if not plans_json_path.is_file():
+            plans_json_path = metadata_root / "plans.json"
+        if dataset_json_path.is_file() and plans_json_path.is_file():
+            return dataset_json_path, plans_json_path
+
     dataset_name = _get_dataset_defaults()["name"]
     from brats_project.utilities.file_path_utilities import get_output_folder
 
@@ -322,6 +360,27 @@ def _resolve_evaluation_metadata(
             f"trained model folder. Missing: {missing}"
         )
     return dataset_json_path, plans_json_path
+
+
+def _extract_prediction_metadata(output_dir: Path) -> None:
+    if not output_dir.is_dir():
+        return
+    metadata_root = _prediction_metadata_root()
+    moved_any = False
+    for item in sorted(output_dir.iterdir()):
+        if not item.is_file() or item.is_symlink() or is_nifti_path(item):
+            continue
+        target = metadata_root / item.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if target.exists():
+            target.unlink()
+        shutil.move(str(item), str(target))
+        moved_any = True
+    if moved_any:
+        print(
+            f"[INFO] Prediction metadata was moved to "
+            f"{workspace_relative_string(metadata_root)}."
+        )
 
 
 def _load_inference_information(dataset_name: str) -> dict[str, Any] | None:
@@ -666,6 +725,7 @@ def cmd_train(args: argparse.Namespace) -> int:
             args.configuration,
             int(args.fold),
         )
+    _relocate_workspace_nifti_outputs(Path(os.environ["PROJECT_RESULTS"]))
     return 0
 
 
@@ -713,6 +773,7 @@ def cmd_find_best_config(args: argparse.Namespace) -> int:
         overwrite=not args.no_overwrite,
         folds=tuple(args.folds),
     )
+    _relocate_workspace_nifti_outputs(Path(os.environ["PROJECT_RESULTS"]))
     return 0
 
 
@@ -802,7 +863,10 @@ def cmd_predict(args: argparse.Namespace) -> int:
             ]
         )
 
+    output_dir = resolve_workspace_path(args.output_dir)
     _call_entrypoint(predict_entry_point, argv)
+    _relocate_workspace_nifti_outputs(output_dir)
+    _extract_prediction_metadata(output_dir)
     return 0
 
 
@@ -907,7 +971,7 @@ def cmd_report_evaluation(args: argparse.Namespace) -> int:
     sample_selection_file = (
         resolve_workspace_path(args.sample_selection_file)
         if args.sample_selection_file
-        else _project_file("04_inference_and_evaluation/input/sample_selection.json")
+        else _default_sample_selection_file()
     )
     module.main(
         summary_file=summary_file,
@@ -1137,7 +1201,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     evaluate.add_argument(
         "--gt-dir",
-        default="nnUNet_test/nnUNet_preprocessed/Dataset220_BraTS2020/gt_segmentations",
+        default=f"{paths['project_preprocessed_root']}/{dataset['name']}/gt_segmentations",
         help=(
             "Ground-truth segmentation directory. Relative paths are resolved from the BraTS project root."
         ),
@@ -1193,10 +1257,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     report.add_argument(
         "--sample-selection-file",
-        default="04_inference_and_evaluation/input/sample_selection.json",
+        default=paths["sample_selection_file"],
         help=(
             "Sampling metadata file written by predict auto-sampling. Relative paths are resolved "
-            "from the BraTS project root. Default: 04_inference_and_evaluation/input/sample_selection.json"
+            "from the BraTS project root."
         ),
     )
     report.add_argument(

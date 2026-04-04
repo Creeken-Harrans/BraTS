@@ -10,9 +10,9 @@ from typing import Iterable
 DATASET_ID = 220
 DATASET_NAME = "BraTS2020"
 DEFAULT_SRC_ROOT_REL = Path(
-    "../archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
+    "../BraTS-Dataset/archive/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData"
 )
-DEFAULT_PROJECT_RAW_REL = Path("../nnUNet_test/nnUNet_raw")
+DEFAULT_PROJECT_RAW_REL = Path("../BraTS-Dataset/nnUNet_raw")
 
 
 def find_project_root() -> Path:
