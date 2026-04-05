@@ -1,0 +1,9 @@
+
+#######################################################################
+Please cite the following paper when using nnU-Net:
+Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211.
+#######################################################################
+ 
+2026-04-05 00:34:27.830079: Using torch.compile... 
+2026-04-05 00:34:30.608899: WARNING: Ignoring resume metadata that is ahead of the loaded checkpoint state {'checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/checkpoint_final.pth', 'checkpoint_epoch': 100, 'logged_epochs': 100, 'state_next_epoch': 100, 'text_log_next_epoch': 121} 
+2026-04-05 00:34:30.615613: Loaded checkpoint state {'checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_1/checkpoint_final.pth', 'resuming_at_epoch': 100, 'display_epoch': '101/150', 'logged_epochs': 100, 'state_next_epoch': 100, 'text_log_next_epoch': 121} 

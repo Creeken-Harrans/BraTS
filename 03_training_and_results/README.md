@@ -103,6 +103,8 @@ python run.py train --fold 0 --validation-only --npz
 - 如果当前 fold 已经有可恢复 checkpoint，`python run.py train --fold 0` 会自动走续训路径。
 - 如果没有可恢复 checkpoint，命令会从头开始。
 - 如果 checkpoint 是旧的总轮数，例如已经完成 `100` 轮，而当前 `SegTrainer` 已经改成 `150` 轮，命令会继续从已有 checkpoint 接着训练到 `150`。
+- 恢复时以 checkpoint 自带的 `current_epoch` 和 logging 内容为准，不再允许 `training_state.json` 或旧文本日志把恢复进度推进到 checkpoint 之外。
+- 如果日志里出现“`Ignoring resume metadata that is ahead of the loaded checkpoint state`”，说明本地曾经留下比当前 checkpoint 更靠后的恢复痕迹；这时训练会继续信任 checkpoint，本身不算新的报错。
 - 如果你明确要忽略已有结果并从头开始，使用 `--restart-training`。
 
 ## `fold` 的含义

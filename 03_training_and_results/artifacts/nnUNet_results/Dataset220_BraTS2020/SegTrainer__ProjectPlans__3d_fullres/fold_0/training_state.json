@@ -1,6 +1,6 @@
 {
-    "status": "running",
-    "timestamp": "2026-04-04T20:41:59.410732",
+    "status": "completed",
+    "timestamp": "2026-04-04T22:32:39.349564",
     "trainer_name": "SegTrainer",
     "configuration": "3d_fullres",
     "fold": 0,
@@ -12,8 +12,8 @@
     "best_checkpoint_path": null,
     "final_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_0/checkpoint_final.pth",
     "num_epochs": 150,
-    "logged_epochs": 100,
-    "current_completed_epoch": 99,
-    "next_epoch": 100,
-    "remaining_epochs": 50
+    "logged_epochs": 150,
+    "current_completed_epoch": 149,
+    "next_epoch": 150,
+    "remaining_epochs": 0
 }

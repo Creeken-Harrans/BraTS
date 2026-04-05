@@ -78,7 +78,12 @@ class MetaLogger(object):
         if key == "mean_fg_dice":
             ema_history = self.get_value("ema_fg_dice", step=None)
             if len(ema_history) > 0:
-                prev_ema = float(self.get_value("ema_fg_dice", step=step - 1))
+                # Resume state can occasionally contain fewer EMA entries than the
+                # target epoch index if a previous run advanced bookkeeping without
+                # persisting a matching checkpoint. Fall back to the latest available
+                # EMA instead of crashing on an out-of-range index.
+                prev_ema_step = min(step - 1, len(ema_history) - 1)
+                prev_ema = float(self.get_value("ema_fg_dice", step=prev_ema_step))
                 new_ema_pseudo_dice = prev_ema * 0.9 + 0.1 * float(value)
             else:
                 new_ema_pseudo_dice = float(value)

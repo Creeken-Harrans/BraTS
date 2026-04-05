@@ -53,6 +53,8 @@ python run.py train --fold 0 --validation-only --npz
 - 检查优先级：`checkpoint_final.pth -> checkpoint_latest.pth -> checkpoint_best.pth`；
 - 找到后自动进入恢复路径；
 - 如果 checkpoint 对应的是更早的总轮数，例如 `100`，而当前 trainer 的目标总轮数已经提高到 `150`，则会在已有 checkpoint 基础上继续训练到新的目标轮数；
+- 恢复以 checkpoint 内部状态为准；`training_state.json` 和 `training_log_*.txt` 只做辅助判断，不会覆盖到 checkpoint 之后的 epoch；
+- 如果历史日志里记录过更靠后的 `next_epoch`，加载时会输出 warning 并忽略这部分元数据，避免出现 `ema_fg_dice`/logger 越界；
 - 没找到时从头开始；
 - 只有显式传 `--restart-training` 才会忽略已有 checkpoint。
 

@@ -522,7 +522,8 @@ class nnUNetTrainer(object):
         self, checkpoint_path: str, checkpoint: dict
     ) -> Tuple[int, int, Optional[int], Optional[int]]:
         logged_epochs = self.logger.get_num_logged_epochs()
-        resolved_epoch = max(int(checkpoint["current_epoch"]), int(logged_epochs))
+        checkpoint_epoch = int(checkpoint["current_epoch"])
+        resolved_epoch = max(checkpoint_epoch, int(logged_epochs))
 
         state_next_epoch = None
         training_state = self._read_training_state()
@@ -538,11 +539,24 @@ class nnUNetTrainer(object):
         )
         if training_state is not None and checkpoint_path in matching_checkpoint_paths:
             state_next_epoch = int(training_state.get("next_epoch", 0))
-            resolved_epoch = max(resolved_epoch, state_next_epoch)
 
         text_log_next_epoch = self._infer_next_epoch_from_text_logs()
-        if text_log_next_epoch is not None:
-            resolved_epoch = max(resolved_epoch, text_log_next_epoch)
+        if (
+            state_next_epoch is not None and state_next_epoch > resolved_epoch
+        ) or (
+            text_log_next_epoch is not None and text_log_next_epoch > resolved_epoch
+        ):
+            self.print_to_log_file(
+                "WARNING: Ignoring resume metadata that is ahead of the loaded checkpoint state",
+                {
+                    "checkpoint_path": checkpoint_path,
+                    "checkpoint_epoch": checkpoint_epoch,
+                    "logged_epochs": logged_epochs,
+                    "state_next_epoch": state_next_epoch,
+                    "text_log_next_epoch": text_log_next_epoch,
+                },
+                also_print_to_console=True,
+            )
 
         return resolved_epoch, logged_epochs, state_next_epoch, text_log_next_epoch
 

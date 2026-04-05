@@ -1,0 +1,1029 @@
+
+#######################################################################
+Please cite the following paper when using nnU-Net:
+Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211.
+#######################################################################
+ 
+
+#######################################################################
+Please cite the following paper when using nnU-Net:
+Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211.
+#######################################################################
+ 
+2026-04-05 06:22:52.115373: Resuming training from checkpoint: /home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth 
+2026-04-05 06:22:52.379820: Using torch.compile... 
+2026-04-05 06:22:52.611677: Loaded checkpoint state {'checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'resuming_at_epoch': 22, 'display_epoch': '23/150', 'logged_epochs': 22, 'state_next_epoch': 22, 'text_log_next_epoch': 22} 
+2026-04-05 06:22:52.612377: do_dummy_2d_data_aug: False 
+2026-04-05 06:22:52.613041: Using splits from existing split file: /home/Creeken/Desktop/machine-learning-test/BraTS-Dataset/nnUNet_preprocessed/Dataset220_BraTS2020/splits_final.json 
+2026-04-05 06:22:52.613167: The split file contains 5 splits. 
+2026-04-05 06:22:52.613196: Desired fold for training: 4 
+2026-04-05 06:22:52.613220: This split has 295 training and 73 validation cases. 
+
+This is the configuration used by this training:
+Configuration name: 3d_fullres
+ {'data_identifier': 'ProjectPlans_3d_fullres', 'preprocessor_name': 'DefaultPreprocessor', 'batch_size': 2, 'patch_size': [128, 128, 128], 'median_image_size_in_voxels': [139.0, 170.0, 138.0], 'spacing': [1.0, 1.0, 1.0], 'normalization_schemes': ['ZScoreNormalization', 'ZScoreNormalization', 'ZScoreNormalization', 'ZScoreNormalization'], 'use_mask_for_norm': [True, True, True, True], 'resampling_fn_data': 'resample_data_or_seg_to_shape', 'resampling_fn_seg': 'resample_data_or_seg_to_shape', 'resampling_fn_data_kwargs': {'is_seg': False, 'order': 3, 'order_z': 0, 'force_separate_z': None}, 'resampling_fn_seg_kwargs': {'is_seg': True, 'order': 1, 'order_z': 0, 'force_separate_z': None}, 'resampling_fn_probabilities': 'resample_data_or_seg_to_shape', 'resampling_fn_probabilities_kwargs': {'is_seg': False, 'order': 1, 'order_z': 0, 'force_separate_z': None}, 'architecture': {'network_class_name': 'dynamic_network_architectures.architectures.unet.PlainConvUNet', 'arch_kwargs': {'n_stages': 6, 'features_per_stage': [32, 64, 128, 256, 320, 320], 'conv_op': 'torch.nn.modules.conv.Conv3d', 'kernel_sizes': [[3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3], [3, 3, 3]], 'strides': [[1, 1, 1], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2], [2, 2, 2]], 'n_conv_per_stage': [2, 2, 2, 2, 2, 2], 'n_conv_per_stage_decoder': [2, 2, 2, 2, 2], 'conv_bias': True, 'norm_op': 'torch.nn.modules.instancenorm.InstanceNorm3d', 'norm_op_kwargs': {'eps': 1e-05, 'affine': True}, 'dropout_op': None, 'dropout_op_kwargs': None, 'nonlin': 'torch.nn.LeakyReLU', 'nonlin_kwargs': {'inplace': True}}, '_kw_requires_import': ['conv_op', 'norm_op', 'dropout_op', 'nonlin']}, 'batch_dice': False} 
+ 
+These are the global plan.json settings:
+ {'dataset_name': 'Dataset220_BraTS2020', 'plans_name': 'ProjectPlans', 'original_median_spacing_after_transp': [1.0, 1.0, 1.0], 'original_median_shape_after_transp': [139, 170, 138], 'image_reader_writer': 'SimpleITKIO', 'transpose_forward': [0, 1, 2], 'transpose_backward': [0, 1, 2], 'experiment_planner_used': 'ExperimentPlanner', 'label_manager': 'LabelManager', 'foreground_intensity_properties_per_channel': {'0': {'max': 21113.0, 'mean': 644.5308227539062, 'median': 356.0, 'min': 0.0, 'percentile_00_5': 37.0, 'percentile_99_5': 8507.0, 'std': 1026.2943115234375}, '1': {'max': 18011.0, 'mean': 793.4114990234375, 'median': 415.0, 'min': 0.0, 'percentile_00_5': 36.0, 'percentile_99_5': 8115.0, 'std': 1158.5498046875}, '2': {'max': 31404.0, 'mean': 1070.948974609375, 'median': 665.0, 'min': 0.0, 'percentile_00_5': 96.0, 'percentile_99_5': 16391.0, 'std': 1993.7572021484375}, '3': {'max': 29422.0, 'mean': 724.111572265625, 'median': 428.0, 'min': 0.0, 'percentile_00_5': 73.0, 'percentile_99_5': 16638.0, 'std': 1905.12744140625}}} 
+ 
+2026-04-05 06:22:55.470336: Unable to plot network architecture: PROJECT_COMPILE is enabled! 
+2026-04-05 06:22:55.499360: Training session state: {'output_folder': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4', 'log_file': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/training_log_2026_4_5_06_22_52.txt', 'training_state_file': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/training_state.json', 'starting_epoch': 22, 'logged_epochs': 22, 'num_epochs': 150, 'remaining_epochs': 128, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:22:55.502951:  
+2026-04-05 06:22:55.503174: Epoch 22 (run 23/150) 
+2026-04-05 06:22:55.503484: Current learning rate: 0.00867 
+2026-04-05 06:25:06.477914: train_loss -0.8031 
+2026-04-05 06:25:06.478441: val_loss -0.756 
+2026-04-05 06:25:06.478498: Pseudo dice [np.float32(0.8986), np.float32(0.8343), np.float32(0.7975)] 
+2026-04-05 06:25:06.478552: Epoch time: 130.98 s 
+2026-04-05 06:25:06.478585: Epoch summary {'completed_epoch': 22, 'next_epoch': 23, 'logged_epochs': 23, 'remaining_epochs': 127, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:25:06.672868: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 23, 'logged_epochs': 23} 
+2026-04-05 06:25:06.673295: Yayy! New best EMA pseudo Dice: 0.8254 
+2026-04-05 06:25:06.849587: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 23, 'logged_epochs': 23} 
+2026-04-05 06:25:07.030021:  
+2026-04-05 06:25:07.030090: Epoch 23 (run 24/150) 
+2026-04-05 06:25:07.030143: Current learning rate: 0.00861 
+2026-04-05 06:27:18.372111: train_loss -0.7825 
+2026-04-05 06:27:18.372499: val_loss -0.741 
+2026-04-05 06:27:18.372559: Pseudo dice [np.float32(0.8945), np.float32(0.8327), np.float32(0.7777)] 
+2026-04-05 06:27:18.372613: Epoch time: 131.34 s 
+2026-04-05 06:27:18.372645: Epoch summary {'completed_epoch': 23, 'next_epoch': 24, 'logged_epochs': 24, 'remaining_epochs': 126, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:27:18.566834: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 24, 'logged_epochs': 24} 
+2026-04-05 06:27:18.567303: Yayy! New best EMA pseudo Dice: 0.8263 
+2026-04-05 06:27:18.744659: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 24, 'logged_epochs': 24} 
+2026-04-05 06:27:18.923836:  
+2026-04-05 06:27:18.923910: Epoch 24 (run 25/150) 
+2026-04-05 06:27:18.923974: Current learning rate: 0.00855 
+2026-04-05 06:29:30.051153: train_loss -0.7968 
+2026-04-05 06:29:30.052710: val_loss -0.7583 
+2026-04-05 06:29:30.052770: Pseudo dice [np.float32(0.9108), np.float32(0.8535), np.float32(0.8258)] 
+2026-04-05 06:29:30.052830: Epoch time: 131.13 s 
+2026-04-05 06:29:30.052864: Epoch summary {'completed_epoch': 24, 'next_epoch': 25, 'logged_epochs': 25, 'remaining_epochs': 125, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:29:30.235134: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 25, 'logged_epochs': 25} 
+2026-04-05 06:29:30.235606: Yayy! New best EMA pseudo Dice: 0.83 
+2026-04-05 06:29:30.408394: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 25, 'logged_epochs': 25} 
+2026-04-05 06:29:30.587249:  
+2026-04-05 06:29:30.587326: Epoch 25 (run 26/150) 
+2026-04-05 06:29:30.587391: Current learning rate: 0.00849 
+2026-04-05 06:31:41.809566: train_loss -0.7907 
+2026-04-05 06:31:41.810046: val_loss -0.7677 
+2026-04-05 06:31:41.810100: Pseudo dice [np.float32(0.9102), np.float32(0.877), np.float32(0.8166)] 
+2026-04-05 06:31:41.810154: Epoch time: 131.22 s 
+2026-04-05 06:31:41.810186: Epoch summary {'completed_epoch': 25, 'next_epoch': 26, 'logged_epochs': 26, 'remaining_epochs': 124, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:31:41.998065: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 26, 'logged_epochs': 26} 
+2026-04-05 06:31:41.998492: Yayy! New best EMA pseudo Dice: 0.8338 
+2026-04-05 06:31:42.174941: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 26, 'logged_epochs': 26} 
+2026-04-05 06:31:42.355294:  
+2026-04-05 06:31:42.355362: Epoch 26 (run 27/150) 
+2026-04-05 06:31:42.355414: Current learning rate: 0.00843 
+2026-04-05 06:33:53.895052: train_loss -0.7987 
+2026-04-05 06:33:53.896590: val_loss -0.7673 
+2026-04-05 06:33:53.896650: Pseudo dice [np.float32(0.9035), np.float32(0.8714), np.float32(0.8172)] 
+2026-04-05 06:33:53.896706: Epoch time: 131.54 s 
+2026-04-05 06:33:53.896738: Epoch summary {'completed_epoch': 26, 'next_epoch': 27, 'logged_epochs': 27, 'remaining_epochs': 123, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:33:54.080889: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 27, 'logged_epochs': 27} 
+2026-04-05 06:33:54.081343: Yayy! New best EMA pseudo Dice: 0.8368 
+2026-04-05 06:33:54.258682: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 27, 'logged_epochs': 27} 
+2026-04-05 06:33:54.437908:  
+2026-04-05 06:33:54.437976: Epoch 27 (run 28/150) 
+2026-04-05 06:33:54.438030: Current learning rate: 0.00836 
+2026-04-05 06:36:06.034661: train_loss -0.8005 
+2026-04-05 06:36:06.035150: val_loss -0.7549 
+2026-04-05 06:36:06.035208: Pseudo dice [np.float32(0.9022), np.float32(0.8403), np.float32(0.8371)] 
+2026-04-05 06:36:06.035265: Epoch time: 131.6 s 
+2026-04-05 06:36:06.035300: Epoch summary {'completed_epoch': 27, 'next_epoch': 28, 'logged_epochs': 28, 'remaining_epochs': 122, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:36:06.209639: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 28, 'logged_epochs': 28} 
+2026-04-05 06:36:06.210079: Yayy! New best EMA pseudo Dice: 0.8391 
+2026-04-05 06:36:06.374503: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 28, 'logged_epochs': 28} 
+2026-04-05 06:36:06.551750:  
+2026-04-05 06:36:06.551828: Epoch 28 (run 29/150) 
+2026-04-05 06:36:06.551907: Current learning rate: 0.0083 
+2026-04-05 06:38:17.833552: train_loss -0.7966 
+2026-04-05 06:38:17.833976: val_loss -0.755 
+2026-04-05 06:38:17.834031: Pseudo dice [np.float32(0.9056), np.float32(0.8377), np.float32(0.8206)] 
+2026-04-05 06:38:17.834090: Epoch time: 131.28 s 
+2026-04-05 06:38:17.834139: Epoch summary {'completed_epoch': 28, 'next_epoch': 29, 'logged_epochs': 29, 'remaining_epochs': 121, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:38:18.019729: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 29, 'logged_epochs': 29} 
+2026-04-05 06:38:18.020146: Yayy! New best EMA pseudo Dice: 0.8407 
+2026-04-05 06:38:18.195160: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 29, 'logged_epochs': 29} 
+2026-04-05 06:38:18.375125:  
+2026-04-05 06:38:18.375197: Epoch 29 (run 30/150) 
+2026-04-05 06:38:18.375252: Current learning rate: 0.00824 
+2026-04-05 06:40:29.070358: train_loss -0.8072 
+2026-04-05 06:40:29.070667: val_loss -0.7799 
+2026-04-05 06:40:29.070723: Pseudo dice [np.float32(0.9022), np.float32(0.89), np.float32(0.8414)] 
+2026-04-05 06:40:29.070778: Epoch time: 130.7 s 
+2026-04-05 06:40:29.070810: Epoch summary {'completed_epoch': 29, 'next_epoch': 30, 'logged_epochs': 30, 'remaining_epochs': 120, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:40:29.247798: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 30, 'logged_epochs': 30} 
+2026-04-05 06:40:29.248205: Yayy! New best EMA pseudo Dice: 0.8444 
+2026-04-05 06:40:29.422132: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 30, 'logged_epochs': 30} 
+2026-04-05 06:40:29.598218:  
+2026-04-05 06:40:29.598316: Epoch 30 (run 31/150) 
+2026-04-05 06:40:29.598378: Current learning rate: 0.00818 
+2026-04-05 06:42:40.715936: train_loss -0.7849 
+2026-04-05 06:42:40.716446: val_loss -0.7656 
+2026-04-05 06:42:40.716503: Pseudo dice [np.float32(0.9041), np.float32(0.8548), np.float32(0.813)] 
+2026-04-05 06:42:40.716560: Epoch time: 131.12 s 
+2026-04-05 06:42:40.716593: Epoch summary {'completed_epoch': 30, 'next_epoch': 31, 'logged_epochs': 31, 'remaining_epochs': 119, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:42:40.900906: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 31, 'logged_epochs': 31} 
+2026-04-05 06:42:40.901294: Yayy! New best EMA pseudo Dice: 0.8457 
+2026-04-05 06:42:41.088635: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 31, 'logged_epochs': 31} 
+2026-04-05 06:42:41.264562:  
+2026-04-05 06:42:41.264644: Epoch 31 (run 32/150) 
+2026-04-05 06:42:41.264710: Current learning rate: 0.00812 
+2026-04-05 06:44:52.663745: train_loss -0.7875 
+2026-04-05 06:44:52.664290: val_loss -0.7712 
+2026-04-05 06:44:52.664348: Pseudo dice [np.float32(0.8995), np.float32(0.852), np.float32(0.8328)] 
+2026-04-05 06:44:52.664404: Epoch time: 131.4 s 
+2026-04-05 06:44:52.664442: Epoch summary {'completed_epoch': 31, 'next_epoch': 32, 'logged_epochs': 32, 'remaining_epochs': 118, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:44:52.845964: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 32, 'logged_epochs': 32} 
+2026-04-05 06:44:52.846405: Yayy! New best EMA pseudo Dice: 0.8473 
+2026-04-05 06:44:53.019421: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 32, 'logged_epochs': 32} 
+2026-04-05 06:44:53.196433:  
+2026-04-05 06:44:53.196523: Epoch 32 (run 33/150) 
+2026-04-05 06:44:53.196583: Current learning rate: 0.00806 
+2026-04-05 06:47:04.520276: train_loss -0.7896 
+2026-04-05 06:47:04.521926: val_loss -0.7482 
+2026-04-05 06:47:04.521991: Pseudo dice [np.float32(0.9029), np.float32(0.8663), np.float32(0.8473)] 
+2026-04-05 06:47:04.522051: Epoch time: 131.32 s 
+2026-04-05 06:47:04.522086: Epoch summary {'completed_epoch': 32, 'next_epoch': 33, 'logged_epochs': 33, 'remaining_epochs': 117, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:47:04.704195: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 33, 'logged_epochs': 33} 
+2026-04-05 06:47:04.704609: Yayy! New best EMA pseudo Dice: 0.8498 
+2026-04-05 06:47:04.881877: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 33, 'logged_epochs': 33} 
+2026-04-05 06:47:05.057516:  
+2026-04-05 06:47:05.057591: Epoch 33 (run 34/150) 
+2026-04-05 06:47:05.057658: Current learning rate: 0.008 
+2026-04-05 06:49:16.370281: train_loss -0.8039 
+2026-04-05 06:49:16.370774: val_loss -0.776 
+2026-04-05 06:49:16.370844: Pseudo dice [np.float32(0.9038), np.float32(0.8666), np.float32(0.8258)] 
+2026-04-05 06:49:16.370911: Epoch time: 131.31 s 
+2026-04-05 06:49:16.370949: Epoch summary {'completed_epoch': 33, 'next_epoch': 34, 'logged_epochs': 34, 'remaining_epochs': 116, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:49:16.556184: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 34, 'logged_epochs': 34} 
+2026-04-05 06:49:16.556624: Yayy! New best EMA pseudo Dice: 0.8513 
+2026-04-05 06:49:16.729526: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 34, 'logged_epochs': 34} 
+2026-04-05 06:49:17.262947:  
+2026-04-05 06:49:17.263012: Epoch 34 (run 35/150) 
+2026-04-05 06:49:17.263062: Current learning rate: 0.00793 
+2026-04-05 06:51:28.510916: train_loss -0.8043 
+2026-04-05 06:51:28.511228: val_loss -0.7623 
+2026-04-05 06:51:28.511286: Pseudo dice [np.float32(0.8941), np.float32(0.8433), np.float32(0.8238)] 
+2026-04-05 06:51:28.511340: Epoch time: 131.25 s 
+2026-04-05 06:51:28.511372: Epoch summary {'completed_epoch': 34, 'next_epoch': 35, 'logged_epochs': 35, 'remaining_epochs': 115, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:51:28.701092: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 35, 'logged_epochs': 35} 
+2026-04-05 06:51:28.701598: Yayy! New best EMA pseudo Dice: 0.8516 
+2026-04-05 06:51:28.879567: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 35, 'logged_epochs': 35} 
+2026-04-05 06:51:29.064504:  
+2026-04-05 06:51:29.064608: Epoch 35 (run 36/150) 
+2026-04-05 06:51:29.064734: Current learning rate: 0.00787 
+2026-04-05 06:53:40.374903: train_loss -0.8086 
+2026-04-05 06:53:40.375367: val_loss -0.7544 
+2026-04-05 06:53:40.375432: Pseudo dice [np.float32(0.9012), np.float32(0.8605), np.float32(0.7961)] 
+2026-04-05 06:53:40.375492: Epoch time: 131.31 s 
+2026-04-05 06:53:40.375528: Epoch summary {'completed_epoch': 35, 'next_epoch': 36, 'logged_epochs': 36, 'remaining_epochs': 114, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:53:40.564589: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 36, 'logged_epochs': 36} 
+2026-04-05 06:53:40.565063: Yayy! New best EMA pseudo Dice: 0.8517 
+2026-04-05 06:53:40.741034: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 36, 'logged_epochs': 36} 
+2026-04-05 06:53:40.921242:  
+2026-04-05 06:53:40.921312: Epoch 36 (run 37/150) 
+2026-04-05 06:53:40.921366: Current learning rate: 0.00781 
+2026-04-05 06:55:52.307458: train_loss -0.8023 
+2026-04-05 06:55:52.307883: val_loss -0.7754 
+2026-04-05 06:55:52.307947: Pseudo dice [np.float32(0.9094), np.float32(0.8763), np.float32(0.8391)] 
+2026-04-05 06:55:52.308006: Epoch time: 131.39 s 
+2026-04-05 06:55:52.308041: Epoch summary {'completed_epoch': 36, 'next_epoch': 37, 'logged_epochs': 37, 'remaining_epochs': 113, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:55:54.368708: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 37, 'logged_epochs': 37} 
+2026-04-05 06:55:54.369168: Yayy! New best EMA pseudo Dice: 0.854 
+2026-04-05 06:55:56.183020: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 37, 'logged_epochs': 37} 
+2026-04-05 06:55:56.372092:  
+2026-04-05 06:55:56.372231: Epoch 37 (run 38/150) 
+2026-04-05 06:55:56.372322: Current learning rate: 0.00775 
+2026-04-05 06:58:07.633343: train_loss -0.8182 
+2026-04-05 06:58:07.634062: val_loss -0.7789 
+2026-04-05 06:58:07.634118: Pseudo dice [np.float32(0.9072), np.float32(0.8704), np.float32(0.8415)] 
+2026-04-05 06:58:07.634172: Epoch time: 131.26 s 
+2026-04-05 06:58:07.634203: Epoch summary {'completed_epoch': 37, 'next_epoch': 38, 'logged_epochs': 38, 'remaining_epochs': 112, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 06:58:07.923642: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 38, 'logged_epochs': 38} 
+2026-04-05 06:58:07.924151: Yayy! New best EMA pseudo Dice: 0.8559 
+2026-04-05 06:58:08.185888: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 38, 'logged_epochs': 38} 
+2026-04-05 06:58:08.386469:  
+2026-04-05 06:58:08.386547: Epoch 38 (run 39/150) 
+2026-04-05 06:58:08.386623: Current learning rate: 0.00769 
+2026-04-05 07:00:19.695593: train_loss -0.8094 
+2026-04-05 07:00:19.695993: val_loss -0.7682 
+2026-04-05 07:00:19.696051: Pseudo dice [np.float32(0.8938), np.float32(0.8536), np.float32(0.8092)] 
+2026-04-05 07:00:19.696107: Epoch time: 131.31 s 
+2026-04-05 07:00:19.696139: Epoch summary {'completed_epoch': 38, 'next_epoch': 39, 'logged_epochs': 39, 'remaining_epochs': 111, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:00:19.983197: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 39, 'logged_epochs': 39} 
+2026-04-05 07:00:20.169718:  
+2026-04-05 07:00:20.169811: Epoch 39 (run 40/150) 
+2026-04-05 07:00:20.169864: Current learning rate: 0.00763 
+2026-04-05 07:02:31.434615: train_loss -0.8193 
+2026-04-05 07:02:31.435306: val_loss -0.7364 
+2026-04-05 07:02:31.435363: Pseudo dice [np.float32(0.898), np.float32(0.8196), np.float32(0.8109)] 
+2026-04-05 07:02:31.435418: Epoch time: 131.27 s 
+2026-04-05 07:02:31.435456: Epoch summary {'completed_epoch': 39, 'next_epoch': 40, 'logged_epochs': 40, 'remaining_epochs': 110, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:02:31.712741: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 40, 'logged_epochs': 40} 
+2026-04-05 07:02:31.900342:  
+2026-04-05 07:02:31.900411: Epoch 40 (run 41/150) 
+2026-04-05 07:02:31.900478: Current learning rate: 0.00756 
+2026-04-05 07:04:43.309744: train_loss -0.8173 
+2026-04-05 07:04:43.310288: val_loss -0.7974 
+2026-04-05 07:04:43.310346: Pseudo dice [np.float32(0.9151), np.float32(0.88), np.float32(0.82)] 
+2026-04-05 07:04:43.310451: Epoch time: 131.41 s 
+2026-04-05 07:04:43.310485: Epoch summary {'completed_epoch': 40, 'next_epoch': 41, 'logged_epochs': 41, 'remaining_epochs': 109, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:04:43.581411: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 41, 'logged_epochs': 41} 
+2026-04-05 07:04:43.581883: Yayy! New best EMA pseudo Dice: 0.856 
+2026-04-05 07:04:43.834536: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 41, 'logged_epochs': 41} 
+2026-04-05 07:04:44.016841:  
+2026-04-05 07:04:44.016916: Epoch 41 (run 42/150) 
+2026-04-05 07:04:44.016982: Current learning rate: 0.0075 
+2026-04-05 07:06:55.595062: train_loss -0.8226 
+2026-04-05 07:06:55.595533: val_loss -0.747 
+2026-04-05 07:06:55.595596: Pseudo dice [np.float32(0.9054), np.float32(0.8373), np.float32(0.7831)] 
+2026-04-05 07:06:55.595657: Epoch time: 131.58 s 
+2026-04-05 07:06:55.595693: Epoch summary {'completed_epoch': 41, 'next_epoch': 42, 'logged_epochs': 42, 'remaining_epochs': 108, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:06:55.863692: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 42, 'logged_epochs': 42} 
+2026-04-05 07:06:56.046803:  
+2026-04-05 07:06:56.046898: Epoch 42 (run 43/150) 
+2026-04-05 07:06:56.047002: Current learning rate: 0.00744 
+2026-04-05 07:09:07.519529: train_loss -0.8129 
+2026-04-05 07:09:07.520048: val_loss -0.778 
+2026-04-05 07:09:07.520108: Pseudo dice [np.float32(0.9129), np.float32(0.8827), np.float32(0.8337)] 
+2026-04-05 07:09:07.520168: Epoch time: 131.47 s 
+2026-04-05 07:09:07.520201: Epoch summary {'completed_epoch': 42, 'next_epoch': 43, 'logged_epochs': 43, 'remaining_epochs': 107, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:09:07.794205: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 43, 'logged_epochs': 43} 
+2026-04-05 07:09:07.794719: Yayy! New best EMA pseudo Dice: 0.8568 
+2026-04-05 07:09:08.063092: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 43, 'logged_epochs': 43} 
+2026-04-05 07:09:08.247251:  
+2026-04-05 07:09:08.247338: Epoch 43 (run 44/150) 
+2026-04-05 07:09:08.247397: Current learning rate: 0.00738 
+2026-04-05 07:11:19.077302: train_loss -0.8232 
+2026-04-05 07:11:19.077878: val_loss -0.7417 
+2026-04-05 07:11:19.077937: Pseudo dice [np.float32(0.9133), np.float32(0.8674), np.float32(0.8542)] 
+2026-04-05 07:11:19.077992: Epoch time: 130.83 s 
+2026-04-05 07:11:19.078024: Epoch summary {'completed_epoch': 43, 'next_epoch': 44, 'logged_epochs': 44, 'remaining_epochs': 106, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:11:19.366422: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 44, 'logged_epochs': 44} 
+2026-04-05 07:11:19.366870: Yayy! New best EMA pseudo Dice: 0.8589 
+2026-04-05 07:11:19.622962: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 44, 'logged_epochs': 44} 
+2026-04-05 07:11:19.807306:  
+2026-04-05 07:11:19.807395: Epoch 44 (run 45/150) 
+2026-04-05 07:11:19.807472: Current learning rate: 0.00732 
+2026-04-05 07:13:30.917204: train_loss -0.8139 
+2026-04-05 07:13:30.917708: val_loss -0.7999 
+2026-04-05 07:13:30.917770: Pseudo dice [np.float32(0.9111), np.float32(0.8729), np.float32(0.8523)] 
+2026-04-05 07:13:30.917831: Epoch time: 131.11 s 
+2026-04-05 07:13:30.917866: Epoch summary {'completed_epoch': 44, 'next_epoch': 45, 'logged_epochs': 45, 'remaining_epochs': 105, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:13:31.191640: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 45, 'logged_epochs': 45} 
+2026-04-05 07:13:31.192135: Yayy! New best EMA pseudo Dice: 0.8609 
+2026-04-05 07:13:31.443411: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 45, 'logged_epochs': 45} 
+2026-04-05 07:13:31.626380:  
+2026-04-05 07:13:31.626470: Epoch 45 (run 46/150) 
+2026-04-05 07:13:31.626548: Current learning rate: 0.00725 
+2026-04-05 07:15:43.107171: train_loss -0.8223 
+2026-04-05 07:15:43.107557: val_loss -0.8243 
+2026-04-05 07:15:43.107616: Pseudo dice [np.float32(0.9219), np.float32(0.9051), np.float32(0.8662)] 
+2026-04-05 07:15:43.107671: Epoch time: 131.48 s 
+2026-04-05 07:15:43.107704: Epoch summary {'completed_epoch': 45, 'next_epoch': 46, 'logged_epochs': 46, 'remaining_epochs': 104, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:15:43.382835: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 46, 'logged_epochs': 46} 
+2026-04-05 07:15:43.383276: Yayy! New best EMA pseudo Dice: 0.8646 
+2026-04-05 07:15:43.645105: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 46, 'logged_epochs': 46} 
+2026-04-05 07:15:43.832240:  
+2026-04-05 07:15:43.832316: Epoch 46 (run 47/150) 
+2026-04-05 07:15:43.832393: Current learning rate: 0.00719 
+2026-04-05 07:17:55.044343: train_loss -0.8138 
+2026-04-05 07:17:55.044780: val_loss -0.774 
+2026-04-05 07:17:55.044838: Pseudo dice [np.float32(0.9044), np.float32(0.8594), np.float32(0.8522)] 
+2026-04-05 07:17:55.044892: Epoch time: 131.21 s 
+2026-04-05 07:17:55.044937: Epoch summary {'completed_epoch': 46, 'next_epoch': 47, 'logged_epochs': 47, 'remaining_epochs': 103, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:17:55.330331: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 47, 'logged_epochs': 47} 
+2026-04-05 07:17:55.330768: Yayy! New best EMA pseudo Dice: 0.8653 
+2026-04-05 07:17:55.584274: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 47, 'logged_epochs': 47} 
+2026-04-05 07:17:55.761364:  
+2026-04-05 07:17:55.761443: Epoch 47 (run 48/150) 
+2026-04-05 07:17:55.761518: Current learning rate: 0.00713 
+2026-04-05 07:20:07.175361: train_loss -0.8044 
+2026-04-05 07:20:07.175957: val_loss -0.7409 
+2026-04-05 07:20:07.176013: Pseudo dice [np.float32(0.8842), np.float32(0.8401), np.float32(0.7987)] 
+2026-04-05 07:20:07.176072: Epoch time: 131.41 s 
+2026-04-05 07:20:07.176104: Epoch summary {'completed_epoch': 47, 'next_epoch': 48, 'logged_epochs': 48, 'remaining_epochs': 102, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:20:07.453506: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 48, 'logged_epochs': 48} 
+2026-04-05 07:20:07.642624:  
+2026-04-05 07:20:07.642771: Epoch 48 (run 49/150) 
+2026-04-05 07:20:07.642841: Current learning rate: 0.00707 
+2026-04-05 07:22:18.674181: train_loss -0.824 
+2026-04-05 07:22:18.674672: val_loss -0.7984 
+2026-04-05 07:22:18.674737: Pseudo dice [np.float32(0.9139), np.float32(0.9021), np.float32(0.8744)] 
+2026-04-05 07:22:18.674802: Epoch time: 131.03 s 
+2026-04-05 07:22:18.674849: Epoch summary {'completed_epoch': 48, 'next_epoch': 49, 'logged_epochs': 49, 'remaining_epochs': 101, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:22:18.930063: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 49, 'logged_epochs': 49} 
+2026-04-05 07:22:18.930546: Yayy! New best EMA pseudo Dice: 0.8663 
+2026-04-05 07:22:19.177349: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 49, 'logged_epochs': 49} 
+2026-04-05 07:22:19.352951:  
+2026-04-05 07:22:19.353046: Epoch 49 (run 50/150) 
+2026-04-05 07:22:19.353103: Current learning rate: 0.007 
+2026-04-05 07:24:30.838790: train_loss -0.8162 
+2026-04-05 07:24:30.839322: val_loss -0.7793 
+2026-04-05 07:24:30.839379: Pseudo dice [np.float32(0.8955), np.float32(0.8593), np.float32(0.8581)] 
+2026-04-05 07:24:30.839440: Epoch time: 131.49 s 
+2026-04-05 07:24:30.839484: Epoch summary {'completed_epoch': 49, 'next_epoch': 50, 'logged_epochs': 50, 'remaining_epochs': 100, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:24:31.103706: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 50, 'logged_epochs': 50} 
+2026-04-05 07:24:31.104216: Yayy! New best EMA pseudo Dice: 0.8668 
+2026-04-05 07:24:31.350092: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 50, 'logged_epochs': 50} 
+2026-04-05 07:24:31.539042:  
+2026-04-05 07:24:31.539117: Epoch 50 (run 51/150) 
+2026-04-05 07:24:31.539179: Current learning rate: 0.00694 
+2026-04-05 07:26:42.939663: train_loss -0.8292 
+2026-04-05 07:26:42.940177: val_loss -0.7859 
+2026-04-05 07:26:42.940244: Pseudo dice [np.float32(0.9091), np.float32(0.8652), np.float32(0.8273)] 
+2026-04-05 07:26:42.940298: Epoch time: 131.4 s 
+2026-04-05 07:26:42.940329: Epoch summary {'completed_epoch': 50, 'next_epoch': 51, 'logged_epochs': 51, 'remaining_epochs': 99, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:26:43.213970: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 51, 'logged_epochs': 51} 
+2026-04-05 07:26:43.214391: Yayy! New best EMA pseudo Dice: 0.8668 
+2026-04-05 07:26:43.468040: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 51, 'logged_epochs': 51} 
+2026-04-05 07:26:43.645701:  
+2026-04-05 07:26:43.645776: Epoch 51 (run 52/150) 
+2026-04-05 07:26:43.645859: Current learning rate: 0.00688 
+2026-04-05 07:28:55.136147: train_loss -0.8178 
+2026-04-05 07:28:55.136699: val_loss -0.7797 
+2026-04-05 07:28:55.136765: Pseudo dice [np.float32(0.9091), np.float32(0.8631), np.float32(0.8256)] 
+2026-04-05 07:28:55.136831: Epoch time: 131.49 s 
+2026-04-05 07:28:55.136867: Epoch summary {'completed_epoch': 51, 'next_epoch': 52, 'logged_epochs': 52, 'remaining_epochs': 98, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:28:55.412204: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 52, 'logged_epochs': 52} 
+2026-04-05 07:28:55.595379:  
+2026-04-05 07:28:55.595472: Epoch 52 (run 53/150) 
+2026-04-05 07:28:55.595529: Current learning rate: 0.00682 
+2026-04-05 07:31:07.045787: train_loss -0.8309 
+2026-04-05 07:31:07.046299: val_loss -0.7823 
+2026-04-05 07:31:07.046363: Pseudo dice [np.float32(0.9095), np.float32(0.8639), np.float32(0.8302)] 
+2026-04-05 07:31:07.046432: Epoch time: 131.45 s 
+2026-04-05 07:31:07.046473: Epoch summary {'completed_epoch': 52, 'next_epoch': 53, 'logged_epochs': 53, 'remaining_epochs': 97, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:31:07.314169: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 53, 'logged_epochs': 53} 
+2026-04-05 07:31:07.314605: Yayy! New best EMA pseudo Dice: 0.8668 
+2026-04-05 07:31:07.565303: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 53, 'logged_epochs': 53} 
+2026-04-05 07:31:07.743086:  
+2026-04-05 07:31:07.743160: Epoch 53 (run 54/150) 
+2026-04-05 07:31:07.743235: Current learning rate: 0.00675 
+2026-04-05 07:33:19.294316: train_loss -0.8311 
+2026-04-05 07:33:19.294804: val_loss -0.7912 
+2026-04-05 07:33:19.294864: Pseudo dice [np.float32(0.9186), np.float32(0.863), np.float32(0.8439)] 
+2026-04-05 07:33:19.294923: Epoch time: 131.55 s 
+2026-04-05 07:33:19.294958: Epoch summary {'completed_epoch': 53, 'next_epoch': 54, 'logged_epochs': 54, 'remaining_epochs': 96, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:33:19.559226: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 54, 'logged_epochs': 54} 
+2026-04-05 07:33:19.559684: Yayy! New best EMA pseudo Dice: 0.8677 
+2026-04-05 07:33:19.807958: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 54, 'logged_epochs': 54} 
+2026-04-05 07:33:19.996492:  
+2026-04-05 07:33:19.996564: Epoch 54 (run 55/150) 
+2026-04-05 07:33:19.996633: Current learning rate: 0.00669 
+2026-04-05 07:35:31.267827: train_loss -0.8278 
+2026-04-05 07:35:31.268412: val_loss -0.7793 
+2026-04-05 07:35:31.268481: Pseudo dice [np.float32(0.9151), np.float32(0.8618), np.float32(0.8353)] 
+2026-04-05 07:35:31.268545: Epoch time: 131.27 s 
+2026-04-05 07:35:31.268585: Epoch summary {'completed_epoch': 54, 'next_epoch': 55, 'logged_epochs': 55, 'remaining_epochs': 95, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:35:31.549201: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 55, 'logged_epochs': 55} 
+2026-04-05 07:35:31.549629: Yayy! New best EMA pseudo Dice: 0.868 
+2026-04-05 07:35:31.793791: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 55, 'logged_epochs': 55} 
+2026-04-05 07:35:31.982548:  
+2026-04-05 07:35:31.982625: Epoch 55 (run 56/150) 
+2026-04-05 07:35:31.982690: Current learning rate: 0.00663 
+2026-04-05 07:37:43.486120: train_loss -0.8309 
+2026-04-05 07:37:43.487646: val_loss -0.7827 
+2026-04-05 07:37:43.487706: Pseudo dice [np.float32(0.9189), np.float32(0.8763), np.float32(0.8373)] 
+2026-04-05 07:37:43.487764: Epoch time: 131.5 s 
+2026-04-05 07:37:43.487797: Epoch summary {'completed_epoch': 55, 'next_epoch': 56, 'logged_epochs': 56, 'remaining_epochs': 94, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:37:43.793274: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 56, 'logged_epochs': 56} 
+2026-04-05 07:37:43.793722: Yayy! New best EMA pseudo Dice: 0.8689 
+2026-04-05 07:37:44.106608: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 56, 'logged_epochs': 56} 
+2026-04-05 07:37:44.290745:  
+2026-04-05 07:37:44.290836: Epoch 56 (run 57/150) 
+2026-04-05 07:37:44.290919: Current learning rate: 0.00657 
+2026-04-05 07:39:55.881004: train_loss -0.8346 
+2026-04-05 07:39:55.881415: val_loss -0.7662 
+2026-04-05 07:39:55.881477: Pseudo dice [np.float32(0.9126), np.float32(0.8749), np.float32(0.8489)] 
+2026-04-05 07:39:55.881533: Epoch time: 131.59 s 
+2026-04-05 07:39:55.881565: Epoch summary {'completed_epoch': 56, 'next_epoch': 57, 'logged_epochs': 57, 'remaining_epochs': 93, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:39:56.194161: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 57, 'logged_epochs': 57} 
+2026-04-05 07:39:56.194688: Yayy! New best EMA pseudo Dice: 0.8699 
+2026-04-05 07:39:56.514811: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 57, 'logged_epochs': 57} 
+2026-04-05 07:39:56.690641:  
+2026-04-05 07:39:56.690720: Epoch 57 (run 58/150) 
+2026-04-05 07:39:56.690793: Current learning rate: 0.0065 
+2026-04-05 07:42:08.282099: train_loss -0.8309 
+2026-04-05 07:42:08.282642: val_loss -0.7907 
+2026-04-05 07:42:08.282700: Pseudo dice [np.float32(0.9057), np.float32(0.8776), np.float32(0.8358)] 
+2026-04-05 07:42:08.282753: Epoch time: 131.59 s 
+2026-04-05 07:42:08.282785: Epoch summary {'completed_epoch': 57, 'next_epoch': 58, 'logged_epochs': 58, 'remaining_epochs': 92, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:42:08.586457: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 58, 'logged_epochs': 58} 
+2026-04-05 07:42:08.586999: Yayy! New best EMA pseudo Dice: 0.8702 
+2026-04-05 07:42:08.893925: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 58, 'logged_epochs': 58} 
+2026-04-05 07:42:09.072592:  
+2026-04-05 07:42:09.072665: Epoch 58 (run 59/150) 
+2026-04-05 07:42:09.072730: Current learning rate: 0.00644 
+2026-04-05 07:44:20.693889: train_loss -0.8281 
+2026-04-05 07:44:20.694292: val_loss -0.7632 
+2026-04-05 07:44:20.694350: Pseudo dice [np.float32(0.903), np.float32(0.8458), np.float32(0.8357)] 
+2026-04-05 07:44:20.694434: Epoch time: 131.62 s 
+2026-04-05 07:44:20.694477: Epoch summary {'completed_epoch': 58, 'next_epoch': 59, 'logged_epochs': 59, 'remaining_epochs': 91, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:44:20.988305: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 59, 'logged_epochs': 59} 
+2026-04-05 07:44:21.165833:  
+2026-04-05 07:44:21.165908: Epoch 59 (run 60/150) 
+2026-04-05 07:44:21.165969: Current learning rate: 0.00638 
+2026-04-05 07:46:32.848895: train_loss -0.8365 
+2026-04-05 07:46:32.849215: val_loss -0.8079 
+2026-04-05 07:46:32.849282: Pseudo dice [np.float32(0.9207), np.float32(0.8924), np.float32(0.8459)] 
+2026-04-05 07:46:32.849336: Epoch time: 131.68 s 
+2026-04-05 07:46:32.849367: Epoch summary {'completed_epoch': 59, 'next_epoch': 60, 'logged_epochs': 60, 'remaining_epochs': 90, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:46:33.150826: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 60, 'logged_epochs': 60} 
+2026-04-05 07:46:33.151237: Yayy! New best EMA pseudo Dice: 0.871 
+2026-04-05 07:46:33.441581: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 60, 'logged_epochs': 60} 
+2026-04-05 07:46:33.623966:  
+2026-04-05 07:46:33.624112: Epoch 60 (run 61/150) 
+2026-04-05 07:46:33.624182: Current learning rate: 0.00631 
+2026-04-05 07:48:44.700807: train_loss -0.8298 
+2026-04-05 07:48:44.701409: val_loss -0.8073 
+2026-04-05 07:48:44.701469: Pseudo dice [np.float32(0.9128), np.float32(0.9026), np.float32(0.8516)] 
+2026-04-05 07:48:44.701528: Epoch time: 131.08 s 
+2026-04-05 07:48:44.701559: Epoch summary {'completed_epoch': 60, 'next_epoch': 61, 'logged_epochs': 61, 'remaining_epochs': 89, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:48:45.016120: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 61, 'logged_epochs': 61} 
+2026-04-05 07:48:45.016580: Yayy! New best EMA pseudo Dice: 0.8728 
+2026-04-05 07:48:45.320402: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 61, 'logged_epochs': 61} 
+2026-04-05 07:48:45.503070:  
+2026-04-05 07:48:45.503151: Epoch 61 (run 62/150) 
+2026-04-05 07:48:45.503227: Current learning rate: 0.00625 
+2026-04-05 07:50:57.077282: train_loss -0.834 
+2026-04-05 07:50:57.077735: val_loss -0.7917 
+2026-04-05 07:50:57.077802: Pseudo dice [np.float32(0.918), np.float32(0.8849), np.float32(0.8285)] 
+2026-04-05 07:50:57.077867: Epoch time: 131.57 s 
+2026-04-05 07:50:57.077902: Epoch summary {'completed_epoch': 61, 'next_epoch': 62, 'logged_epochs': 62, 'remaining_epochs': 88, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:50:57.378195: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 62, 'logged_epochs': 62} 
+2026-04-05 07:50:57.378693: Yayy! New best EMA pseudo Dice: 0.8733 
+2026-04-05 07:50:57.680644: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 62, 'logged_epochs': 62} 
+2026-04-05 07:50:57.872601:  
+2026-04-05 07:50:57.872721: Epoch 62 (run 63/150) 
+2026-04-05 07:50:57.872798: Current learning rate: 0.00619 
+2026-04-05 07:53:09.515782: train_loss -0.8246 
+2026-04-05 07:53:09.516311: val_loss -0.7514 
+2026-04-05 07:53:09.516366: Pseudo dice [np.float32(0.9116), np.float32(0.8264), np.float32(0.8133)] 
+2026-04-05 07:53:09.516421: Epoch time: 131.64 s 
+2026-04-05 07:53:09.516455: Epoch summary {'completed_epoch': 62, 'next_epoch': 63, 'logged_epochs': 63, 'remaining_epochs': 87, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:53:09.821454: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 63, 'logged_epochs': 63} 
+2026-04-05 07:53:10.001588:  
+2026-04-05 07:53:10.001665: Epoch 63 (run 64/150) 
+2026-04-05 07:53:10.001738: Current learning rate: 0.00612 
+2026-04-05 07:55:21.477524: train_loss -0.8368 
+2026-04-05 07:55:21.478209: val_loss -0.7693 
+2026-04-05 07:55:21.478273: Pseudo dice [np.float32(0.9072), np.float32(0.8263), np.float32(0.8466)] 
+2026-04-05 07:55:21.478327: Epoch time: 131.48 s 
+2026-04-05 07:55:21.478357: Epoch summary {'completed_epoch': 63, 'next_epoch': 64, 'logged_epochs': 64, 'remaining_epochs': 86, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:55:21.808623: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 64, 'logged_epochs': 64} 
+2026-04-05 07:55:21.990643:  
+2026-04-05 07:55:21.990718: Epoch 64 (run 65/150) 
+2026-04-05 07:55:21.990780: Current learning rate: 0.00606 
+2026-04-05 07:57:33.526689: train_loss -0.8181 
+2026-04-05 07:57:33.528255: val_loss -0.7841 
+2026-04-05 07:57:33.528317: Pseudo dice [np.float32(0.9187), np.float32(0.8575), np.float32(0.8603)] 
+2026-04-05 07:57:33.528377: Epoch time: 131.54 s 
+2026-04-05 07:57:33.528411: Epoch summary {'completed_epoch': 64, 'next_epoch': 65, 'logged_epochs': 65, 'remaining_epochs': 85, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:57:33.862633: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 65, 'logged_epochs': 65} 
+2026-04-05 07:57:34.064008:  
+2026-04-05 07:57:34.064092: Epoch 65 (run 66/150) 
+2026-04-05 07:57:34.064171: Current learning rate: 0.006 
+2026-04-05 07:59:45.148177: train_loss -0.8292 
+2026-04-05 07:59:45.148896: val_loss -0.7976 
+2026-04-05 07:59:45.148958: Pseudo dice [np.float32(0.9124), np.float32(0.8701), np.float32(0.8964)] 
+2026-04-05 07:59:45.149018: Epoch time: 131.08 s 
+2026-04-05 07:59:45.149053: Epoch summary {'completed_epoch': 65, 'next_epoch': 66, 'logged_epochs': 66, 'remaining_epochs': 84, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 07:59:45.511707: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 66, 'logged_epochs': 66} 
+2026-04-05 07:59:45.690275:  
+2026-04-05 07:59:45.690346: Epoch 66 (run 67/150) 
+2026-04-05 07:59:45.690403: Current learning rate: 0.00593 
+2026-04-05 08:01:56.889524: train_loss -0.828 
+2026-04-05 08:01:56.890041: val_loss -0.8169 
+2026-04-05 08:01:56.890097: Pseudo dice [np.float32(0.915), np.float32(0.8806), np.float32(0.8559)] 
+2026-04-05 08:01:56.890151: Epoch time: 131.2 s 
+2026-04-05 08:01:56.890182: Epoch summary {'completed_epoch': 66, 'next_epoch': 67, 'logged_epochs': 67, 'remaining_epochs': 83, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:01:57.211624: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 67, 'logged_epochs': 67} 
+2026-04-05 08:01:57.212074: Yayy! New best EMA pseudo Dice: 0.8741 
+2026-04-05 08:01:57.535001: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 67, 'logged_epochs': 67} 
+2026-04-05 08:01:57.714563:  
+2026-04-05 08:01:57.714658: Epoch 67 (run 68/150) 
+2026-04-05 08:01:57.714729: Current learning rate: 0.00587 
+2026-04-05 08:04:09.025363: train_loss -0.8415 
+2026-04-05 08:04:09.026219: val_loss -0.7933 
+2026-04-05 08:04:09.026300: Pseudo dice [np.float32(0.9015), np.float32(0.8732), np.float32(0.8474)] 
+2026-04-05 08:04:09.026365: Epoch time: 131.31 s 
+2026-04-05 08:04:09.026399: Epoch summary {'completed_epoch': 67, 'next_epoch': 68, 'logged_epochs': 68, 'remaining_epochs': 82, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:04:09.377689: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 68, 'logged_epochs': 68} 
+2026-04-05 08:04:09.863543:  
+2026-04-05 08:04:09.863658: Epoch 68 (run 69/150) 
+2026-04-05 08:04:09.863723: Current learning rate: 0.00581 
+2026-04-05 08:06:21.239041: train_loss -0.8422 
+2026-04-05 08:06:21.239449: val_loss -0.7778 
+2026-04-05 08:06:21.239511: Pseudo dice [np.float32(0.9083), np.float32(0.8609), np.float32(0.8637)] 
+2026-04-05 08:06:21.239567: Epoch time: 131.38 s 
+2026-04-05 08:06:21.239599: Epoch summary {'completed_epoch': 68, 'next_epoch': 69, 'logged_epochs': 69, 'remaining_epochs': 81, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:06:21.579843: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 69, 'logged_epochs': 69} 
+2026-04-05 08:06:21.580327: Yayy! New best EMA pseudo Dice: 0.8744 
+2026-04-05 08:06:21.931787: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 69, 'logged_epochs': 69} 
+2026-04-05 08:06:22.123669:  
+2026-04-05 08:06:22.123768: Epoch 69 (run 70/150) 
+2026-04-05 08:06:22.123848: Current learning rate: 0.00574 
+2026-04-05 08:08:32.946668: train_loss -0.8334 
+2026-04-05 08:08:32.947581: val_loss -0.7725 
+2026-04-05 08:08:32.947642: Pseudo dice [np.float32(0.9055), np.float32(0.8596), np.float32(0.8511)] 
+2026-04-05 08:08:32.947697: Epoch time: 130.82 s 
+2026-04-05 08:08:32.947730: Epoch summary {'completed_epoch': 69, 'next_epoch': 70, 'logged_epochs': 70, 'remaining_epochs': 80, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:08:33.287755: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 70, 'logged_epochs': 70} 
+2026-04-05 08:08:33.471074:  
+2026-04-05 08:08:33.471163: Epoch 70 (run 71/150) 
+2026-04-05 08:08:33.471235: Current learning rate: 0.00568 
+2026-04-05 08:10:44.818724: train_loss -0.8412 
+2026-04-05 08:10:44.820090: val_loss -0.7759 
+2026-04-05 08:10:44.820145: Pseudo dice [np.float32(0.9113), np.float32(0.8747), np.float32(0.8429)] 
+2026-04-05 08:10:44.820200: Epoch time: 131.35 s 
+2026-04-05 08:10:44.820232: Epoch summary {'completed_epoch': 70, 'next_epoch': 71, 'logged_epochs': 71, 'remaining_epochs': 79, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:10:45.159823: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 71, 'logged_epochs': 71} 
+2026-04-05 08:10:45.353637:  
+2026-04-05 08:10:45.353712: Epoch 71 (run 72/150) 
+2026-04-05 08:10:45.353773: Current learning rate: 0.00562 
+2026-04-05 08:12:56.485544: train_loss -0.8302 
+2026-04-05 08:12:56.486279: val_loss -0.8257 
+2026-04-05 08:12:56.486339: Pseudo dice [np.float32(0.9219), np.float32(0.9042), np.float32(0.8707)] 
+2026-04-05 08:12:56.486395: Epoch time: 131.13 s 
+2026-04-05 08:12:56.486432: Epoch summary {'completed_epoch': 71, 'next_epoch': 72, 'logged_epochs': 72, 'remaining_epochs': 78, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:12:56.849303: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 72, 'logged_epochs': 72} 
+2026-04-05 08:12:56.849841: Yayy! New best EMA pseudo Dice: 0.8769 
+2026-04-05 08:12:57.204457: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 72, 'logged_epochs': 72} 
+2026-04-05 08:12:57.398184:  
+2026-04-05 08:12:57.398294: Epoch 72 (run 73/150) 
+2026-04-05 08:12:57.398355: Current learning rate: 0.00555 
+2026-04-05 08:15:08.514911: train_loss -0.8376 
+2026-04-05 08:15:08.515854: val_loss -0.7724 
+2026-04-05 08:15:08.515917: Pseudo dice [np.float32(0.9122), np.float32(0.8602), np.float32(0.8507)] 
+2026-04-05 08:15:08.515979: Epoch time: 131.12 s 
+2026-04-05 08:15:08.516014: Epoch summary {'completed_epoch': 72, 'next_epoch': 73, 'logged_epochs': 73, 'remaining_epochs': 77, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:15:08.850998: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 73, 'logged_epochs': 73} 
+2026-04-05 08:15:09.034162:  
+2026-04-05 08:15:09.034286: Epoch 73 (run 74/150) 
+2026-04-05 08:15:09.034350: Current learning rate: 0.00549 
+2026-04-05 08:17:20.427495: train_loss -0.8358 
+2026-04-05 08:17:20.428219: val_loss -0.7571 
+2026-04-05 08:17:20.428282: Pseudo dice [np.float32(0.9018), np.float32(0.8742), np.float32(0.8338)] 
+2026-04-05 08:17:20.428342: Epoch time: 131.39 s 
+2026-04-05 08:17:20.428377: Epoch summary {'completed_epoch': 73, 'next_epoch': 74, 'logged_epochs': 74, 'remaining_epochs': 76, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:17:20.758855: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 74, 'logged_epochs': 74} 
+2026-04-05 08:17:20.959286:  
+2026-04-05 08:17:20.959364: Epoch 74 (run 75/150) 
+2026-04-05 08:17:20.959442: Current learning rate: 0.00542 
+2026-04-05 08:19:32.110865: train_loss -0.8301 
+2026-04-05 08:19:32.111368: val_loss -0.7813 
+2026-04-05 08:19:32.111434: Pseudo dice [np.float32(0.8956), np.float32(0.8543), np.float32(0.8715)] 
+2026-04-05 08:19:32.111495: Epoch time: 131.15 s 
+2026-04-05 08:19:32.111530: Epoch summary {'completed_epoch': 74, 'next_epoch': 75, 'logged_epochs': 75, 'remaining_epochs': 75, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:19:32.434982: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 75, 'logged_epochs': 75} 
+2026-04-05 08:19:32.618210:  
+2026-04-05 08:19:32.618282: Epoch 75 (run 76/150) 
+2026-04-05 08:19:32.618347: Current learning rate: 0.00536 
+2026-04-05 08:21:44.166944: train_loss -0.8493 
+2026-04-05 08:21:44.168494: val_loss -0.8047 
+2026-04-05 08:21:44.168568: Pseudo dice [np.float32(0.9195), np.float32(0.8811), np.float32(0.8716)] 
+2026-04-05 08:21:44.168632: Epoch time: 131.55 s 
+2026-04-05 08:21:44.168667: Epoch summary {'completed_epoch': 75, 'next_epoch': 76, 'logged_epochs': 76, 'remaining_epochs': 74, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:21:44.515133: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 76, 'logged_epochs': 76} 
+2026-04-05 08:21:44.515669: Yayy! New best EMA pseudo Dice: 0.8772 
+2026-04-05 08:21:44.866538: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 76, 'logged_epochs': 76} 
+2026-04-05 08:21:45.047081:  
+2026-04-05 08:21:45.047151: Epoch 76 (run 77/150) 
+2026-04-05 08:21:45.047210: Current learning rate: 0.00529 
+2026-04-05 08:23:56.636146: train_loss -0.8371 
+2026-04-05 08:23:56.636634: val_loss -0.8152 
+2026-04-05 08:23:56.636700: Pseudo dice [np.float32(0.9182), np.float32(0.8947), np.float32(0.8596)] 
+2026-04-05 08:23:56.636765: Epoch time: 131.59 s 
+2026-04-05 08:23:56.636802: Epoch summary {'completed_epoch': 76, 'next_epoch': 77, 'logged_epochs': 77, 'remaining_epochs': 73, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:23:56.968092: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 77, 'logged_epochs': 77} 
+2026-04-05 08:23:56.968606: Yayy! New best EMA pseudo Dice: 0.8786 
+2026-04-05 08:23:57.298361: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 77, 'logged_epochs': 77} 
+2026-04-05 08:23:57.482870:  
+2026-04-05 08:23:57.482947: Epoch 77 (run 78/150) 
+2026-04-05 08:23:57.483015: Current learning rate: 0.00523 
+2026-04-05 08:26:09.172844: train_loss -0.8364 
+2026-04-05 08:26:09.173399: val_loss -0.8021 
+2026-04-05 08:26:09.173467: Pseudo dice [np.float32(0.913), np.float32(0.871), np.float32(0.8425)] 
+2026-04-05 08:26:09.173529: Epoch time: 131.69 s 
+2026-04-05 08:26:09.173566: Epoch summary {'completed_epoch': 77, 'next_epoch': 78, 'logged_epochs': 78, 'remaining_epochs': 72, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:26:09.518467: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 78, 'logged_epochs': 78} 
+2026-04-05 08:26:09.703608:  
+2026-04-05 08:26:09.703675: Epoch 78 (run 79/150) 
+2026-04-05 08:26:09.703736: Current learning rate: 0.00517 
+2026-04-05 08:28:21.429165: train_loss -0.8418 
+2026-04-05 08:28:21.429936: val_loss -0.8124 
+2026-04-05 08:28:21.430002: Pseudo dice [np.float32(0.9157), np.float32(0.8943), np.float32(0.8772)] 
+2026-04-05 08:28:21.430064: Epoch time: 131.73 s 
+2026-04-05 08:28:21.430101: Epoch summary {'completed_epoch': 78, 'next_epoch': 79, 'logged_epochs': 79, 'remaining_epochs': 71, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:28:21.780648: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 79, 'logged_epochs': 79} 
+2026-04-05 08:28:21.781216: Yayy! New best EMA pseudo Dice: 0.88 
+2026-04-05 08:28:22.096000: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 79, 'logged_epochs': 79} 
+2026-04-05 08:28:22.284666:  
+2026-04-05 08:28:22.284756: Epoch 79 (run 80/150) 
+2026-04-05 08:28:22.284825: Current learning rate: 0.0051 
+2026-04-05 08:30:34.088646: train_loss -0.8255 
+2026-04-05 08:30:34.089650: val_loss -0.7851 
+2026-04-05 08:30:34.089714: Pseudo dice [np.float32(0.9299), np.float32(0.876), np.float32(0.8442)] 
+2026-04-05 08:30:34.089769: Epoch time: 131.8 s 
+2026-04-05 08:30:34.089800: Epoch summary {'completed_epoch': 79, 'next_epoch': 80, 'logged_epochs': 80, 'remaining_epochs': 70, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:30:34.404359: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 80, 'logged_epochs': 80} 
+2026-04-05 08:30:34.404840: Yayy! New best EMA pseudo Dice: 0.8804 
+2026-04-05 08:30:34.711720: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 80, 'logged_epochs': 80} 
+2026-04-05 08:30:34.893593:  
+2026-04-05 08:30:34.893665: Epoch 80 (run 81/150) 
+2026-04-05 08:30:34.893721: Current learning rate: 0.00504 
+2026-04-05 08:32:46.476704: train_loss -0.8476 
+2026-04-05 08:32:46.477536: val_loss -0.7894 
+2026-04-05 08:32:46.477593: Pseudo dice [np.float32(0.9154), np.float32(0.8859), np.float32(0.8433)] 
+2026-04-05 08:32:46.477651: Epoch time: 131.58 s 
+2026-04-05 08:32:46.477683: Epoch summary {'completed_epoch': 80, 'next_epoch': 81, 'logged_epochs': 81, 'remaining_epochs': 69, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:32:46.794080: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 81, 'logged_epochs': 81} 
+2026-04-05 08:32:46.794590: Yayy! New best EMA pseudo Dice: 0.8805 
+2026-04-05 08:32:47.089383: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 81, 'logged_epochs': 81} 
+2026-04-05 08:32:47.280607:  
+2026-04-05 08:32:47.280693: Epoch 81 (run 82/150) 
+2026-04-05 08:32:47.280762: Current learning rate: 0.00497 
+2026-04-05 08:34:58.731768: train_loss -0.8363 
+2026-04-05 08:34:58.732194: val_loss -0.8254 
+2026-04-05 08:34:58.732252: Pseudo dice [np.float32(0.9123), np.float32(0.9043), np.float32(0.8563)] 
+2026-04-05 08:34:58.732309: Epoch time: 131.45 s 
+2026-04-05 08:34:58.732342: Epoch summary {'completed_epoch': 81, 'next_epoch': 82, 'logged_epochs': 82, 'remaining_epochs': 68, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:34:59.032969: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 82, 'logged_epochs': 82} 
+2026-04-05 08:34:59.033438: Yayy! New best EMA pseudo Dice: 0.8815 
+2026-04-05 08:34:59.332212: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 82, 'logged_epochs': 82} 
+2026-04-05 08:34:59.513541:  
+2026-04-05 08:34:59.513673: Epoch 82 (run 83/150) 
+2026-04-05 08:34:59.513730: Current learning rate: 0.00491 
+2026-04-05 08:37:11.146993: train_loss -0.8346 
+2026-04-05 08:37:11.147728: val_loss -0.8013 
+2026-04-05 08:37:11.147788: Pseudo dice [np.float32(0.9217), np.float32(0.9026), np.float32(0.8424)] 
+2026-04-05 08:37:11.147842: Epoch time: 131.63 s 
+2026-04-05 08:37:11.147872: Epoch summary {'completed_epoch': 82, 'next_epoch': 83, 'logged_epochs': 83, 'remaining_epochs': 67, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:37:11.472643: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 83, 'logged_epochs': 83} 
+2026-04-05 08:37:11.473125: Yayy! New best EMA pseudo Dice: 0.8823 
+2026-04-05 08:37:11.821905: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 83, 'logged_epochs': 83} 
+2026-04-05 08:37:12.001727:  
+2026-04-05 08:37:12.001800: Epoch 83 (run 84/150) 
+2026-04-05 08:37:12.001870: Current learning rate: 0.00484 
+2026-04-05 08:39:23.275039: train_loss -0.8479 
+2026-04-05 08:39:23.275760: val_loss -0.815 
+2026-04-05 08:39:23.275815: Pseudo dice [np.float32(0.9203), np.float32(0.8917), np.float32(0.8789)] 
+2026-04-05 08:39:23.275868: Epoch time: 131.27 s 
+2026-04-05 08:39:23.275921: Epoch summary {'completed_epoch': 83, 'next_epoch': 84, 'logged_epochs': 84, 'remaining_epochs': 66, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:39:23.599309: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 84, 'logged_epochs': 84} 
+2026-04-05 08:39:23.599877: Yayy! New best EMA pseudo Dice: 0.8837 
+2026-04-05 08:39:23.780140: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 84, 'logged_epochs': 84} 
+2026-04-05 08:39:23.959491:  
+2026-04-05 08:39:23.959565: Epoch 84 (run 85/150) 
+2026-04-05 08:39:23.959638: Current learning rate: 0.00478 
+2026-04-05 08:41:35.101815: train_loss -0.8466 
+2026-04-05 08:41:35.102260: val_loss -0.8253 
+2026-04-05 08:41:35.102318: Pseudo dice [np.float32(0.9119), np.float32(0.8814), np.float32(0.8524)] 
+2026-04-05 08:41:35.102373: Epoch time: 131.14 s 
+2026-04-05 08:41:35.102405: Epoch summary {'completed_epoch': 84, 'next_epoch': 85, 'logged_epochs': 85, 'remaining_epochs': 65, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:41:35.286811: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 85, 'logged_epochs': 85} 
+2026-04-05 08:41:35.471893:  
+2026-04-05 08:41:35.471964: Epoch 85 (run 86/150) 
+2026-04-05 08:41:35.472024: Current learning rate: 0.00471 
+2026-04-05 08:43:47.126658: train_loss -0.845 
+2026-04-05 08:43:47.127180: val_loss -0.7826 
+2026-04-05 08:43:47.127240: Pseudo dice [np.float32(0.8973), np.float32(0.8658), np.float32(0.846)] 
+2026-04-05 08:43:47.127300: Epoch time: 131.66 s 
+2026-04-05 08:43:47.127337: Epoch summary {'completed_epoch': 85, 'next_epoch': 86, 'logged_epochs': 86, 'remaining_epochs': 64, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:43:47.312007: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 86, 'logged_epochs': 86} 
+2026-04-05 08:43:47.496941:  
+2026-04-05 08:43:47.497007: Epoch 86 (run 87/150) 
+2026-04-05 08:43:47.497060: Current learning rate: 0.00465 
+2026-04-05 08:45:58.972729: train_loss -0.8415 
+2026-04-05 08:45:58.973006: val_loss -0.7992 
+2026-04-05 08:45:58.973066: Pseudo dice [np.float32(0.9143), np.float32(0.879), np.float32(0.8438)] 
+2026-04-05 08:45:58.973124: Epoch time: 131.48 s 
+2026-04-05 08:45:58.973156: Epoch summary {'completed_epoch': 86, 'next_epoch': 87, 'logged_epochs': 87, 'remaining_epochs': 63, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:45:59.158798: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 87, 'logged_epochs': 87} 
+2026-04-05 08:45:59.338310:  
+2026-04-05 08:45:59.338389: Epoch 87 (run 88/150) 
+2026-04-05 08:45:59.338472: Current learning rate: 0.00458 
+2026-04-05 08:48:10.644814: train_loss -0.8506 
+2026-04-05 08:48:10.645289: val_loss -0.7756 
+2026-04-05 08:48:10.645343: Pseudo dice [np.float32(0.9144), np.float32(0.8715), np.float32(0.8431)] 
+2026-04-05 08:48:10.645397: Epoch time: 131.31 s 
+2026-04-05 08:48:10.645432: Epoch summary {'completed_epoch': 87, 'next_epoch': 88, 'logged_epochs': 88, 'remaining_epochs': 62, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:48:10.831674: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 88, 'logged_epochs': 88} 
+2026-04-05 08:48:11.012990:  
+2026-04-05 08:48:11.013063: Epoch 88 (run 89/150) 
+2026-04-05 08:48:11.013128: Current learning rate: 0.00452 
+2026-04-05 08:50:22.824384: train_loss -0.8427 
+2026-04-05 08:50:22.824959: val_loss -0.8065 
+2026-04-05 08:50:22.825020: Pseudo dice [np.float32(0.9188), np.float32(0.8826), np.float32(0.833)] 
+2026-04-05 08:50:22.825078: Epoch time: 131.81 s 
+2026-04-05 08:50:22.825111: Epoch summary {'completed_epoch': 88, 'next_epoch': 89, 'logged_epochs': 89, 'remaining_epochs': 61, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:50:23.014830: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 89, 'logged_epochs': 89} 
+2026-04-05 08:50:23.211954:  
+2026-04-05 08:50:23.212022: Epoch 89 (run 90/150) 
+2026-04-05 08:50:23.212080: Current learning rate: 0.00445 
+2026-04-05 08:52:35.112187: train_loss -0.8427 
+2026-04-05 08:52:35.112740: val_loss -0.774 
+2026-04-05 08:52:35.112801: Pseudo dice [np.float32(0.9121), np.float32(0.8683), np.float32(0.8243)] 
+2026-04-05 08:52:35.112857: Epoch time: 131.9 s 
+2026-04-05 08:52:35.112891: Epoch summary {'completed_epoch': 89, 'next_epoch': 90, 'logged_epochs': 90, 'remaining_epochs': 60, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:52:35.297617: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 90, 'logged_epochs': 90} 
+2026-04-05 08:52:35.482375:  
+2026-04-05 08:52:35.482449: Epoch 90 (run 91/150) 
+2026-04-05 08:52:35.482506: Current learning rate: 0.00438 
+2026-04-05 08:54:47.227057: train_loss -0.8463 
+2026-04-05 08:54:47.228499: val_loss -0.7732 
+2026-04-05 08:54:47.228563: Pseudo dice [np.float32(0.92), np.float32(0.8763), np.float32(0.8654)] 
+2026-04-05 08:54:47.228623: Epoch time: 131.75 s 
+2026-04-05 08:54:47.228658: Epoch summary {'completed_epoch': 90, 'next_epoch': 91, 'logged_epochs': 91, 'remaining_epochs': 59, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:54:47.419967: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 91, 'logged_epochs': 91} 
+2026-04-05 08:54:47.602833:  
+2026-04-05 08:54:47.602924: Epoch 91 (run 92/150) 
+2026-04-05 08:54:47.602985: Current learning rate: 0.00432 
+2026-04-05 08:56:58.808314: train_loss -0.8437 
+2026-04-05 08:56:58.808853: val_loss -0.7794 
+2026-04-05 08:56:58.808911: Pseudo dice [np.float32(0.909), np.float32(0.8477), np.float32(0.8436)] 
+2026-04-05 08:56:58.808966: Epoch time: 131.21 s 
+2026-04-05 08:56:58.808999: Epoch summary {'completed_epoch': 91, 'next_epoch': 92, 'logged_epochs': 92, 'remaining_epochs': 58, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:56:58.987812: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 92, 'logged_epochs': 92} 
+2026-04-05 08:56:59.175302:  
+2026-04-05 08:56:59.175378: Epoch 92 (run 93/150) 
+2026-04-05 08:56:59.175461: Current learning rate: 0.00425 
+2026-04-05 08:59:10.810529: train_loss -0.8456 
+2026-04-05 08:59:10.810996: val_loss -0.8154 
+2026-04-05 08:59:10.811059: Pseudo dice [np.float32(0.9189), np.float32(0.8957), np.float32(0.8592)] 
+2026-04-05 08:59:10.811118: Epoch time: 131.64 s 
+2026-04-05 08:59:10.811150: Epoch summary {'completed_epoch': 92, 'next_epoch': 93, 'logged_epochs': 93, 'remaining_epochs': 57, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 08:59:10.993273: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 93, 'logged_epochs': 93} 
+2026-04-05 08:59:11.172548:  
+2026-04-05 08:59:11.172623: Epoch 93 (run 94/150) 
+2026-04-05 08:59:11.172680: Current learning rate: 0.00419 
+2026-04-05 09:01:22.673837: train_loss -0.8405 
+2026-04-05 09:01:22.675346: val_loss -0.7945 
+2026-04-05 09:01:22.675402: Pseudo dice [np.float32(0.9073), np.float32(0.8702), np.float32(0.849)] 
+2026-04-05 09:01:22.675459: Epoch time: 131.5 s 
+2026-04-05 09:01:22.675490: Epoch summary {'completed_epoch': 93, 'next_epoch': 94, 'logged_epochs': 94, 'remaining_epochs': 56, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:01:22.870886: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 94, 'logged_epochs': 94} 
+2026-04-05 09:01:23.070029:  
+2026-04-05 09:01:23.070126: Epoch 94 (run 95/150) 
+2026-04-05 09:01:23.070200: Current learning rate: 0.00412 
+2026-04-05 09:03:34.717491: train_loss -0.8401 
+2026-04-05 09:03:34.718940: val_loss -0.7895 
+2026-04-05 09:03:34.718999: Pseudo dice [np.float32(0.9157), np.float32(0.8699), np.float32(0.8509)] 
+2026-04-05 09:03:34.719053: Epoch time: 131.65 s 
+2026-04-05 09:03:34.719085: Epoch summary {'completed_epoch': 94, 'next_epoch': 95, 'logged_epochs': 95, 'remaining_epochs': 55, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:03:34.904758: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 95, 'logged_epochs': 95} 
+2026-04-05 09:03:35.083823:  
+2026-04-05 09:03:35.083974: Epoch 95 (run 96/150) 
+2026-04-05 09:03:35.084065: Current learning rate: 0.00405 
+2026-04-05 09:05:46.934621: train_loss -0.8299 
+2026-04-05 09:05:46.936239: val_loss -0.8111 
+2026-04-05 09:05:46.936301: Pseudo dice [np.float32(0.9226), np.float32(0.8982), np.float32(0.8446)] 
+2026-04-05 09:05:46.936364: Epoch time: 131.85 s 
+2026-04-05 09:05:46.936396: Epoch summary {'completed_epoch': 95, 'next_epoch': 96, 'logged_epochs': 96, 'remaining_epochs': 54, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:05:47.122868: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 96, 'logged_epochs': 96} 
+2026-04-05 09:05:47.301457:  
+2026-04-05 09:05:47.301592: Epoch 96 (run 97/150) 
+2026-04-05 09:05:47.301691: Current learning rate: 0.00399 
+2026-04-05 09:07:59.013664: train_loss -0.8441 
+2026-04-05 09:07:59.013972: val_loss -0.8041 
+2026-04-05 09:07:59.014035: Pseudo dice [np.float32(0.9181), np.float32(0.882), np.float32(0.8389)] 
+2026-04-05 09:07:59.014092: Epoch time: 131.71 s 
+2026-04-05 09:07:59.014129: Epoch summary {'completed_epoch': 96, 'next_epoch': 97, 'logged_epochs': 97, 'remaining_epochs': 53, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:07:59.193344: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 97, 'logged_epochs': 97} 
+2026-04-05 09:07:59.390503:  
+2026-04-05 09:07:59.390582: Epoch 97 (run 98/150) 
+2026-04-05 09:07:59.390656: Current learning rate: 0.00392 
+2026-04-05 09:10:11.142749: train_loss -0.8507 
+2026-04-05 09:10:11.143207: val_loss -0.818 
+2026-04-05 09:10:11.143266: Pseudo dice [np.float32(0.9193), np.float32(0.8897), np.float32(0.8579)] 
+2026-04-05 09:10:11.143320: Epoch time: 131.75 s 
+2026-04-05 09:10:11.143353: Epoch summary {'completed_epoch': 97, 'next_epoch': 98, 'logged_epochs': 98, 'remaining_epochs': 52, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:10:11.326333: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 98, 'logged_epochs': 98} 
+2026-04-05 09:10:11.509849:  
+2026-04-05 09:10:11.509943: Epoch 98 (run 99/150) 
+2026-04-05 09:10:11.510002: Current learning rate: 0.00385 
+2026-04-05 09:12:23.313808: train_loss -0.8464 
+2026-04-05 09:12:23.315251: val_loss -0.8135 
+2026-04-05 09:12:23.315313: Pseudo dice [np.float32(0.9218), np.float32(0.9021), np.float32(0.8524)] 
+2026-04-05 09:12:23.315374: Epoch time: 131.8 s 
+2026-04-05 09:12:23.315407: Epoch summary {'completed_epoch': 98, 'next_epoch': 99, 'logged_epochs': 99, 'remaining_epochs': 51, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:12:23.498463: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 99, 'logged_epochs': 99} 
+2026-04-05 09:12:23.681598:  
+2026-04-05 09:12:23.681681: Epoch 99 (run 100/150) 
+2026-04-05 09:12:23.681763: Current learning rate: 0.00379 
+2026-04-05 09:14:35.320852: train_loss -0.8526 
+2026-04-05 09:14:35.322373: val_loss -0.8131 
+2026-04-05 09:14:35.322437: Pseudo dice [np.float32(0.9141), np.float32(0.8909), np.float32(0.8672)] 
+2026-04-05 09:14:35.322495: Epoch time: 131.64 s 
+2026-04-05 09:14:35.322528: Epoch summary {'completed_epoch': 99, 'next_epoch': 100, 'logged_epochs': 100, 'remaining_epochs': 50, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:14:35.504842: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 100, 'logged_epochs': 100} 
+2026-04-05 09:14:35.685617:  
+2026-04-05 09:14:35.685709: Epoch 100 (run 101/150) 
+2026-04-05 09:14:35.685774: Current learning rate: 0.00372 
+2026-04-05 09:16:47.053564: train_loss -0.8609 
+2026-04-05 09:16:47.055139: val_loss -0.8016 
+2026-04-05 09:16:47.055233: Pseudo dice [np.float32(0.9214), np.float32(0.8802), np.float32(0.8486)] 
+2026-04-05 09:16:47.055288: Epoch time: 131.37 s 
+2026-04-05 09:16:47.055320: Epoch summary {'completed_epoch': 100, 'next_epoch': 101, 'logged_epochs': 101, 'remaining_epochs': 49, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:16:47.239327: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 101, 'logged_epochs': 101} 
+2026-04-05 09:16:47.421004:  
+2026-04-05 09:16:47.421134: Epoch 101 (run 102/150) 
+2026-04-05 09:16:47.421202: Current learning rate: 0.00365 
+2026-04-05 09:18:59.008985: train_loss -0.8499 
+2026-04-05 09:18:59.010428: val_loss -0.7626 
+2026-04-05 09:18:59.010492: Pseudo dice [np.float32(0.905), np.float32(0.8519), np.float32(0.8333)] 
+2026-04-05 09:18:59.010550: Epoch time: 131.59 s 
+2026-04-05 09:18:59.010583: Epoch summary {'completed_epoch': 101, 'next_epoch': 102, 'logged_epochs': 102, 'remaining_epochs': 48, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:18:59.195693: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 102, 'logged_epochs': 102} 
+2026-04-05 09:18:59.389440:  
+2026-04-05 09:18:59.389609: Epoch 102 (run 103/150) 
+2026-04-05 09:18:59.389775: Current learning rate: 0.00359 
+2026-04-05 09:21:10.400824: train_loss -0.8533 
+2026-04-05 09:21:10.401787: val_loss -0.8134 
+2026-04-05 09:21:10.401863: Pseudo dice [np.float32(0.9295), np.float32(0.9089), np.float32(0.8715)] 
+2026-04-05 09:21:10.401918: Epoch time: 131.01 s 
+2026-04-05 09:21:10.401950: Epoch summary {'completed_epoch': 102, 'next_epoch': 103, 'logged_epochs': 103, 'remaining_epochs': 47, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:21:10.584564: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 103, 'logged_epochs': 103} 
+2026-04-05 09:21:10.768853:  
+2026-04-05 09:21:10.768931: Epoch 103 (run 104/150) 
+2026-04-05 09:21:10.769002: Current learning rate: 0.00352 
+2026-04-05 09:23:22.376683: train_loss -0.8474 
+2026-04-05 09:23:22.378240: val_loss -0.809 
+2026-04-05 09:23:22.378299: Pseudo dice [np.float32(0.9272), np.float32(0.8904), np.float32(0.8609)] 
+2026-04-05 09:23:22.378358: Epoch time: 131.61 s 
+2026-04-05 09:23:22.378394: Epoch summary {'completed_epoch': 103, 'next_epoch': 104, 'logged_epochs': 104, 'remaining_epochs': 46, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:23:25.034470: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 104, 'logged_epochs': 104} 
+2026-04-05 09:23:25.034951: Yayy! New best EMA pseudo Dice: 0.8844 
+2026-04-05 09:23:25.252236: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 104, 'logged_epochs': 104} 
+2026-04-05 09:23:25.435053:  
+2026-04-05 09:23:25.435131: Epoch 104 (run 105/150) 
+2026-04-05 09:23:25.435203: Current learning rate: 0.00345 
+2026-04-05 09:25:37.269563: train_loss -0.8479 
+2026-04-05 09:25:37.270990: val_loss -0.8193 
+2026-04-05 09:25:37.271046: Pseudo dice [np.float32(0.9289), np.float32(0.8921), np.float32(0.8614)] 
+2026-04-05 09:25:37.271100: Epoch time: 131.83 s 
+2026-04-05 09:25:37.271130: Epoch summary {'completed_epoch': 104, 'next_epoch': 105, 'logged_epochs': 105, 'remaining_epochs': 45, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:25:37.457193: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 105, 'logged_epochs': 105} 
+2026-04-05 09:25:37.457670: Yayy! New best EMA pseudo Dice: 0.8854 
+2026-04-05 09:25:37.646301: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 105, 'logged_epochs': 105} 
+2026-04-05 09:25:37.830887:  
+2026-04-05 09:25:37.830977: Epoch 105 (run 106/150) 
+2026-04-05 09:25:37.831070: Current learning rate: 0.00338 
+2026-04-05 09:27:49.811931: train_loss -0.8572 
+2026-04-05 09:27:49.812422: val_loss -0.8001 
+2026-04-05 09:27:49.812482: Pseudo dice [np.float32(0.9119), np.float32(0.8858), np.float32(0.8456)] 
+2026-04-05 09:27:49.812537: Epoch time: 131.98 s 
+2026-04-05 09:27:49.812569: Epoch summary {'completed_epoch': 105, 'next_epoch': 106, 'logged_epochs': 106, 'remaining_epochs': 44, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:27:50.003331: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 106, 'logged_epochs': 106} 
+2026-04-05 09:27:50.505937:  
+2026-04-05 09:27:50.506004: Epoch 106 (run 107/150) 
+2026-04-05 09:27:50.506054: Current learning rate: 0.00332 
+2026-04-05 09:30:02.387950: train_loss -0.8449 
+2026-04-05 09:30:02.389528: val_loss -0.8321 
+2026-04-05 09:30:02.389587: Pseudo dice [np.float32(0.9213), np.float32(0.9077), np.float32(0.8689)] 
+2026-04-05 09:30:02.389641: Epoch time: 131.88 s 
+2026-04-05 09:30:02.389671: Epoch summary {'completed_epoch': 106, 'next_epoch': 107, 'logged_epochs': 107, 'remaining_epochs': 43, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:30:02.573023: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 107, 'logged_epochs': 107} 
+2026-04-05 09:30:02.573468: Yayy! New best EMA pseudo Dice: 0.8864 
+2026-04-05 09:30:02.750732: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth', 'next_epoch': 107, 'logged_epochs': 107} 
+2026-04-05 09:30:02.929401:  
+2026-04-05 09:30:02.929473: Epoch 107 (run 108/150) 
+2026-04-05 09:30:02.929551: Current learning rate: 0.00325 
+2026-04-05 09:32:14.897676: train_loss -0.8446 
+2026-04-05 09:32:14.899179: val_loss -0.7797 
+2026-04-05 09:32:14.899244: Pseudo dice [np.float32(0.9174), np.float32(0.871), np.float32(0.8375)] 
+2026-04-05 09:32:14.899307: Epoch time: 131.97 s 
+2026-04-05 09:32:14.899343: Epoch summary {'completed_epoch': 107, 'next_epoch': 108, 'logged_epochs': 108, 'remaining_epochs': 42, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:32:15.089807: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 108, 'logged_epochs': 108} 
+2026-04-05 09:32:15.275628:  
+2026-04-05 09:32:15.275707: Epoch 108 (run 109/150) 
+2026-04-05 09:32:15.275775: Current learning rate: 0.00318 
+2026-04-05 09:34:27.114084: train_loss -0.8543 
+2026-04-05 09:34:27.114400: val_loss -0.7927 
+2026-04-05 09:34:27.114465: Pseudo dice [np.float32(0.9154), np.float32(0.8666), np.float32(0.8489)] 
+2026-04-05 09:34:27.114519: Epoch time: 131.84 s 
+2026-04-05 09:34:27.114551: Epoch summary {'completed_epoch': 108, 'next_epoch': 109, 'logged_epochs': 109, 'remaining_epochs': 41, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:34:27.298654: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 109, 'logged_epochs': 109} 
+2026-04-05 09:34:27.493001:  
+2026-04-05 09:34:27.493078: Epoch 109 (run 110/150) 
+2026-04-05 09:34:27.493155: Current learning rate: 0.00311 
+2026-04-05 09:36:39.369994: train_loss -0.8503 
+2026-04-05 09:36:39.371446: val_loss -0.7978 
+2026-04-05 09:36:39.371506: Pseudo dice [np.float32(0.9088), np.float32(0.8714), np.float32(0.8199)] 
+2026-04-05 09:36:39.371559: Epoch time: 131.88 s 
+2026-04-05 09:36:39.371593: Epoch summary {'completed_epoch': 109, 'next_epoch': 110, 'logged_epochs': 110, 'remaining_epochs': 40, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:36:39.556349: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 110, 'logged_epochs': 110} 
+2026-04-05 09:36:39.738429:  
+2026-04-05 09:36:39.738499: Epoch 110 (run 111/150) 
+2026-04-05 09:36:39.738557: Current learning rate: 0.00304 
+2026-04-05 09:38:51.572454: train_loss -0.8497 
+2026-04-05 09:38:51.574046: val_loss -0.813 
+2026-04-05 09:38:51.574105: Pseudo dice [np.float32(0.9127), np.float32(0.8927), np.float32(0.8396)] 
+2026-04-05 09:38:51.574157: Epoch time: 131.83 s 
+2026-04-05 09:38:51.574190: Epoch summary {'completed_epoch': 110, 'next_epoch': 111, 'logged_epochs': 111, 'remaining_epochs': 39, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:38:51.758806: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 111, 'logged_epochs': 111} 
+2026-04-05 09:38:51.940985:  
+2026-04-05 09:38:51.941056: Epoch 111 (run 112/150) 
+2026-04-05 09:38:51.941113: Current learning rate: 0.00297 
+2026-04-05 09:41:03.707413: train_loss -0.85 
+2026-04-05 09:41:03.707641: val_loss -0.8041 
+2026-04-05 09:41:03.707697: Pseudo dice [np.float32(0.9111), np.float32(0.875), np.float32(0.8367)] 
+2026-04-05 09:41:03.707751: Epoch time: 131.77 s 
+2026-04-05 09:41:03.707783: Epoch summary {'completed_epoch': 111, 'next_epoch': 112, 'logged_epochs': 112, 'remaining_epochs': 38, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:41:03.890633: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 112, 'logged_epochs': 112} 
+2026-04-05 09:41:04.072419:  
+2026-04-05 09:41:04.072491: Epoch 112 (run 113/150) 
+2026-04-05 09:41:04.072553: Current learning rate: 0.00291 
+2026-04-05 09:43:16.070271: train_loss -0.8584 
+2026-04-05 09:43:16.070596: val_loss -0.8134 
+2026-04-05 09:43:16.070666: Pseudo dice [np.float32(0.9252), np.float32(0.89), np.float32(0.8654)] 
+2026-04-05 09:43:16.070731: Epoch time: 132.0 s 
+2026-04-05 09:43:16.070770: Epoch summary {'completed_epoch': 112, 'next_epoch': 113, 'logged_epochs': 113, 'remaining_epochs': 37, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:43:16.258895: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 113, 'logged_epochs': 113} 
+2026-04-05 09:43:16.443421:  
+2026-04-05 09:43:16.443499: Epoch 113 (run 114/150) 
+2026-04-05 09:43:16.443573: Current learning rate: 0.00284 
+2026-04-05 09:45:28.441457: train_loss -0.8538 
+2026-04-05 09:45:28.442986: val_loss -0.7962 
+2026-04-05 09:45:28.443059: Pseudo dice [np.float32(0.9257), np.float32(0.8827), np.float32(0.8459)] 
+2026-04-05 09:45:28.443125: Epoch time: 132.0 s 
+2026-04-05 09:45:28.443161: Epoch summary {'completed_epoch': 113, 'next_epoch': 114, 'logged_epochs': 114, 'remaining_epochs': 36, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:45:28.621230: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 114, 'logged_epochs': 114} 
+2026-04-05 09:45:28.811266:  
+2026-04-05 09:45:28.811429: Epoch 114 (run 115/150) 
+2026-04-05 09:45:28.811563: Current learning rate: 0.00277 
+2026-04-05 09:47:40.848545: train_loss -0.8562 
+2026-04-05 09:47:40.850062: val_loss -0.787 
+2026-04-05 09:47:40.850120: Pseudo dice [np.float32(0.9193), np.float32(0.8826), np.float32(0.8387)] 
+2026-04-05 09:47:40.850173: Epoch time: 132.04 s 
+2026-04-05 09:47:40.850206: Epoch summary {'completed_epoch': 114, 'next_epoch': 115, 'logged_epochs': 115, 'remaining_epochs': 35, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:47:41.032648: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 115, 'logged_epochs': 115} 
+2026-04-05 09:47:41.213937:  
+2026-04-05 09:47:41.214042: Epoch 115 (run 116/150) 
+2026-04-05 09:47:41.214112: Current learning rate: 0.0027 
+2026-04-05 09:49:52.970578: train_loss -0.8585 
+2026-04-05 09:49:52.970846: val_loss -0.7955 
+2026-04-05 09:49:52.970908: Pseudo dice [np.float32(0.9188), np.float32(0.8979), np.float32(0.8557)] 
+2026-04-05 09:49:52.970970: Epoch time: 131.76 s 
+2026-04-05 09:49:52.971006: Epoch summary {'completed_epoch': 115, 'next_epoch': 116, 'logged_epochs': 116, 'remaining_epochs': 34, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:49:53.159771: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 116, 'logged_epochs': 116} 
+2026-04-05 09:49:53.342092:  
+2026-04-05 09:49:53.342218: Epoch 116 (run 117/150) 
+2026-04-05 09:49:53.342322: Current learning rate: 0.00263 
+2026-04-05 09:52:04.520284: train_loss -0.8594 
+2026-04-05 09:52:04.520692: val_loss -0.8369 
+2026-04-05 09:52:04.520752: Pseudo dice [np.float32(0.9192), np.float32(0.9079), np.float32(0.8762)] 
+2026-04-05 09:52:04.520810: Epoch time: 131.18 s 
+2026-04-05 09:52:04.520844: Epoch summary {'completed_epoch': 116, 'next_epoch': 117, 'logged_epochs': 117, 'remaining_epochs': 33, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:52:04.700477: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 117, 'logged_epochs': 117} 
+2026-04-05 09:52:04.894113:  
+2026-04-05 09:52:04.894183: Epoch 117 (run 118/150) 
+2026-04-05 09:52:04.894247: Current learning rate: 0.00256 
+2026-04-05 09:54:16.446886: train_loss -0.8562 
+2026-04-05 09:54:16.448341: val_loss -0.8221 
+2026-04-05 09:54:16.448403: Pseudo dice [np.float32(0.9165), np.float32(0.8965), np.float32(0.8655)] 
+2026-04-05 09:54:16.448462: Epoch time: 131.55 s 
+2026-04-05 09:54:16.448494: Epoch summary {'completed_epoch': 117, 'next_epoch': 118, 'logged_epochs': 118, 'remaining_epochs': 32, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:54:16.636834: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 118, 'logged_epochs': 118} 
+2026-04-05 09:54:16.826984:  
+2026-04-05 09:54:16.827061: Epoch 118 (run 119/150) 
+2026-04-05 09:54:16.827132: Current learning rate: 0.00249 
+2026-04-05 09:56:27.980345: train_loss -0.8535 
+2026-04-05 09:56:27.980865: val_loss -0.7923 
+2026-04-05 09:56:27.980921: Pseudo dice [np.float32(0.9177), np.float32(0.8914), np.float32(0.8578)] 
+2026-04-05 09:56:27.980975: Epoch time: 131.15 s 
+2026-04-05 09:56:27.981075: Epoch summary {'completed_epoch': 118, 'next_epoch': 119, 'logged_epochs': 119, 'remaining_epochs': 31, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:56:28.156628: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 119, 'logged_epochs': 119} 
+2026-04-05 09:56:28.339588:  
+2026-04-05 09:56:28.339656: Epoch 119 (run 120/150) 
+2026-04-05 09:56:28.339714: Current learning rate: 0.00242 
+2026-04-05 09:58:39.501073: train_loss -0.8524 
+2026-04-05 09:58:39.501463: val_loss -0.7712 
+2026-04-05 09:58:39.501523: Pseudo dice [np.float32(0.9164), np.float32(0.8726), np.float32(0.8428)] 
+2026-04-05 09:58:39.501579: Epoch time: 131.16 s 
+2026-04-05 09:58:39.501611: Epoch summary {'completed_epoch': 119, 'next_epoch': 120, 'logged_epochs': 120, 'remaining_epochs': 30, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 09:58:39.695242: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 120, 'logged_epochs': 120} 
+2026-04-05 09:58:39.878639:  
+2026-04-05 09:58:39.878737: Epoch 120 (run 121/150) 
+2026-04-05 09:58:39.878814: Current learning rate: 0.00235 
+2026-04-05 10:00:50.848966: train_loss -0.8543 
+2026-04-05 10:00:50.849496: val_loss -0.8089 
+2026-04-05 10:00:50.849555: Pseudo dice [np.float32(0.913), np.float32(0.8917), np.float32(0.8447)] 
+2026-04-05 10:00:50.849614: Epoch time: 130.97 s 
+2026-04-05 10:00:50.849648: Epoch summary {'completed_epoch': 120, 'next_epoch': 121, 'logged_epochs': 121, 'remaining_epochs': 29, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 10:00:51.040281: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 121, 'logged_epochs': 121} 
+2026-04-05 10:00:51.223242:  
+2026-04-05 10:00:51.223312: Epoch 121 (run 122/150) 
+2026-04-05 10:00:51.223377: Current learning rate: 0.00228 
+2026-04-05 10:03:02.743098: train_loss -0.8617 
+2026-04-05 10:03:02.744928: val_loss -0.7963 
+2026-04-05 10:03:02.744983: Pseudo dice [np.float32(0.9164), np.float32(0.8857), np.float32(0.8392)] 
+2026-04-05 10:03:02.745036: Epoch time: 131.52 s 
+2026-04-05 10:03:02.745067: Epoch summary {'completed_epoch': 121, 'next_epoch': 122, 'logged_epochs': 122, 'remaining_epochs': 28, 'resume_checkpoint_path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth'} 
+2026-04-05 10:03:02.931256: Saved checkpoint {'path': '/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth', 'next_epoch': 122, 'logged_epochs': 122} 
+2026-04-05 10:03:03.113823:  
+2026-04-05 10:03:03.113894: Epoch 122 (run 123/150) 
+2026-04-05 10:03:03.113946: Current learning rate: 0.00221 

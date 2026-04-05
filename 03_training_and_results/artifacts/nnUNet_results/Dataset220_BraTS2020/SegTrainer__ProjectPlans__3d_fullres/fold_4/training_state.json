@@ -1,19 +1,19 @@
 {
     "status": "running",
-    "timestamp": "2026-04-04T20:18:14.541370",
+    "timestamp": "2026-04-05T10:03:03.113286",
     "trainer_name": "SegTrainer",
     "configuration": "3d_fullres",
     "fold": 4,
     "output_folder": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4",
-    "log_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/training_log_2026_4_4_19_29_20.txt",
+    "log_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/training_log_2026_4_5_06_22_52.txt",
     "training_state_file": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/training_state.json",
-    "resume_checkpoint_path": null,
+    "resume_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth",
     "latest_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_latest.pth",
     "best_checkpoint_path": "/home/Creeken/Desktop/machine-learning-test/BraTS/03_training_and_results/artifacts/nnUNet_results/Dataset220_BraTS2020/SegTrainer__ProjectPlans__3d_fullres/fold_4/checkpoint_best.pth",
     "final_checkpoint_path": null,
-    "num_epochs": 100,
-    "logged_epochs": 22,
-    "current_completed_epoch": 21,
-    "next_epoch": 22,
-    "remaining_epochs": 78
+    "num_epochs": 150,
+    "logged_epochs": 122,
+    "current_completed_epoch": 121,
+    "next_epoch": 122,
+    "remaining_epochs": 28
 }
